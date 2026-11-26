@@ -13,6 +13,9 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterials;
+import net.minecraft.item.ArmorMaterial;
+import net.minecraft.registry.entry.RegistryEntry;
+import java.util.List;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -41,7 +44,8 @@ public final class LunarHorizons implements ModInitializer {
     public static final Item CRYSTAL = item("lunar_crystal", new Item(new Item.Settings()));
     public static final Item FUEL = item("rocket_fuel", new Item(new Item.Settings()));
     public static final Item OXYGEN = item("oxygen_tank", new Item(new Item.Settings().maxDamage(600)));
-    public static final Item HELMET = item("space_helmet", new ArmorItem(ArmorMaterials.IRON, ArmorItem.Type.HELMET, new Item.Settings().maxDamage(165)));
+    public static final RegistryEntry<ArmorMaterial> SPACE_ARMOR = registerSpaceArmor();
+    public static final Item HELMET = item("space_helmet", new ArmorItem(SPACE_ARMOR, ArmorItem.Type.HELMET, new Item.Settings().maxDamage(165)));
     public static final ItemGroup GROUP = FabricItemGroup.builder()
             .icon(() -> new ItemStack(ROCKET)).displayName(Text.translatable("itemGroup.lunar_horizons"))
             .entries((context, entries) -> {
@@ -50,6 +54,13 @@ public final class LunarHorizons implements ModInitializer {
             }).build();
 
     public static Identifier id(String path) { return Identifier.of(ID, path); }
+    private static RegistryEntry<ArmorMaterial> registerSpaceArmor() {
+        ArmorMaterial iron = ArmorMaterials.IRON.value();
+        return Registry.registerReference(Registries.ARMOR_MATERIAL, id("space_suit"),
+                new ArmorMaterial(iron.defense(), iron.enchantability(), iron.equipSound(),
+                        iron.repairIngredient(), List.of(new ArmorMaterial.Layer(id("space_suit"))),
+                        iron.toughness(), iron.knockbackResistance()));
+    }
     private static Item item(String path, Item item) { return Registry.register(Registries.ITEM, id(path), item); }
     private static Block block(String path, AbstractBlock.Settings settings) {
         Block block = Registry.register(Registries.BLOCK, id(path), new Block(settings));
