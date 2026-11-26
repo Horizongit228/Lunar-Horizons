@@ -29,7 +29,7 @@ final class MoonSurvival {
             boolean moon = p.getWorld().getRegistryKey().equals(LunarHorizons.MOON);
             modifier(p.getAttributeInstance(EntityAttributes.GENERIC_GRAVITY), GRAVITY, -0.75, moon);
             modifier(p.getAttributeInstance(EntityAttributes.GENERIC_FALL_DAMAGE_MULTIPLIER), FALL, -1.0, moon);
-            if (!moon || !p.isAlive() || p.isCreative() || p.isSpectator() || server.getTicks() % 20 != 0 || FlightManager.isLaunching(p)) continue;
+            if (!moon || !p.isAlive() || p.isCreative() || p.isSpectator() || server.getTicks() % 20 != 0 || p.getVehicle() instanceof RocketEntity) continue;
             int slot = tankSlot(p);
             if (slot >= 0 && LunarHorizons.hasHelmet(p)) {
                 ItemStack tank = p.getInventory().getStack(slot);

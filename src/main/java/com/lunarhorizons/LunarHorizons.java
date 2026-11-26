@@ -4,13 +4,14 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterials;
 import net.minecraft.item.ArmorMaterial;
@@ -40,7 +41,14 @@ public final class LunarHorizons implements ModInitializer {
     public static final Block CRYSTAL_ORE = block("crystal_ore", AbstractBlock.Settings.copy(Blocks.IRON_ORE).luminance(s -> 5));
     public static final Block MOON_BRICKS = block("moon_bricks", AbstractBlock.Settings.copy(Blocks.STONE_BRICKS));
     public static final Block LAUNCH_PAD = block("launch_pad", AbstractBlock.Settings.copy(Blocks.IRON_BLOCK));
-    public static final Block ROCKET = block("rocket", AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).nonOpaque());
+    // Retain the old block ID for existing saves. Its item now deploys a real vehicle.
+    public static final EntityType<RocketEntity> ROCKET_ENTITY = Registry.register(Registries.ENTITY_TYPE, id("rocket"),
+            EntityType.Builder.<RocketEntity>create(RocketEntity::new, SpawnGroup.MISC)
+                    .dimensions(3.0F, 8.0F).maxTrackingRange(16).trackingTickInterval(1)
+                    .fireImmune().build(ID + ":rocket"));
+    public static final Block ROCKET = Registry.register(Registries.BLOCK, id("rocket"),
+            new Block(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).nonOpaque()));
+    public static final Item ROCKET_ITEM = item("rocket", new RocketItem(ROCKET, new Item.Settings().maxCount(1)));
     public static final Item CRYSTAL = item("lunar_crystal", new Item(new Item.Settings()));
     public static final Item FUEL = item("rocket_fuel", new Item(new Item.Settings()));
     public static final Item OXYGEN = item("oxygen_tank", new Item(new Item.Settings().maxDamage(600)));
@@ -74,13 +82,11 @@ public final class LunarHorizons implements ModInitializer {
         UseBlockCallback.EVENT.register((player, world, hand, hit) -> {
             if (player.isSpectator() || hand != Hand.MAIN_HAND || player.isSneaking() || !world.getBlockState(hit.getBlockPos()).isOf(ROCKET)) return ActionResult.PASS;
             if (world instanceof ServerWorld serverWorld && player instanceof ServerPlayerEntity serverPlayer) {
-                FlightManager.start(serverPlayer, serverWorld, hit.getBlockPos());
+                RocketEntity.convertLegacy(serverPlayer, serverWorld, hit.getBlockPos());
             }
             return ActionResult.SUCCESS;
         });
-        ServerLifecycleEvents.SERVER_STOPPED.register(server -> FlightManager.clear());
         ServerTickEvents.END_SERVER_TICK.register(server -> {
-            FlightManager.tick(server);
             MoonSurvival.tick(server);
         });
     }
