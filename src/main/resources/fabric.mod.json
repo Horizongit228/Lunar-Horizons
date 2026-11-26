@@ -8,6 +8,9 @@
   "entrypoints": {
     "main": [
       "com.lunarhorizons.LunarHorizons"
+    ],
+    "client": [
+      "com.lunarhorizons.client.LunarClient"
     ]
   },
   "depends": {

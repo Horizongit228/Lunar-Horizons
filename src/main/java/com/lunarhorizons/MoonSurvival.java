@@ -28,7 +28,7 @@ final class MoonSurvival {
         for (ServerPlayerEntity p : server.getPlayerManager().getPlayerList()) {
             boolean moon = p.getWorld().getRegistryKey().equals(LunarHorizons.MOON);
             modifier(p.getAttributeInstance(EntityAttributes.GENERIC_GRAVITY), GRAVITY, -0.75, moon);
-            modifier(p.getAttributeInstance(EntityAttributes.GENERIC_FALL_DAMAGE_MULTIPLIER), FALL, -0.75, moon);
+            modifier(p.getAttributeInstance(EntityAttributes.GENERIC_FALL_DAMAGE_MULTIPLIER), FALL, -1.0, moon);
             if (!moon || !p.isAlive() || p.isCreative() || p.isSpectator() || server.getTicks() % 20 != 0 || FlightManager.isLaunching(p)) continue;
             int slot = tankSlot(p);
             if (slot >= 0 && LunarHorizons.hasHelmet(p)) {

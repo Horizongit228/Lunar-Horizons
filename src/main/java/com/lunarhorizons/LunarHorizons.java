@@ -1,6 +1,8 @@
 package com.lunarhorizons;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
@@ -57,6 +59,7 @@ public final class LunarHorizons implements ModInitializer {
     public static boolean hasHelmet(ServerPlayerEntity p) { return p.getEquippedStack(EquipmentSlot.HEAD).isOf(HELMET); }
     @Override public void onInitialize() {
         Registry.register(Registries.ITEM_GROUP, id("main"), GROUP);
+        ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> !(entity instanceof ServerPlayerEntity player && player.getWorld().getRegistryKey().equals(MOON) && source.isIn(DamageTypeTags.IS_FALL)));
         UseBlockCallback.EVENT.register((player, world, hand, hit) -> {
             if (player.isSpectator() || hand != Hand.MAIN_HAND || player.isSneaking() || !world.getBlockState(hit.getBlockPos()).isOf(ROCKET)) return ActionResult.PASS;
             if (world instanceof ServerWorld serverWorld && player instanceof ServerPlayerEntity serverPlayer) {
