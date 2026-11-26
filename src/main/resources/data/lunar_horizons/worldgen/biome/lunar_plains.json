@@ -19,7 +19,12 @@
     "water_creature": []
   },
   "spawn_costs": {},
-  "carvers": {},
+  "carvers": {
+    "air": [
+      "lunar_horizons:lunar_tunnels",
+      "lunar_horizons:lunar_shallow_caves"
+    ]
+  },
   "features": [
     [],
     [],

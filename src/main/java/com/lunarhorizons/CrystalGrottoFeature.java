@@ -25,6 +25,13 @@ public final class CrystalGrottoFeature extends Feature<DefaultFeatureConfig>{
                     boolean roof=false;
                     for(int h=3;h<=18;h++) if(w.getBlockState(a.up(h)).isOf(LunarHorizons.MOON_ROCK)||w.getBlockState(a.up(h)).isOf(LunarHorizons.REGOLITH)){roof=true;break;}
                     if(!roof)break;
+                    // Clusters are spaced out; keep the passage walkable.
+                    boolean crowded=false;
+                    for(int dx=-1;dx<=1;dx++)for(int dz=-1;dz<=1;dz++){
+                        if((a.getX()+dx>>4)!=(p.getX()>>4)||(a.getZ()+dz>>4)!=(p.getZ()>>4))continue;
+                        if(w.getBlockState(a.add(dx,0,dz)).isOf(LunarHorizons.CRYSTAL_CLUSTER))crowded=true;
+                    }
+                    if(crowded)break;
                     w.setBlockState(below,LunarHorizons.CRYSTAL_STONE.getDefaultState(),2);
                     if(r.nextInt(7)==0&&w.isAir(a.up(3))){
                         w.setBlockState(a,LunarHorizons.CRYSTAL_STONE.getDefaultState(),2);
@@ -34,7 +41,7 @@ public final class CrystalGrottoFeature extends Feature<DefaultFeatureConfig>{
                 }
                 break;
             }
-            if(placed>=5)break;
+            if(placed>=3)break;
         }
         return placed>0;
     }

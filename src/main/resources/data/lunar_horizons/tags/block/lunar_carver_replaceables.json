@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "lunar_horizons:moon_rock",
+    "lunar_horizons:regolith"
+  ]
+}
