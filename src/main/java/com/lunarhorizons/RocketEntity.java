@@ -242,7 +242,7 @@ public final class RocketEntity extends Entity {
                 if(pilot!=null && phaseTicks%20==0) message(pilot,"landing_altitude",(int)Math.ceil(remaining));
                 if(next<=landing.getY()+.001){
                     phase(IDLE);
-                    world.playSound(null,getBlockPos(),SoundEvents.BLOCK_IRON_BLOCK_HIT,SoundCategory.NEUTRAL,1.3f,.65f);
+                    world.playSound(null,getBlockPos(),SoundEvents.BLOCK_METAL_HIT,SoundCategory.NEUTRAL,1.3f,.65f);
                     if(pilot!=null){message(pilot,world.getRegistryKey().equals(LunarHorizons.MOON)?"arrived_moon":"arrived_earth");pilot.stopRiding();}
                 }
             }

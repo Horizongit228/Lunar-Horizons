@@ -1,4 +1,4 @@
-# Lunar Horizons — Alpha 0.3.0: Rocket Update
+# Lunar Horizons — Alpha 0.3.1: Rocket Update
 
 Minecraft Java 1.21.1 / Fabric / Java 21. Экспериментальный мод; компиляция и тесты в игре необходимы.
 

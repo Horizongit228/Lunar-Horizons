@@ -45,7 +45,7 @@ public final class LunarHorizons implements ModInitializer {
     public static final EntityType<RocketEntity> ROCKET_ENTITY = Registry.register(Registries.ENTITY_TYPE, id("rocket"),
             EntityType.Builder.<RocketEntity>create(RocketEntity::new, SpawnGroup.MISC)
                     .dimensions(3.0F, 8.0F).maxTrackingRange(16).trackingTickInterval(1)
-                    .fireImmune().build(ID + ":rocket"));
+                    .makeFireImmune().build(ID + ":rocket"));
     public static final Block ROCKET = Registry.register(Registries.BLOCK, id("rocket"),
             new Block(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).nonOpaque()));
     public static final Item ROCKET_ITEM = item("rocket", new RocketItem(ROCKET, new Item.Settings().maxCount(1)));
