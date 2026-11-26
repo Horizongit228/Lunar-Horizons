@@ -131,7 +131,7 @@
                   }
                 }
               },
-              "argument2": -0.2
+              "argument2": -0.12
             },
             "argument2": {
               "type": "minecraft:min",
@@ -156,7 +156,7 @@
                     }
                   }
                 },
-                "argument2": 0.18
+                "argument2": 0.34
               },
               "argument2": {
                 "type": "minecraft:add",
@@ -181,25 +181,38 @@
                     }
                   }
                 },
-                "argument2": -0.11
+                "argument2": -0.05
               }
             }
           },
           "argument2": {
             "type": "minecraft:max",
             "argument1": {
-              "type": "minecraft:y_clamped_gradient",
-              "from_y": -58,
-              "to_y": -43,
-              "from_value": 1,
-              "to_value": -1
+              "type": "minecraft:add",
+              "argument1": {
+                "type": "minecraft:noise",
+                "noise": "lunar_horizons:cave_regions",
+                "xz_scale": 1,
+                "y_scale": 0.2
+              },
+              "argument2": 0.08
             },
             "argument2": {
-              "type": "minecraft:y_clamped_gradient",
-              "from_y": 54,
-              "to_y": 85,
-              "from_value": -1,
-              "to_value": 1
+              "type": "minecraft:max",
+              "argument1": {
+                "type": "minecraft:y_clamped_gradient",
+                "from_y": -58,
+                "to_y": -44,
+                "from_value": 1,
+                "to_value": -1
+              },
+              "argument2": {
+                "type": "minecraft:y_clamped_gradient",
+                "from_y": 24,
+                "to_y": 56,
+                "from_value": -1,
+                "to_value": 1
+              }
             }
           }
         }

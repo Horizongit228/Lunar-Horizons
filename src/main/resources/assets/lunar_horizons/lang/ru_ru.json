@@ -57,5 +57,12 @@
   "hud.lunar_horizons.suit_missing": "Нет защиты!",
   "hud.lunar_horizons.safe": "Атмосфера в кабине",
   "hud.lunar_horizons.sealed": "Скафандр герметичен",
-  "hud.lunar_horizons.vacuum": "ОПАСНО: вакуум"
+  "hud.lunar_horizons.vacuum": "ОПАСНО: вакуум",
+  "block.lunar_horizons.dark_crystal_ore": "Руда тёмного кристалла",
+  "item.lunar_horizons.dark_crystal": "Тёмный кристалл",
+  "item.lunar_horizons.dark_crystal_sword": "Тёмно-кристальный меч",
+  "item.lunar_horizons.dark_crystal_pickaxe": "Тёмно-кристальная кирка",
+  "item.lunar_horizons.dark_crystal_axe": "Тёмно-кристальный топор",
+  "item.lunar_horizons.dark_crystal_shovel": "Тёмно-кристальная лопата",
+  "item.lunar_horizons.dark_crystal_hoe": "Тёмно-кристальная мотыга"
 }

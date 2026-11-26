@@ -57,5 +57,12 @@
   "hud.lunar_horizons.suit_missing": "Suit incomplete!",
   "hud.lunar_horizons.safe": "Cabin atmosphere",
   "hud.lunar_horizons.sealed": "Suit sealed",
-  "hud.lunar_horizons.vacuum": "DANGER: vacuum"
+  "hud.lunar_horizons.vacuum": "DANGER: vacuum",
+  "block.lunar_horizons.dark_crystal_ore": "Dark Crystal Ore",
+  "item.lunar_horizons.dark_crystal": "Dark Crystal",
+  "item.lunar_horizons.dark_crystal_sword": "Dark Crystal Sword",
+  "item.lunar_horizons.dark_crystal_pickaxe": "Dark Crystal Pickaxe",
+  "item.lunar_horizons.dark_crystal_axe": "Dark Crystal Axe",
+  "item.lunar_horizons.dark_crystal_shovel": "Dark Crystal Shovel",
+  "item.lunar_horizons.dark_crystal_hoe": "Dark Crystal Hoe"
 }

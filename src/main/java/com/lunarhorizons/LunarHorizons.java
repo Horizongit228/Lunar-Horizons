@@ -46,6 +46,7 @@ public final class LunarHorizons implements ModInitializer {
     public static final Block REGOLITH = block("regolith", AbstractBlock.Settings.copy(Blocks.DIRT));
     public static final Block MOON_ROCK = block("moon_rock", AbstractBlock.Settings.copy(Blocks.STONE));
     public static final Block CRYSTAL_ORE = block("crystal_ore", AbstractBlock.Settings.copy(Blocks.IRON_ORE).luminance(s -> 5));
+    public static final Block DARK_CRYSTAL_ORE = block("dark_crystal_ore", AbstractBlock.Settings.copy(Blocks.DEEPSLATE_DIAMOND_ORE).requiresTool().luminance(s -> 3));
     public static final Block MOON_BRICKS = block("moon_bricks", AbstractBlock.Settings.copy(Blocks.STONE_BRICKS));
     public static final Block LAUNCH_PAD = block("launch_pad", AbstractBlock.Settings.copy(Blocks.IRON_BLOCK));
     // Retain the old block ID for existing saves. Its item now deploys a real vehicle.
@@ -57,6 +58,7 @@ public final class LunarHorizons implements ModInitializer {
             new Block(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).nonOpaque()));
     public static final Item ROCKET_ITEM = item("rocket", new RocketItem(ROCKET, new Item.Settings().maxCount(1)));
     public static final Item CRYSTAL = item("lunar_crystal", new Item(new Item.Settings()));
+    public static final Item DARK_CRYSTAL = item("dark_crystal", new Item(new Item.Settings()));
     public static final Item FUEL = item("rocket_fuel", new Item(new Item.Settings()));
     public static final Item OXYGEN = item("oxygen_tank", new Item(new Item.Settings().maxDamage(600)));
     public static final Item LARGE_OXYGEN = item("large_oxygen_tank",new Item(new Item.Settings().maxDamage(1800)));
@@ -75,11 +77,16 @@ public final class LunarHorizons implements ModInitializer {
     public static final Item CRYSTAL_AXE = item("crystal_axe",new AxeItem(CrystalMaterial.INSTANCE,new Item.Settings().attributeModifiers(AxeItem.createAttributeModifiers(CrystalMaterial.INSTANCE,6,-3.1F))));
     public static final Item CRYSTAL_SHOVEL = item("crystal_shovel",new ShovelItem(CrystalMaterial.INSTANCE,new Item.Settings().attributeModifiers(ShovelItem.createAttributeModifiers(CrystalMaterial.INSTANCE,1.5F,-3.0F))));
     public static final Item CRYSTAL_HOE = item("crystal_hoe",new HoeItem(CrystalMaterial.INSTANCE,new Item.Settings().attributeModifiers(HoeItem.createAttributeModifiers(CrystalMaterial.INSTANCE,-2,-1.0F))));
+    public static final Item DARK_CRYSTAL_SWORD = item("dark_crystal_sword",new SwordItem(DarkCrystalMaterial.INSTANCE,new Item.Settings().attributeModifiers(SwordItem.createAttributeModifiers(DarkCrystalMaterial.INSTANCE,3,-2.4F))));
+    public static final Item DARK_CRYSTAL_PICKAXE = item("dark_crystal_pickaxe",new PickaxeItem(DarkCrystalMaterial.INSTANCE,new Item.Settings().attributeModifiers(PickaxeItem.createAttributeModifiers(DarkCrystalMaterial.INSTANCE,1,-2.8F))));
+    public static final Item DARK_CRYSTAL_AXE = item("dark_crystal_axe",new AxeItem(DarkCrystalMaterial.INSTANCE,new Item.Settings().attributeModifiers(AxeItem.createAttributeModifiers(DarkCrystalMaterial.INSTANCE,6,-3.1F))));
+    public static final Item DARK_CRYSTAL_SHOVEL = item("dark_crystal_shovel",new ShovelItem(DarkCrystalMaterial.INSTANCE,new Item.Settings().attributeModifiers(ShovelItem.createAttributeModifiers(DarkCrystalMaterial.INSTANCE,1.5F,-3.0F))));
+    public static final Item DARK_CRYSTAL_HOE = item("dark_crystal_hoe",new HoeItem(DarkCrystalMaterial.INSTANCE,new Item.Settings().attributeModifiers(HoeItem.createAttributeModifiers(DarkCrystalMaterial.INSTANCE,-4,0.0F))));
     public static final ItemGroup GROUP = FabricItemGroup.builder()
             .icon(() -> new ItemStack(ROCKET)).displayName(Text.translatable("itemGroup.lunar_horizons"))
             .entries((context, entries) -> {
-                for (Block b : new Block[]{ROCKET, LAUNCH_PAD, REGOLITH, MOON_ROCK, CRYSTAL_ORE, MOON_BRICKS, REFILL_STATION, CRYSTAL_CLUSTER, CRYSTAL_STONE}) entries.add(b);
-                for (Item i : new Item[]{FUEL, OXYGEN, LARGE_OXYGEN, BACKPACK, HELMET, CHEST, LEGS, BOOTS, CRYSTAL, CRYSTAL_SWORD, CRYSTAL_PICKAXE, CRYSTAL_AXE, CRYSTAL_SHOVEL, CRYSTAL_HOE}) entries.add(i);
+                for (Block b : new Block[]{ROCKET, LAUNCH_PAD, REGOLITH, MOON_ROCK, CRYSTAL_ORE, MOON_BRICKS, REFILL_STATION, CRYSTAL_CLUSTER, CRYSTAL_STONE, DARK_CRYSTAL_ORE}) entries.add(b);
+                for (Item i : new Item[]{FUEL, OXYGEN, LARGE_OXYGEN, BACKPACK, HELMET, CHEST, LEGS, BOOTS, CRYSTAL, CRYSTAL_SWORD, CRYSTAL_PICKAXE, CRYSTAL_AXE, CRYSTAL_SHOVEL, CRYSTAL_HOE, DARK_CRYSTAL, DARK_CRYSTAL_SWORD, DARK_CRYSTAL_PICKAXE, DARK_CRYSTAL_AXE, DARK_CRYSTAL_SHOVEL, DARK_CRYSTAL_HOE}) entries.add(i);
             }).build();
 
     public static Identifier id(String path) { return Identifier.of(ID, path); }
