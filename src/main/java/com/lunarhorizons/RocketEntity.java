@@ -31,7 +31,7 @@ public final class RocketEntity extends Entity {
     public static final int IDLE=0, COUNTDOWN=1, ASCENT=2, DESCENT=3, READY=4;
     private static final TrackedData<Integer> PHASE = DataTracker.registerData(RocketEntity.class, TrackedDataHandlerRegistry.INTEGER);
     private static final TrackedData<Integer> ALTITUDE = DataTracker.registerData(RocketEntity.class, TrackedDataHandlerRegistry.INTEGER);
-    private static final TrackedData<Integer> COUNTDOWN = DataTracker.registerData(RocketEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    private static final TrackedData<Integer> COUNTDOWN_SYNC = DataTracker.registerData(RocketEntity.class, TrackedDataHandlerRegistry.INTEGER);
     private static final int COUNTDOWN_TICKS = 100;
     private BlockPos landing = BlockPos.ORIGIN;
     private BlockPos home = null;
@@ -45,11 +45,11 @@ public final class RocketEntity extends Entity {
         setNoGravity(true);
     }
 
-    @Override protected void initDataTracker(DataTracker.Builder builder) { builder.add(PHASE, IDLE); builder.add(ALTITUDE,0); builder.add(COUNTDOWN,0); }
+    @Override protected void initDataTracker(DataTracker.Builder builder) { builder.add(PHASE, IDLE); builder.add(ALTITUDE,0); builder.add(COUNTDOWN_SYNC,0); }
     public int phase() { return getDataTracker().get(PHASE); }
     private void phase(int value) { getDataTracker().set(PHASE,value); phaseTicks=0; missingPilotTicks=0; }
     public int flightAltitude(){return getDataTracker().get(ALTITUDE);}
-    public int countdownSeconds(){return getDataTracker().get(COUNTDOWN);}
+    public int countdownSeconds(){return getDataTracker().get(COUNTDOWN_SYNC);}
     public boolean enginesOn() { return phase()==ASCENT || phase()==DESCENT; }
 
     @Override protected void readCustomDataFromNbt(NbtCompound nbt) {
@@ -178,8 +178,8 @@ public final class RocketEntity extends Entity {
 
     public void requestLaunch(ServerPlayerEntity pilot){
         if(getWorld().isClient || !(getWorld() instanceof ServerWorld world) || getFirstPassenger()!=pilot || !pilot.isAlive())return;
-        if(phase()==READY && ready(pilot,world)){phase(COUNTDOWN);getDataTracker().set(COUNTDOWN,5);message(pilot,"countdown",5);}
-        else if(phase()==COUNTDOWN){phase(READY);getDataTracker().set(COUNTDOWN,0);message(pilot,"launch_cancelled");}
+        if(phase()==READY && ready(pilot,world)){phase(COUNTDOWN);getDataTracker().set(COUNTDOWN_SYNC,5);message(pilot,"countdown",5);}
+        else if(phase()==COUNTDOWN){phase(READY);getDataTracker().set(COUNTDOWN_SYNC,0);message(pilot,"launch_cancelled");}
     }
 
     @Override public void updateTrackedPositionAndAngles(double x,double y,double z,float yaw,float pitch,int steps) {
@@ -202,7 +202,7 @@ public final class RocketEntity extends Entity {
         ServerPlayerEntity pilot=getFirstPassenger() instanceof ServerPlayerEntity p && p.isAlive()?p:null;
         phaseTicks++;
         getDataTracker().set(ALTITUDE,Math.max(0,(int)Math.ceil(getY()-landing.getY())));
-        getDataTracker().set(COUNTDOWN,phase()==COUNTDOWN?Math.max(0,(COUNTDOWN_TICKS-phaseTicks+19)/20):0);
+        getDataTracker().set(COUNTDOWN_SYNC,phase()==COUNTDOWN?Math.max(0,(COUNTDOWN_TICKS-phaseTicks+19)/20):0);
         switch(phase()){
             case READY -> { if(pilot==null && ++missingPilotTicks>60)phase(IDLE); else if(pilot!=null)missingPilotTicks=0; }
             case IDLE -> { if(hasPassengers() && pilot!=null){pilot.stopRiding();} }
