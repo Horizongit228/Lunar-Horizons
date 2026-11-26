@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "lunar_horizons:block/expedition_flag"
+    },
+    "facing=east": {
+      "model": "lunar_horizons:block/expedition_flag",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "lunar_horizons:block/expedition_flag",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "lunar_horizons:block/expedition_flag",
+      "y": 270
+    }
+  }
+}

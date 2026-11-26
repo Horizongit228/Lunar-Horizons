@@ -109,10 +109,14 @@ public final class LunarHorizons implements ModInitializer {
     public static final Feature<DefaultFeatureConfig> SATELLITE = Registry.register(Registries.FEATURE,id("crashed_satellite"),new ExplorationSiteFeature(DefaultFeatureConfig.CODEC,1));
     public static final Feature<DefaultFeatureConfig> LAB = Registry.register(Registries.FEATURE,id("buried_lab"),new ExplorationSiteFeature(DefaultFeatureConfig.CODEC,2));
     public static final Feature<DefaultFeatureConfig> GEODE = Registry.register(Registries.FEATURE,id("lunar_geode"),new ExplorationSiteFeature(DefaultFeatureConfig.CODEC,3));
+    public static final Block EXPEDITION_FLAG = flag("expedition_flag");
+    public static final Block RED_FLAG = flag("red_flag");
+    public static final Block BLUE_FLAG = flag("blue_flag");
+    public static final Block ORANGE_FLAG = flag("orange_flag");
     public static final ItemGroup GROUP = FabricItemGroup.builder()
             .icon(() -> new ItemStack(ROCKET)).displayName(Text.translatable("itemGroup.lunar_horizons"))
             .entries((context, entries) -> {
-                for (Block b : new Block[]{ROCKET, LAUNCH_PAD, REGOLITH, MOON_ROCK, CRYSTAL_ORE, MOON_BRICKS, REFILL_STATION, CRYSTAL_CLUSTER, CRYSTAL_STONE, DARK_CRYSTAL_ORE, LUNAR_STEMS, HIGHLAND_ROCK, DARK_REGOLITH, FROSTED_REGOLITH, LUNAR_ICE, TITANIUM_ORE, HELIUM_ORE, METEORITE_ROCK, LUNAR_LANTERN, SURVEY_BEACON, TITANIUM_BLOCK}) entries.add(b);
+                for (Block b : new Block[]{ROCKET, LAUNCH_PAD, REGOLITH, MOON_ROCK, CRYSTAL_ORE, MOON_BRICKS, REFILL_STATION, CRYSTAL_CLUSTER, CRYSTAL_STONE, DARK_CRYSTAL_ORE, LUNAR_STEMS, HIGHLAND_ROCK, DARK_REGOLITH, FROSTED_REGOLITH, LUNAR_ICE, TITANIUM_ORE, HELIUM_ORE, METEORITE_ROCK, LUNAR_LANTERN, SURVEY_BEACON, TITANIUM_BLOCK, EXPEDITION_FLAG, RED_FLAG, BLUE_FLAG, ORANGE_FLAG}) entries.add(b);
                 for (Item i : new Item[]{FUEL, OXYGEN, LARGE_OXYGEN, BACKPACK, HELMET, CHEST, LEGS, BOOTS, LUNAR_STICK, CRYSTAL, CRYSTAL_SWORD, CRYSTAL_PICKAXE, CRYSTAL_AXE, CRYSTAL_SHOVEL, CRYSTAL_HOE, DARK_CRYSTAL, DARK_CRYSTAL_SWORD, DARK_CRYSTAL_PICKAXE, DARK_CRYSTAL_AXE, DARK_CRYSTAL_SHOVEL, DARK_CRYSTAL_HOE, RAW_TITANIUM, TITANIUM_INGOT, HELIUM, METEORITE_FRAGMENT, EXTREME_OXYGEN, MINERAL_DETECTOR, LUNAR_RADAR, TITANIUM_DRILL}) entries.add(i);
             }).build();
 
@@ -128,6 +132,12 @@ public final class LunarHorizons implements ModInitializer {
     private static Block block(String path, AbstractBlock.Settings settings) {
         Block block = Registry.register(Registries.BLOCK, id(path), new Block(settings));
         item(path, new BlockItem(block, new Item.Settings()));
+        return block;
+    }
+    private static Block flag(String path) {
+        Block block = Registry.register(Registries.BLOCK, id(path),
+            new ExpeditionFlagBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).strength(.6F).nonOpaque().noCollision()));
+        item(path, new BlockItem(block,new Item.Settings()));
         return block;
     }
     public static boolean hasHelmet(ServerPlayerEntity p) { return p.getEquippedStack(EquipmentSlot.HEAD).isOf(HELMET); }

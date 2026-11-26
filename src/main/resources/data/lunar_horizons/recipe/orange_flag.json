@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IWW",
+    "IWW",
+    "I  "
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "W": {
+      "item": "minecraft:orange_wool"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:orange_flag",
+    "count": 1
+  }
+}

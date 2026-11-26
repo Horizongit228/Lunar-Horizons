@@ -107,5 +107,9 @@
   "message.lunar_horizons.scan_none": "No signals nearby.",
   "message.lunar_horizons.radar_found": "Beacon: X %s, Z %s • %s m away",
   "message.lunar_horizons.mineral_found": "Mineral %s m away: %s",
-  "message.lunar_horizons.meteor_warning": "WARNING: meteor shower nearby!"
+  "message.lunar_horizons.meteor_warning": "WARNING: meteor shower nearby!",
+  "block.lunar_horizons.expedition_flag": "Lunar Horizons Expedition Flag",
+  "block.lunar_horizons.red_flag": "Red Expedition Flag",
+  "block.lunar_horizons.blue_flag": "Blue Expedition Flag",
+  "block.lunar_horizons.orange_flag": "Orange Expedition Flag"
 }

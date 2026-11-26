@@ -107,5 +107,9 @@
   "message.lunar_horizons.scan_none": "Сигналов поблизости нет.",
   "message.lunar_horizons.radar_found": "Маяк: X %s, Z %s • расстояние %s м",
   "message.lunar_horizons.mineral_found": "Минерал в %s м: %s",
-  "message.lunar_horizons.meteor_warning": "ВНИМАНИЕ: метеоритный дождь поблизости!"
+  "message.lunar_horizons.meteor_warning": "ВНИМАНИЕ: метеоритный дождь поблизости!",
+  "block.lunar_horizons.expedition_flag": "Флаг Lunar Horizons",
+  "block.lunar_horizons.red_flag": "Красный экспедиционный флаг",
+  "block.lunar_horizons.blue_flag": "Синий экспедиционный флаг",
+  "block.lunar_horizons.orange_flag": "Оранжевый экспедиционный флаг"
 }
