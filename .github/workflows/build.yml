@@ -28,6 +28,8 @@ jobs:
           for p in pathlib.Path('src/main/resources').rglob('*.json'):
               json.loads(p.read_text(encoding='utf-8'))
           PY
+      - name: Validate PNG textures and model references
+        run: python3 scripts/validate_textures.py
       - name: Build mod
         run: gradle --no-daemon build
       - name: Upload mod JAR
