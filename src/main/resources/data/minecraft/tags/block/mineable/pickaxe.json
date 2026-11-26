@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "lunar_horizons:moon_rock",
+    "lunar_horizons:crystal_ore",
+    "lunar_horizons:moon_bricks",
+    "lunar_horizons:launch_pad",
+    "lunar_horizons:rocket"
+  ]
+}

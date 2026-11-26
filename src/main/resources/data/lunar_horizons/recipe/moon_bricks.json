@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RR",
+    "RR"
+  ],
+  "key": {
+    "R": {
+      "item": "lunar_horizons:moon_rock"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:moon_bricks",
+    "count": 4
+  }
+}

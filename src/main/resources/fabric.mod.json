@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "lunar_horizons",
+  "version": "${version}",
+  "name": "Lunar Horizons",
+  "description": "Launch a rocket and explore the Moon. Early prototype.",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.lunarhorizons.LunarHorizons"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.10",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "icon": "assets/lunar_horizons/icon.png"
+}

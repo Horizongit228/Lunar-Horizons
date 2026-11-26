@@ -1,0 +1,11 @@
+{
+  "type": "lunar_horizons:moon",
+  "generator": {
+    "type": "minecraft:noise",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "lunar_horizons:lunar_plains"
+    },
+    "settings": "lunar_horizons:moon"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "lunar_horizons:crystal_ore",
+    "lunar_horizons:launch_pad",
+    "lunar_horizons:rocket"
+  ]
+}
