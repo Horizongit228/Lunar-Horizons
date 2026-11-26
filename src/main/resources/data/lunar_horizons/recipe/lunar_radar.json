@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " M ",
+    "TCT",
+    "TRT"
+  ],
+  "key": {
+    "M": {
+      "item": "lunar_horizons:meteorite_fragment"
+    },
+    "T": {
+      "item": "lunar_horizons:titanium_ingot"
+    },
+    "C": {
+      "item": "minecraft:compass"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:lunar_radar",
+    "count": 1
+  }
+}

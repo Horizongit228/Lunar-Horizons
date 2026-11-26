@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " T ",
+    "CRC",
+    " T "
+  ],
+  "key": {
+    "T": {
+      "item": "lunar_horizons:titanium_ingot"
+    },
+    "C": {
+      "item": "lunar_horizons:lunar_crystal"
+    },
+    "R": {
+      "item": "minecraft:compass"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:mineral_detector",
+    "count": 1
+  }
+}

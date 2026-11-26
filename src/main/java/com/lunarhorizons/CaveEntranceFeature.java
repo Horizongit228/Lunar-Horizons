@@ -17,7 +17,7 @@ public final class CaveEntranceFeature extends Feature<DefaultFeatureConfig> {
     public CaveEntranceFeature(Codec<DefaultFeatureConfig> codec){super(codec);}
     private static boolean natural(StructureWorldAccess w,BlockPos p){
         var s=w.getBlockState(p);
-        return s.isAir()||s.isOf(LunarHorizons.MOON_ROCK)||s.isOf(LunarHorizons.REGOLITH);
+        return s.isAir()||ImpactCraterFeature.natural(w,p);
     }
     private static boolean chamber(StructureWorldAccess w,BlockPos p){
         if(!w.isAir(p)||!w.isAir(p.up())||!w.isAir(p.down()))return false;

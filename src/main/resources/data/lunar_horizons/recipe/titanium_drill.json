@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " T ",
+    "TMT",
+    " S "
+  ],
+  "key": {
+    "T": {
+      "item": "lunar_horizons:titanium_ingot"
+    },
+    "M": {
+      "item": "lunar_horizons:meteorite_fragment"
+    },
+    "S": {
+      "item": "lunar_horizons:lunar_stick"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:titanium_drill",
+    "count": 1
+  }
+}

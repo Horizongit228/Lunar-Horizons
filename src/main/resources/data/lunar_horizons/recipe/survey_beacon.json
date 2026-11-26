@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " G ",
+    "TRT",
+    "TTT"
+  ],
+  "key": {
+    "G": {
+      "item": "lunar_horizons:lunar_crystal"
+    },
+    "T": {
+      "item": "lunar_horizons:titanium_ingot"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:survey_beacon",
+    "count": 1
+  }
+}

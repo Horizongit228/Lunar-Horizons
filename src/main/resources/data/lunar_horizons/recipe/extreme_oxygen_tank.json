@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "TGT",
+    "LHL",
+    "TGT"
+  ],
+  "key": {
+    "T": {
+      "item": "lunar_horizons:titanium_ingot"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "L": {
+      "item": "lunar_horizons:large_oxygen_tank"
+    },
+    "H": {
+      "item": "lunar_horizons:helium_3"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:extreme_oxygen_tank",
+    "count": 1
+  }
+}

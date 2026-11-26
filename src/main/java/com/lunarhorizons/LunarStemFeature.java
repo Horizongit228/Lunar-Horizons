@@ -23,11 +23,11 @@ public final class LunarStemFeature extends Feature<DefaultFeatureConfig> {
                 BlockPos pos=column.up(y),floor=pos.down();
                 if(pos.getY()<-56 || pos.getY()>38 || !world.isAir(pos) || !world.isAir(pos.up()))continue;
                 var state=world.getBlockState(floor);
-                if(!state.isOf(LunarHorizons.MOON_ROCK)&&!state.isOf(LunarHorizons.REGOLITH))continue;
+                if(!ImpactCraterFeature.natural(world,floor))continue;
                 boolean roof=false;
                 for(int h=2;h<=24;h++){
                     var above=world.getBlockState(pos.up(h));
-                    if(above.isOf(LunarHorizons.MOON_ROCK)||above.isOf(LunarHorizons.REGOLITH)){roof=true;break;}
+                    if(ImpactCraterFeature.natural(world,pos.up(h))){roof=true;break;}
                 }
                 if(!roof)continue;
                 world.setBlockState(pos,LunarHorizons.LUNAR_STEMS.getDefaultState(),2);

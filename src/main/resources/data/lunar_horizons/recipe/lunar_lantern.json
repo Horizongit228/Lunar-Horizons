@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " T ",
+    " G ",
+    " T "
+  ],
+  "key": {
+    "T": {
+      "item": "lunar_horizons:titanium_ingot"
+    },
+    "G": {
+      "item": "lunar_horizons:lunar_crystal"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:lunar_lantern",
+    "count": 2
+  }
+}

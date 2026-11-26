@@ -20,16 +20,16 @@ public final class CrystalGrottoFeature extends Feature<DefaultFeatureConfig>{
             if((q.getX()>>4)!=(p.getX()>>4)||(q.getZ()>>4)!=(p.getZ()>>4))continue;
             for(int dy=7;dy>=-7;dy--){
                 BlockPos a=q.up(dy), below=a.down();
-                if(!w.isAir(a)||!w.getBlockState(below).isOf(LunarHorizons.MOON_ROCK)&&!w.getBlockState(below).isOf(LunarHorizons.REGOLITH))continue;
+                if(!w.isAir(a)||!ImpactCraterFeature.natural(w,below))continue;
                 if(w.getBlockState(a.up()).isAir()&&w.getBlockState(a.up(2)).isAir() && a.getY() < 42){
                     boolean roof=false;
-                    for(int h=3;h<=18;h++) if(w.getBlockState(a.up(h)).isOf(LunarHorizons.MOON_ROCK)||w.getBlockState(a.up(h)).isOf(LunarHorizons.REGOLITH)){roof=true;break;}
+                    for(int h=3;h<=18;h++) if(ImpactCraterFeature.natural(w,a.up(h))){roof=true;break;}
                     if(!roof)break;
                     // Clusters are spaced out; keep the passage walkable.
                     boolean crowded=false;
-                    for(int dx=-1;dx<=1;dx++)for(int dz=-1;dz<=1;dz++){
-                        if((a.getX()+dx>>4)!=(p.getX()>>4)||(a.getZ()+dz>>4)!=(p.getZ()>>4))continue;
-                        if(w.getBlockState(a.add(dx,0,dz)).isOf(LunarHorizons.CRYSTAL_CLUSTER))crowded=true;
+                    for(int nx=-1;nx<=1;nx++)for(int nz=-1;nz<=1;nz++){
+                        if(((a.getX()+nx)>>4)!=(p.getX()>>4)||((a.getZ()+nz)>>4)!=(p.getZ()>>4))continue;
+                        if(w.getBlockState(a.add(nx,0,nz)).isOf(LunarHorizons.CRYSTAL_CLUSTER))crowded=true;
                     }
                     if(crowded)break;
                     w.setBlockState(below,LunarHorizons.CRYSTAL_STONE.getDefaultState(),2);

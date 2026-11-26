@@ -2,6 +2,9 @@
   "replace": false,
   "values": [
     "lunar_horizons:moon_rock",
-    "lunar_horizons:regolith"
+    "lunar_horizons:regolith",
+    "lunar_horizons:highland_rock",
+    "lunar_horizons:dark_regolith",
+    "lunar_horizons:frosted_regolith"
   ]
 }

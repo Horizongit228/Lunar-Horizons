@@ -86,11 +86,34 @@ public final class LunarHorizons implements ModInitializer {
     public static final Item DARK_CRYSTAL_AXE = item("dark_crystal_axe",new AxeItem(DarkCrystalMaterial.INSTANCE,new Item.Settings().attributeModifiers(AxeItem.createAttributeModifiers(DarkCrystalMaterial.INSTANCE,6,-3.1F))));
     public static final Item DARK_CRYSTAL_SHOVEL = item("dark_crystal_shovel",new ShovelItem(DarkCrystalMaterial.INSTANCE,new Item.Settings().attributeModifiers(ShovelItem.createAttributeModifiers(DarkCrystalMaterial.INSTANCE,1.5F,-3.0F))));
     public static final Item DARK_CRYSTAL_HOE = item("dark_crystal_hoe",new HoeItem(DarkCrystalMaterial.INSTANCE,new Item.Settings().attributeModifiers(HoeItem.createAttributeModifiers(DarkCrystalMaterial.INSTANCE,-4,0.0F))));
+    public static final Block HIGHLAND_ROCK = block("highland_rock",AbstractBlock.Settings.copy(Blocks.STONE));
+    public static final Block DARK_REGOLITH = block("dark_regolith",AbstractBlock.Settings.copy(Blocks.DEEPSLATE));
+    public static final Block FROSTED_REGOLITH = block("frosted_regolith",AbstractBlock.Settings.copy(Blocks.DIRT));
+    public static final Block LUNAR_ICE = block("lunar_ice",AbstractBlock.Settings.copy(Blocks.PACKED_ICE));
+    public static final Block TITANIUM_ORE = block("titanium_ore",AbstractBlock.Settings.copy(Blocks.IRON_ORE));
+    public static final Block HELIUM_ORE = block("helium_ore",AbstractBlock.Settings.copy(Blocks.COAL_ORE).luminance(s -> 2));
+    public static final Block METEORITE_ROCK = block("meteorite_rock",AbstractBlock.Settings.copy(Blocks.DEEPSLATE));
+    public static final Block LUNAR_LANTERN = block("lunar_lantern",AbstractBlock.Settings.copy(Blocks.SEA_LANTERN).luminance(s -> 15));
+    public static final Block SURVEY_BEACON = block("survey_beacon",AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).luminance(s -> 10));
+    public static final Block TITANIUM_BLOCK = block("titanium_block",AbstractBlock.Settings.copy(Blocks.IRON_BLOCK));
+    public static final Item RAW_TITANIUM = item("raw_titanium",new Item(new Item.Settings()));
+    public static final Item TITANIUM_INGOT = item("titanium_ingot",new Item(new Item.Settings()));
+    public static final Item HELIUM = item("helium_3",new Item(new Item.Settings()));
+    public static final Item METEORITE_FRAGMENT = item("meteorite_fragment",new Item(new Item.Settings()));
+    public static final Item EXTREME_OXYGEN = item("extreme_oxygen_tank",new Item(new Item.Settings().maxDamage(3600)));
+    public static final Item MINERAL_DETECTOR = item("mineral_detector",new SurveyItem(new Item.Settings().maxCount(1),false));
+    public static final Item LUNAR_RADAR = item("lunar_radar",new SurveyItem(new Item.Settings().maxCount(1),true));
+    public static final Item TITANIUM_DRILL = item("titanium_drill",new PickaxeItem(TitaniumMaterial.INSTANCE,new Item.Settings().attributeModifiers(PickaxeItem.createAttributeModifiers(TitaniumMaterial.INSTANCE,1,-2.8F))));
+    public static final Feature<DefaultFeatureConfig> CRATER = Registry.register(Registries.FEATURE,id("impact_crater"),new ImpactCraterFeature(DefaultFeatureConfig.CODEC));
+    public static final Feature<DefaultFeatureConfig> OUTPOST = Registry.register(Registries.FEATURE,id("abandoned_outpost"),new ExplorationSiteFeature(DefaultFeatureConfig.CODEC,0));
+    public static final Feature<DefaultFeatureConfig> SATELLITE = Registry.register(Registries.FEATURE,id("crashed_satellite"),new ExplorationSiteFeature(DefaultFeatureConfig.CODEC,1));
+    public static final Feature<DefaultFeatureConfig> LAB = Registry.register(Registries.FEATURE,id("buried_lab"),new ExplorationSiteFeature(DefaultFeatureConfig.CODEC,2));
+    public static final Feature<DefaultFeatureConfig> GEODE = Registry.register(Registries.FEATURE,id("lunar_geode"),new ExplorationSiteFeature(DefaultFeatureConfig.CODEC,3));
     public static final ItemGroup GROUP = FabricItemGroup.builder()
             .icon(() -> new ItemStack(ROCKET)).displayName(Text.translatable("itemGroup.lunar_horizons"))
             .entries((context, entries) -> {
-                for (Block b : new Block[]{ROCKET, LAUNCH_PAD, REGOLITH, MOON_ROCK, CRYSTAL_ORE, MOON_BRICKS, REFILL_STATION, CRYSTAL_CLUSTER, CRYSTAL_STONE, DARK_CRYSTAL_ORE, LUNAR_STEMS}) entries.add(b);
-                for (Item i : new Item[]{FUEL, OXYGEN, LARGE_OXYGEN, BACKPACK, HELMET, CHEST, LEGS, BOOTS, LUNAR_STICK, CRYSTAL, CRYSTAL_SWORD, CRYSTAL_PICKAXE, CRYSTAL_AXE, CRYSTAL_SHOVEL, CRYSTAL_HOE, DARK_CRYSTAL, DARK_CRYSTAL_SWORD, DARK_CRYSTAL_PICKAXE, DARK_CRYSTAL_AXE, DARK_CRYSTAL_SHOVEL, DARK_CRYSTAL_HOE}) entries.add(i);
+                for (Block b : new Block[]{ROCKET, LAUNCH_PAD, REGOLITH, MOON_ROCK, CRYSTAL_ORE, MOON_BRICKS, REFILL_STATION, CRYSTAL_CLUSTER, CRYSTAL_STONE, DARK_CRYSTAL_ORE, LUNAR_STEMS, HIGHLAND_ROCK, DARK_REGOLITH, FROSTED_REGOLITH, LUNAR_ICE, TITANIUM_ORE, HELIUM_ORE, METEORITE_ROCK, LUNAR_LANTERN, SURVEY_BEACON, TITANIUM_BLOCK}) entries.add(b);
+                for (Item i : new Item[]{FUEL, OXYGEN, LARGE_OXYGEN, BACKPACK, HELMET, CHEST, LEGS, BOOTS, LUNAR_STICK, CRYSTAL, CRYSTAL_SWORD, CRYSTAL_PICKAXE, CRYSTAL_AXE, CRYSTAL_SHOVEL, CRYSTAL_HOE, DARK_CRYSTAL, DARK_CRYSTAL_SWORD, DARK_CRYSTAL_PICKAXE, DARK_CRYSTAL_AXE, DARK_CRYSTAL_SHOVEL, DARK_CRYSTAL_HOE, RAW_TITANIUM, TITANIUM_INGOT, HELIUM, METEORITE_FRAGMENT, EXTREME_OXYGEN, MINERAL_DETECTOR, LUNAR_RADAR, TITANIUM_DRILL}) entries.add(i);
             }).build();
 
     public static Identifier id(String path) { return Identifier.of(ID, path); }
@@ -110,6 +133,7 @@ public final class LunarHorizons implements ModInitializer {
     public static boolean hasHelmet(ServerPlayerEntity p) { return p.getEquippedStack(EquipmentSlot.HEAD).isOf(HELMET); }
     @Override public void onInitialize() {
         RocketControl.register();
+        net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.SERVER_STOPPED.register(server -> MeteorEvents.clear());
         Registry.register(Registries.ITEM_GROUP, id("main"), GROUP);
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> !(entity instanceof ServerPlayerEntity player && player.getWorld().getRegistryKey().equals(MOON) && source.isIn(DamageTypeTags.IS_FALL)));
         UseBlockCallback.EVENT.register((player, world, hand, hit) -> {
@@ -125,6 +149,7 @@ public final class LunarHorizons implements ModInitializer {
         });
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             MoonSurvival.tick(server);
+            MeteorEvents.tick(server);
         });
     }
 }

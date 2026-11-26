@@ -1,0 +1,56 @@
+{
+  "has_precipitation": false,
+  "temperature": -0.5,
+  "downfall": 0,
+  "effects": {
+    "fog_color": 1513765,
+    "sky_color": 526610,
+    "water_color": 4742273,
+    "water_fog_color": 1778746
+  },
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [],
+    "misc": [],
+    "monster": [],
+    "underground_water_creature": [],
+    "water_ambient": [],
+    "water_creature": []
+  },
+  "spawn_costs": {},
+  "carvers": {
+    "air": [
+      "lunar_horizons:lunar_tunnels",
+      "lunar_horizons:lunar_shallow_caves"
+    ]
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "lunar_horizons:impact_crater",
+      "lunar_horizons:cave_entrance",
+      "lunar_horizons:crystal_ore",
+      "lunar_horizons:dark_crystal_ore",
+      "lunar_horizons:titanium_ore",
+      "lunar_horizons:helium_ore",
+      "lunar_horizons:lunar_ice"
+    ],
+    [],
+    [],
+    [
+      "lunar_horizons:crystal_grotto",
+      "lunar_horizons:lunar_stem_patch",
+      "lunar_horizons:abandoned_outpost",
+      "lunar_horizons:crashed_satellite",
+      "lunar_horizons:buried_lab",
+      "lunar_horizons:lunar_geode"
+    ],
+    []
+  ]
+}

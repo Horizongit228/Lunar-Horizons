@@ -33,15 +33,22 @@
     [],
     [],
     [
+      "lunar_horizons:impact_crater",
       "lunar_horizons:cave_entrance",
       "lunar_horizons:crystal_ore",
-      "lunar_horizons:dark_crystal_ore"
+      "lunar_horizons:dark_crystal_ore",
+      "lunar_horizons:titanium_ore",
+      "lunar_horizons:helium_ore"
     ],
     [],
     [],
     [
       "lunar_horizons:crystal_grotto",
-      "lunar_horizons:lunar_stem_patch"
+      "lunar_horizons:lunar_stem_patch",
+      "lunar_horizons:abandoned_outpost",
+      "lunar_horizons:crashed_satellite",
+      "lunar_horizons:buried_lab",
+      "lunar_horizons:lunar_geode"
     ],
     []
   ]

@@ -1,0 +1,54 @@
+{
+  "type": "minecraft:ore",
+  "config": {
+    "discard_chance_on_air_exposure": 0,
+    "size": 4,
+    "targets": [
+      {
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "lunar_horizons:moon_rock"
+        },
+        "state": {
+          "Name": "lunar_horizons:helium_ore"
+        }
+      },
+      {
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "lunar_horizons:regolith"
+        },
+        "state": {
+          "Name": "lunar_horizons:helium_ore"
+        }
+      },
+      {
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "lunar_horizons:frosted_regolith"
+        },
+        "state": {
+          "Name": "lunar_horizons:helium_ore"
+        }
+      },
+      {
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "lunar_horizons:highland_rock"
+        },
+        "state": {
+          "Name": "lunar_horizons:helium_ore"
+        }
+      },
+      {
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "lunar_horizons:dark_regolith"
+        },
+        "state": {
+          "Name": "lunar_horizons:helium_ore"
+        }
+      }
+    ]
+  }
+}

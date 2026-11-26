@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "lunar_horizons:titanium_block"
+    }
+  ],
+  "result": {
+    "id": "lunar_horizons:titanium_ingot",
+    "count": 9
+  }
+}

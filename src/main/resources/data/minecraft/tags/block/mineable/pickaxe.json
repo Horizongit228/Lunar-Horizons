@@ -9,6 +9,15 @@
     "lunar_horizons:oxygen_station",
     "lunar_horizons:crystal_cluster",
     "lunar_horizons:crystal_stone",
-    "lunar_horizons:dark_crystal_ore"
+    "lunar_horizons:dark_crystal_ore",
+    "lunar_horizons:highland_rock",
+    "lunar_horizons:dark_regolith",
+    "lunar_horizons:lunar_ice",
+    "lunar_horizons:titanium_ore",
+    "lunar_horizons:helium_ore",
+    "lunar_horizons:meteorite_rock",
+    "lunar_horizons:lunar_lantern",
+    "lunar_horizons:survey_beacon",
+    "lunar_horizons:titanium_block"
   ]
 }

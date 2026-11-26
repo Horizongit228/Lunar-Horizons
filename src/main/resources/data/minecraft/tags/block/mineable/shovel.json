@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "lunar_horizons:regolith"
+    "lunar_horizons:regolith",
+    "lunar_horizons:frosted_regolith"
   ]
 }
