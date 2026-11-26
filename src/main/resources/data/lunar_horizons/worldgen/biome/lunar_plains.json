@@ -32,7 +32,9 @@
     ],
     [],
     [],
-    [],
+    [
+      "lunar_horizons:crystal_grotto"
+    ],
     []
   ]
 }

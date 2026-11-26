@@ -163,7 +163,7 @@ public final class RocketEntity extends Entity {
         if(!clear(world,landing,height)){message(p,"launch_corridor");return false;}
         if(!p.isCreative() && fuelSlot(p)<0){message(p,"need_fuel");return false;}
         if(!p.isCreative() && world.getRegistryKey().equals(World.OVERWORLD) &&
-                (!LunarHorizons.hasHelmet(p)||MoonSurvival.tankSlot(p)<0)){message(p,"need_suit");return false;}
+                !OxygenSystem.ready(p)){message(p,"need_suit");return false;}
         return true;
     }
     private void board(ServerPlayerEntity p,ServerWorld world) {

@@ -118,7 +118,7 @@
                     "type": "minecraft:noise",
                     "noise": "lunar_horizons:tube_a",
                     "xz_scale": 1.3,
-                    "y_scale": 1.2
+                    "y_scale": 1
                   }
                 },
                 "argument2": {
@@ -127,21 +127,62 @@
                     "type": "minecraft:noise",
                     "noise": "lunar_horizons:tube_b",
                     "xz_scale": 1.3,
-                    "y_scale": 1.2
+                    "y_scale": 1
                   }
                 }
               },
-              "argument2": -0.16
+              "argument2": -0.2
             },
             "argument2": {
-              "type": "minecraft:add",
+              "type": "minecraft:min",
               "argument1": {
-                "type": "minecraft:noise",
-                "noise": "lunar_horizons:cavern",
-                "xz_scale": 0.8,
-                "y_scale": 1.2
+                "type": "minecraft:add",
+                "argument1": {
+                  "type": "minecraft:add",
+                  "argument1": {
+                    "type": "minecraft:noise",
+                    "noise": "lunar_horizons:great_halls",
+                    "xz_scale": 0.9,
+                    "y_scale": 1.35
+                  },
+                  "argument2": {
+                    "type": "minecraft:mul",
+                    "argument1": 0.16,
+                    "argument2": {
+                      "type": "minecraft:noise",
+                      "noise": "lunar_horizons:cavern",
+                      "xz_scale": 1.5,
+                      "y_scale": 1.2
+                    }
+                  }
+                },
+                "argument2": 0.18
               },
-              "argument2": 0.23
+              "argument2": {
+                "type": "minecraft:add",
+                "argument1": {
+                  "type": "minecraft:max",
+                  "argument1": {
+                    "type": "minecraft:abs",
+                    "argument": {
+                      "type": "minecraft:noise",
+                      "noise": "lunar_horizons:shaft_a",
+                      "xz_scale": 1.8,
+                      "y_scale": 0.14
+                    }
+                  },
+                  "argument2": {
+                    "type": "minecraft:abs",
+                    "argument": {
+                      "type": "minecraft:noise",
+                      "noise": "lunar_horizons:shaft_b",
+                      "xz_scale": 1.8,
+                      "y_scale": 0.18
+                    }
+                  }
+                },
+                "argument2": -0.11
+              }
             }
           },
           "argument2": {
@@ -149,14 +190,14 @@
             "argument1": {
               "type": "minecraft:y_clamped_gradient",
               "from_y": -58,
-              "to_y": -42,
+              "to_y": -43,
               "from_value": 1,
               "to_value": -1
             },
             "argument2": {
               "type": "minecraft:y_clamped_gradient",
-              "from_y": 42,
-              "to_y": 72,
+              "from_y": 54,
+              "to_y": 85,
               "from_value": -1,
               "to_value": 1
             }

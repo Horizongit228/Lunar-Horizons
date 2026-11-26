@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "lunar_horizons:item/crystal_axe"
+  }
+}

@@ -96,7 +96,8 @@ public final class RocketRenderer extends EntityRenderer<RocketEntity> {
     @Override public void render(RocketEntity entity,float yaw,float tickDelta,MatrixStack matrices,VertexConsumerProvider vertices,int light){
         matrices.push();
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-yaw));
-        matrices.scale(4,4,4);
+        // ModelPart uses positive Y down, while world coordinates use positive Y up.
+        matrices.scale(-4,-4,4);
         for(Piece piece:pieces){
             RenderLayer layer=piece.glass?RenderLayer.getEntityTranslucent(TEXTURE):RenderLayer.getEntityCutoutNoCull(TEXTURE);
             piece.model.render(matrices,vertices.getBuffer(layer),light,OverlayTexture.DEFAULT_UV,piece.color);

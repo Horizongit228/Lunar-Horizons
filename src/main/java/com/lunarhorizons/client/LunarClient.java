@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry;
 
 public final class LunarClient implements ClientModInitializer {
     @Override public void onInitializeClient() {
+        net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback.EVENT.register(OxygenHud::render);
         EntityRendererRegistry.register(LunarHorizons.ROCKET_ENTITY, RocketRenderer::new);
         DimensionRenderingRegistry.registerSkyRenderer(LunarHorizons.MOON, LunarSky::render);
         DimensionRenderingRegistry.registerCloudRenderer(LunarHorizons.MOON, context -> {});

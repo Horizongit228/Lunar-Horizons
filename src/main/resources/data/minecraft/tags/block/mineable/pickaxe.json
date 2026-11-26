@@ -5,6 +5,9 @@
     "lunar_horizons:crystal_ore",
     "lunar_horizons:moon_bricks",
     "lunar_horizons:launch_pad",
-    "lunar_horizons:rocket"
+    "lunar_horizons:rocket",
+    "lunar_horizons:oxygen_station",
+    "lunar_horizons:crystal_cluster",
+    "lunar_horizons:crystal_stone"
   ]
 }

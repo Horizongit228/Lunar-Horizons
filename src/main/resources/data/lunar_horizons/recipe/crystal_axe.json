@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "CC ",
+    "CS ",
+    " S "
+  ],
+  "key": {
+    "C": {
+      "item": "lunar_horizons:lunar_crystal"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:crystal_axe",
+    "count": 1
+  }
+}

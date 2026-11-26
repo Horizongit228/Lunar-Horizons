@@ -19,6 +19,13 @@ import net.minecraft.registry.entry.RegistryEntry;
 import java.util.List;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.SwordItem;
+import net.minecraft.item.PickaxeItem;
+import net.minecraft.item.AxeItem;
+import net.minecraft.item.ShovelItem;
+import net.minecraft.item.HoeItem;
+import net.minecraft.world.gen.feature.DefaultFeatureConfig;
+import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -52,13 +59,27 @@ public final class LunarHorizons implements ModInitializer {
     public static final Item CRYSTAL = item("lunar_crystal", new Item(new Item.Settings()));
     public static final Item FUEL = item("rocket_fuel", new Item(new Item.Settings()));
     public static final Item OXYGEN = item("oxygen_tank", new Item(new Item.Settings().maxDamage(600)));
+    public static final Item LARGE_OXYGEN = item("large_oxygen_tank",new Item(new Item.Settings().maxDamage(1800)));
+    public static final Item BACKPACK = item("oxygen_backpack",new Item(new Item.Settings().maxCount(1)));
+    public static final Block REFILL_STATION = block("oxygen_station",AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).luminance(s -> 4));
+    public static final Block CRYSTAL_CLUSTER = block("crystal_cluster",AbstractBlock.Settings.copy(Blocks.AMETHYST_CLUSTER).noCollision().nonOpaque().luminance(s -> 12));
+    public static final Block CRYSTAL_STONE = block("crystal_stone",AbstractBlock.Settings.copy(Blocks.AMETHYST_BLOCK).luminance(s -> 8));
+    public static final Feature<DefaultFeatureConfig> CRYSTAL_GROTTO = Registry.register(Registries.FEATURE,id("crystal_grotto"),new CrystalGrottoFeature(DefaultFeatureConfig.CODEC));
     public static final RegistryEntry<ArmorMaterial> SPACE_ARMOR = registerSpaceArmor();
     public static final Item HELMET = item("space_helmet", new ArmorItem(SPACE_ARMOR, ArmorItem.Type.HELMET, new Item.Settings().maxDamage(165)));
+    public static final Item CHEST = item("space_chestplate",new ArmorItem(SPACE_ARMOR,ArmorItem.Type.CHESTPLATE,new Item.Settings().maxDamage(240)));
+    public static final Item LEGS = item("space_leggings",new ArmorItem(SPACE_ARMOR,ArmorItem.Type.LEGGINGS,new Item.Settings().maxDamage(225)));
+    public static final Item BOOTS = item("space_boots",new ArmorItem(SPACE_ARMOR,ArmorItem.Type.BOOTS,new Item.Settings().maxDamage(195)));
+    public static final Item CRYSTAL_SWORD = item("crystal_sword",new SwordItem(CrystalMaterial.INSTANCE,new Item.Settings().attributeModifiers(SwordItem.createAttributeModifiers(CrystalMaterial.INSTANCE,3,-2.4F))));
+    public static final Item CRYSTAL_PICKAXE = item("crystal_pickaxe",new PickaxeItem(CrystalMaterial.INSTANCE,new Item.Settings().attributeModifiers(PickaxeItem.createAttributeModifiers(CrystalMaterial.INSTANCE,1,-2.8F))));
+    public static final Item CRYSTAL_AXE = item("crystal_axe",new AxeItem(CrystalMaterial.INSTANCE,new Item.Settings().attributeModifiers(AxeItem.createAttributeModifiers(CrystalMaterial.INSTANCE,6,-3.1F))));
+    public static final Item CRYSTAL_SHOVEL = item("crystal_shovel",new ShovelItem(CrystalMaterial.INSTANCE,new Item.Settings().attributeModifiers(ShovelItem.createAttributeModifiers(CrystalMaterial.INSTANCE,1.5F,-3.0F))));
+    public static final Item CRYSTAL_HOE = item("crystal_hoe",new HoeItem(CrystalMaterial.INSTANCE,new Item.Settings().attributeModifiers(HoeItem.createAttributeModifiers(CrystalMaterial.INSTANCE,-2,-1.0F))));
     public static final ItemGroup GROUP = FabricItemGroup.builder()
             .icon(() -> new ItemStack(ROCKET)).displayName(Text.translatable("itemGroup.lunar_horizons"))
             .entries((context, entries) -> {
-                for (Block b : new Block[]{ROCKET, LAUNCH_PAD, REGOLITH, MOON_ROCK, CRYSTAL_ORE, MOON_BRICKS}) entries.add(b);
-                for (Item i : new Item[]{FUEL, OXYGEN, HELMET, CRYSTAL}) entries.add(i);
+                for (Block b : new Block[]{ROCKET, LAUNCH_PAD, REGOLITH, MOON_ROCK, CRYSTAL_ORE, MOON_BRICKS, REFILL_STATION, CRYSTAL_CLUSTER, CRYSTAL_STONE}) entries.add(b);
+                for (Item i : new Item[]{FUEL, OXYGEN, LARGE_OXYGEN, BACKPACK, HELMET, CHEST, LEGS, BOOTS, CRYSTAL, CRYSTAL_SWORD, CRYSTAL_PICKAXE, CRYSTAL_AXE, CRYSTAL_SHOVEL, CRYSTAL_HOE}) entries.add(i);
             }).build();
 
     public static Identifier id(String path) { return Identifier.of(ID, path); }
@@ -80,6 +101,10 @@ public final class LunarHorizons implements ModInitializer {
         Registry.register(Registries.ITEM_GROUP, id("main"), GROUP);
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> !(entity instanceof ServerPlayerEntity player && player.getWorld().getRegistryKey().equals(MOON) && source.isIn(DamageTypeTags.IS_FALL)));
         UseBlockCallback.EVENT.register((player, world, hand, hit) -> {
+            if(!player.isSpectator() && hand==Hand.MAIN_HAND && world.getBlockState(hit.getBlockPos()).isOf(REFILL_STATION) && OxygenSystem.isTank(player.getStackInHand(hand))) {
+                if(player instanceof ServerPlayerEntity p) OxygenSystem.refill(p, p.getStackInHand(hand));
+                return ActionResult.SUCCESS;
+            }
             if (player.isSpectator() || hand != Hand.MAIN_HAND || player.isSneaking() || !world.getBlockState(hit.getBlockPos()).isOf(ROCKET)) return ActionResult.PASS;
             if (world instanceof ServerWorld serverWorld && player instanceof ServerPlayerEntity serverPlayer) {
                 RocketEntity.convertLegacy(serverPlayer, serverWorld, hit.getBlockPos());
