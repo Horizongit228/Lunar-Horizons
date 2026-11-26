@@ -66,5 +66,19 @@
   "item.lunar_horizons.dark_crystal_shovel": "Dark Crystal Shovel",
   "item.lunar_horizons.dark_crystal_hoe": "Dark Crystal Hoe",
   "block.lunar_horizons.lunar_stems": "Lunar Mineral Stems",
-  "item.lunar_horizons.lunar_stick": "Lunar Stick"
+  "item.lunar_horizons.lunar_stick": "Lunar Stick",
+  "message.lunar_horizons.ready_launch": "Cockpit ready. Press R to launch; Shift to exit.",
+  "message.lunar_horizons.launch_cancelled": "Countdown cancelled. Press R to try again.",
+  "key.lunar_horizons.launch": "Launch / cancel rocket launch",
+  "category.lunar_horizons": "Lunar Horizons",
+  "hud.lunar_horizons.rocket": "HORIZON • PILOT",
+  "hud.lunar_horizons.rocket_ready": "Ready for launch",
+  "hud.lunar_horizons.rocket_countdown": "Launch in %s s",
+  "hud.lunar_horizons.rocket_ascent": "Ascent",
+  "hud.lunar_horizons.rocket_descent": "Landing",
+  "hud.lunar_horizons.rocket_idle": "Parked",
+  "hud.lunar_horizons.rocket_altitude": "Altitude: %s m",
+  "hud.lunar_horizons.rocket_fuel": "Fuel: %s units",
+  "hud.lunar_horizons.launch_hint": "%s — launch rocket",
+  "hud.lunar_horizons.cancel_hint": "%s — cancel launch"
 }

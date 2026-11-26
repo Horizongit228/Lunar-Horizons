@@ -69,6 +69,7 @@ public final class LunarHorizons implements ModInitializer {
     public static final Feature<DefaultFeatureConfig> LUNAR_STEM_PATCH = Registry.register(Registries.FEATURE,id("lunar_stem_patch"),new LunarStemFeature(DefaultFeatureConfig.CODEC));
     public static final Block CRYSTAL_CLUSTER = block("crystal_cluster",AbstractBlock.Settings.copy(Blocks.AMETHYST_CLUSTER).noCollision().nonOpaque().luminance(s -> 12));
     public static final Block CRYSTAL_STONE = block("crystal_stone",AbstractBlock.Settings.copy(Blocks.AMETHYST_BLOCK).luminance(s -> 8));
+    public static final Feature<DefaultFeatureConfig> CAVE_ENTRANCE = Registry.register(Registries.FEATURE,id("cave_entrance"),new CaveEntranceFeature(DefaultFeatureConfig.CODEC));
     public static final Feature<DefaultFeatureConfig> CRYSTAL_GROTTO = Registry.register(Registries.FEATURE,id("crystal_grotto"),new CrystalGrottoFeature(DefaultFeatureConfig.CODEC));
     public static final RegistryEntry<ArmorMaterial> SPACE_ARMOR = registerSpaceArmor();
     public static final Item HELMET = item("space_helmet", new ArmorItem(SPACE_ARMOR, ArmorItem.Type.HELMET, new Item.Settings().maxDamage(165)));
@@ -108,6 +109,7 @@ public final class LunarHorizons implements ModInitializer {
     }
     public static boolean hasHelmet(ServerPlayerEntity p) { return p.getEquippedStack(EquipmentSlot.HEAD).isOf(HELMET); }
     @Override public void onInitialize() {
+        RocketControl.register();
         Registry.register(Registries.ITEM_GROUP, id("main"), GROUP);
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> !(entity instanceof ServerPlayerEntity player && player.getWorld().getRegistryKey().equals(MOON) && source.isIn(DamageTypeTags.IS_FALL)));
         UseBlockCallback.EVENT.register((player, world, hand, hit) -> {

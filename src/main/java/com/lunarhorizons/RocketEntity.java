@@ -28,8 +28,10 @@ import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 
 public final class RocketEntity extends Entity {
-    public static final int IDLE=0, COUNTDOWN=1, ASCENT=2, DESCENT=3;
+    public static final int IDLE=0, COUNTDOWN=1, ASCENT=2, DESCENT=3, READY=4;
     private static final TrackedData<Integer> PHASE = DataTracker.registerData(RocketEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    private static final TrackedData<Integer> ALTITUDE = DataTracker.registerData(RocketEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    private static final TrackedData<Integer> COUNTDOWN = DataTracker.registerData(RocketEntity.class, TrackedDataHandlerRegistry.INTEGER);
     private static final int COUNTDOWN_TICKS = 100;
     private BlockPos landing = BlockPos.ORIGIN;
     private BlockPos home = null;
@@ -43,15 +45,17 @@ public final class RocketEntity extends Entity {
         setNoGravity(true);
     }
 
-    @Override protected void initDataTracker(DataTracker.Builder builder) { builder.add(PHASE, IDLE); }
+    @Override protected void initDataTracker(DataTracker.Builder builder) { builder.add(PHASE, IDLE); builder.add(ALTITUDE,0); builder.add(COUNTDOWN,0); }
     public int phase() { return getDataTracker().get(PHASE); }
     private void phase(int value) { getDataTracker().set(PHASE,value); phaseTicks=0; missingPilotTicks=0; }
+    public int flightAltitude(){return getDataTracker().get(ALTITUDE);}
+    public int countdownSeconds(){return getDataTracker().get(COUNTDOWN);}
     public boolean enginesOn() { return phase()==ASCENT || phase()==DESCENT; }
 
     @Override protected void readCustomDataFromNbt(NbtCompound nbt) {
         landing = nbt.contains("Landing") ? BlockPos.fromLong(nbt.getLong("Landing")) : getBlockPos();
         home = nbt.contains("Home") ? BlockPos.fromLong(nbt.getLong("Home")) : null;
-        phase(MathHelper.clamp(nbt.getInt("Phase"), IDLE, DESCENT));
+        phase(MathHelper.clamp(nbt.getInt("Phase"), IDLE, READY));
         phaseTicks = Math.max(0, nbt.getInt("PhaseTicks"));
     }
     @Override protected void writeCustomDataToNbt(NbtCompound nbt) {
@@ -167,8 +171,15 @@ public final class RocketEntity extends Entity {
         return true;
     }
     private void board(ServerPlayerEntity p,ServerWorld world) {
-        if(phase()!=IDLE || hasPassengers() || !ready(p,world)) return;
-        if(p.startRiding(this,true)){phase(COUNTDOWN);message(p,"seated");}
+        if(phase()!=IDLE || hasPassengers()) return;
+        if(!world.getRegistryKey().equals(World.OVERWORLD)&&!world.getRegistryKey().equals(LunarHorizons.MOON)){message(p,"wrong_world");return;}
+        if(p.startRiding(this,true)){phase(READY);message(p,"ready_launch");}
+    }
+
+    public void requestLaunch(ServerPlayerEntity pilot){
+        if(getWorld().isClient || !(getWorld() instanceof ServerWorld world) || getFirstPassenger()!=pilot || !pilot.isAlive())return;
+        if(phase()==READY && ready(pilot,world)){phase(COUNTDOWN);getDataTracker().set(COUNTDOWN,5);message(pilot,"countdown",5);}
+        else if(phase()==COUNTDOWN){phase(READY);getDataTracker().set(COUNTDOWN,0);message(pilot,"launch_cancelled");}
     }
 
     @Override public void updateTrackedPositionAndAngles(double x,double y,double z,float yaw,float pitch,int steps) {
@@ -190,7 +201,10 @@ public final class RocketEntity extends Entity {
         setVelocity(Vec3d.ZERO);
         ServerPlayerEntity pilot=getFirstPassenger() instanceof ServerPlayerEntity p && p.isAlive()?p:null;
         phaseTicks++;
+        getDataTracker().set(ALTITUDE,Math.max(0,(int)Math.ceil(getY()-landing.getY())));
+        getDataTracker().set(COUNTDOWN,phase()==COUNTDOWN?Math.max(0,(COUNTDOWN_TICKS-phaseTicks+19)/20):0);
         switch(phase()){
+            case READY -> { if(pilot==null && ++missingPilotTicks>60)phase(IDLE); else if(pilot!=null)missingPilotTicks=0; }
             case IDLE -> { if(hasPassengers() && pilot!=null){pilot.stopRiding();} }
             case COUNTDOWN -> {
                 if(pilot==null){ if(++missingPilotTicks>60)phase(IDLE); return; }
@@ -201,7 +215,7 @@ public final class RocketEntity extends Entity {
                 }
                 if(phaseTicks>60 && phaseTicks%4==0) exhaust(world,false);
                 if(phaseTicks>=COUNTDOWN_TICKS){
-                    if(!ready(pilot,world)){phase(IDLE);pilot.stopRiding();return;}
+                    if(!ready(pilot,world)){phase(READY);return;}
                     if(!pilot.isCreative()){
                         pilot.getInventory().getStack(fuelSlot(pilot)).decrement(1);
                         pilot.getInventory().markDirty();
@@ -250,9 +264,16 @@ public final class RocketEntity extends Entity {
     }
 
     private void exhaust(ServerWorld world, boolean full) {
-        int count=full?10:4;
-        world.spawnParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE,getX(),getY()+.1,getZ(),count,.65,.08,.65,.03);
-        if(full) world.spawnParticles(ParticleTypes.FLAME,getX(),getY()-.25,getZ(),14,.42,.3,.42,.045);
+        // Four independent nozzles, matching the geometry. The rotation keeps the plumes under each bell.
+        double angle=Math.toRadians(getYaw());
+        for(double dx:new double[]{-.45,.45})for(double dz:new double[]{-.45,.45}){
+            double x=getX()+dx*Math.cos(angle)-dz*Math.sin(angle),z=getZ()+dx*Math.sin(angle)+dz*Math.cos(angle);
+            world.spawnParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE,x,getY()-.12,z,full?4:1,.17,.12,.17,.025);
+            if(full){
+                world.spawnParticles(ParticleTypes.FLAME,x,getY()-.35,z,6,.12,.22,.12,.04);
+                world.spawnParticles(ParticleTypes.SOUL_FIRE_FLAME,x,getY()-.10,z,2,.07,.08,.07,.015);
+            }
+        }
         if(full && phaseTicks%20==0)world.playSound(null,getBlockPos(),SoundEvents.ENTITY_BLAZE_SHOOT,SoundCategory.NEUTRAL,1.3f,.55f);
     }
 
@@ -269,6 +290,7 @@ public final class RocketEntity extends Entity {
             if(!existing)pos=pos.up();
             int h=descentHeight(world,pos);
             if(h<12 || !clear(world,pos,h+8)||occupied(world,pos,h+8))continue;
+            if(!existing && !world.getBlockState(pos.down(2)).isSolidBlock(world,pos.down(2)))continue;
             if(!existing){
                 if(!clear(world,pos.down(),1))continue;
                 for(int a=-1;a<=1;a++)for(int b=-1;b<=1;b++)
@@ -295,7 +317,9 @@ public final class RocketEntity extends Entity {
         pilot.fallDistance=0;
         pilot.teleportTo(new TeleportTarget(target,new Vec3d(x,y+4.5,z),Vec3d.ZERO,pilot.getYaw(),0,TeleportTarget.NO_OP));
         if(pilot.getWorld()!=target){arrival.discard();phase(DESCENT);return;}
-        pilot.startRiding(arrival,true);
+        if(!pilot.startRiding(arrival,true)){
+            pilot.teleportTo(new TeleportTarget(target,Vec3d.ofBottomCenter(dest.east(2)),Vec3d.ZERO,pilot.getYaw(),0,TeleportTarget.NO_OP));
+        }
         pilot.fallDistance=0;
         discard();
         message(pilot,"approach");

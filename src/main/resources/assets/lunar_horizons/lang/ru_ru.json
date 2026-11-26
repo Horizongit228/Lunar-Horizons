@@ -66,5 +66,19 @@
   "item.lunar_horizons.dark_crystal_shovel": "Тёмно-кристальная лопата",
   "item.lunar_horizons.dark_crystal_hoe": "Тёмно-кристальная мотыга",
   "block.lunar_horizons.lunar_stems": "Лунные стебли",
-  "item.lunar_horizons.lunar_stick": "Лунная палка"
+  "item.lunar_horizons.lunar_stick": "Лунная палка",
+  "message.lunar_horizons.ready_launch": "Ты в кабине. Нажми R для запуска; Shift — выход.",
+  "message.lunar_horizons.launch_cancelled": "Отсчёт отменён. Нажми R, чтобы начать снова.",
+  "key.lunar_horizons.launch": "Запуск / отмена запуска ракеты",
+  "category.lunar_horizons": "Lunar Horizons",
+  "hud.lunar_horizons.rocket": "ГОРИЗОНТ • ПИЛОТ",
+  "hud.lunar_horizons.rocket_ready": "Готов к запуску",
+  "hud.lunar_horizons.rocket_countdown": "Запуск через %s с",
+  "hud.lunar_horizons.rocket_ascent": "Взлёт",
+  "hud.lunar_horizons.rocket_descent": "Посадка",
+  "hud.lunar_horizons.rocket_idle": "Стоянка",
+  "hud.lunar_horizons.rocket_altitude": "Высота: %s м",
+  "hud.lunar_horizons.rocket_fuel": "Топливо: %s порций",
+  "hud.lunar_horizons.launch_hint": "%s — запуск ракеты",
+  "hud.lunar_horizons.cancel_hint": "%s — отмена запуска"
 }

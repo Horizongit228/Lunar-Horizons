@@ -19,10 +19,13 @@ public final class RocketRenderer extends EntityRenderer<RocketEntity> {
     private static final Identifier TEXTURE = Identifier.ofVanilla("textures/block/white_concrete.png");
     private record Piece(ModelPart model,int color,boolean glass) {}
     private final Piece[] pieces;
+    private final Piece flameOuter, flameCore;
 
     public RocketRenderer(EntityRendererFactory.Context context) {
         super(context);
-        shadowRadius=1.2f;
+        shadowRadius=1.45f;
+        flameOuter=part(0xeaff8833,true,plumes(1.0f,5.0f));
+        flameCore=part(0xfaa1ebff,true,plumes(.43f,3.8f));
         pieces = new Piece[]{
             // Fuselage (the 8-block height is modeled as 32 units).
             part(0xffe6edf2,false,new float[][]{
@@ -84,6 +87,15 @@ public final class RocketRenderer extends EntityRenderer<RocketEntity> {
         };
     }
 
+    private static float[][] plumes(float radius,float length){
+        float[][] boxes=new float[12][];int i=0;
+        for(float x:new float[]{-1.8f,1.8f})for(float z:new float[]{-1.8f,1.8f}){
+            boxes[i++]=new float[]{x-radius,0,z-radius,2*radius,length*.42f,2*radius};
+            boxes[i++]=new float[]{x-radius*.66f,length*.42f,z-radius*.66f,1.32f*radius,length*.33f,1.32f*radius};
+            boxes[i++]=new float[]{x-radius*.3f,length*.75f,z-radius*.3f,.6f*radius,length*.25f,.6f*radius};
+        }
+        return boxes;
+    }
     private static Piece part(int color,boolean glass,float[][] boxes) {
         ModelData data=new ModelData();
         ModelPartBuilder builder=ModelPartBuilder.create();
@@ -101,6 +113,14 @@ public final class RocketRenderer extends EntityRenderer<RocketEntity> {
         for(Piece piece:pieces){
             RenderLayer layer=piece.glass?RenderLayer.getEntityTranslucent(TEXTURE):RenderLayer.getEntityCutoutNoCull(TEXTURE);
             piece.model.render(matrices,vertices.getBuffer(layer),light,OverlayTexture.DEFAULT_UV,piece.color);
+        }
+        if(entity.enginesOn()){
+            matrices.push();
+            float pulse=.80f+.20f*(float)Math.sin((entity.age+tickDelta)*1.3);
+            matrices.scale(1,pulse,1);
+            for(Piece flame:new Piece[]{flameOuter,flameCore})
+                flame.model.render(matrices,vertices.getBuffer(RenderLayer.getEntityTranslucent(TEXTURE)),0x00F000F0,OverlayTexture.DEFAULT_UV,flame.color);
+            matrices.pop();
         }
         matrices.pop();
         super.render(entity,yaw,tickDelta,matrices,vertices,light);
