@@ -64,6 +64,9 @@ public final class LunarHorizons implements ModInitializer {
     public static final Item LARGE_OXYGEN = item("large_oxygen_tank",new Item(new Item.Settings().maxDamage(1800)));
     public static final Item BACKPACK = item("oxygen_backpack",new Item(new Item.Settings().maxCount(1)));
     public static final Block REFILL_STATION = block("oxygen_station",AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).luminance(s -> 4));
+    public static final Item LUNAR_STICK = item("lunar_stick",new Item(new Item.Settings()));
+    public static final Block LUNAR_STEMS = block("lunar_stems",AbstractBlock.Settings.copy(Blocks.AMETHYST_CLUSTER).strength(.5F).noCollision().nonOpaque().luminance(s -> 2));
+    public static final Feature<DefaultFeatureConfig> LUNAR_STEM_PATCH = Registry.register(Registries.FEATURE,id("lunar_stem_patch"),new LunarStemFeature(DefaultFeatureConfig.CODEC));
     public static final Block CRYSTAL_CLUSTER = block("crystal_cluster",AbstractBlock.Settings.copy(Blocks.AMETHYST_CLUSTER).noCollision().nonOpaque().luminance(s -> 12));
     public static final Block CRYSTAL_STONE = block("crystal_stone",AbstractBlock.Settings.copy(Blocks.AMETHYST_BLOCK).luminance(s -> 8));
     public static final Feature<DefaultFeatureConfig> CRYSTAL_GROTTO = Registry.register(Registries.FEATURE,id("crystal_grotto"),new CrystalGrottoFeature(DefaultFeatureConfig.CODEC));
@@ -85,8 +88,8 @@ public final class LunarHorizons implements ModInitializer {
     public static final ItemGroup GROUP = FabricItemGroup.builder()
             .icon(() -> new ItemStack(ROCKET)).displayName(Text.translatable("itemGroup.lunar_horizons"))
             .entries((context, entries) -> {
-                for (Block b : new Block[]{ROCKET, LAUNCH_PAD, REGOLITH, MOON_ROCK, CRYSTAL_ORE, MOON_BRICKS, REFILL_STATION, CRYSTAL_CLUSTER, CRYSTAL_STONE, DARK_CRYSTAL_ORE}) entries.add(b);
-                for (Item i : new Item[]{FUEL, OXYGEN, LARGE_OXYGEN, BACKPACK, HELMET, CHEST, LEGS, BOOTS, CRYSTAL, CRYSTAL_SWORD, CRYSTAL_PICKAXE, CRYSTAL_AXE, CRYSTAL_SHOVEL, CRYSTAL_HOE, DARK_CRYSTAL, DARK_CRYSTAL_SWORD, DARK_CRYSTAL_PICKAXE, DARK_CRYSTAL_AXE, DARK_CRYSTAL_SHOVEL, DARK_CRYSTAL_HOE}) entries.add(i);
+                for (Block b : new Block[]{ROCKET, LAUNCH_PAD, REGOLITH, MOON_ROCK, CRYSTAL_ORE, MOON_BRICKS, REFILL_STATION, CRYSTAL_CLUSTER, CRYSTAL_STONE, DARK_CRYSTAL_ORE, LUNAR_STEMS}) entries.add(b);
+                for (Item i : new Item[]{FUEL, OXYGEN, LARGE_OXYGEN, BACKPACK, HELMET, CHEST, LEGS, BOOTS, LUNAR_STICK, CRYSTAL, CRYSTAL_SWORD, CRYSTAL_PICKAXE, CRYSTAL_AXE, CRYSTAL_SHOVEL, CRYSTAL_HOE, DARK_CRYSTAL, DARK_CRYSTAL_SWORD, DARK_CRYSTAL_PICKAXE, DARK_CRYSTAL_AXE, DARK_CRYSTAL_SHOVEL, DARK_CRYSTAL_HOE}) entries.add(i);
             }).build();
 
     public static Identifier id(String path) { return Identifier.of(ID, path); }

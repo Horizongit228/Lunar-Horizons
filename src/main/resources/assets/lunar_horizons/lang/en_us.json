@@ -64,5 +64,7 @@
   "item.lunar_horizons.dark_crystal_pickaxe": "Dark Crystal Pickaxe",
   "item.lunar_horizons.dark_crystal_axe": "Dark Crystal Axe",
   "item.lunar_horizons.dark_crystal_shovel": "Dark Crystal Shovel",
-  "item.lunar_horizons.dark_crystal_hoe": "Dark Crystal Hoe"
+  "item.lunar_horizons.dark_crystal_hoe": "Dark Crystal Hoe",
+  "block.lunar_horizons.lunar_stems": "Lunar Mineral Stems",
+  "item.lunar_horizons.lunar_stick": "Lunar Stick"
 }

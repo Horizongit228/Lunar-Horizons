@@ -64,5 +64,7 @@
   "item.lunar_horizons.dark_crystal_pickaxe": "Тёмно-кристальная кирка",
   "item.lunar_horizons.dark_crystal_axe": "Тёмно-кристальный топор",
   "item.lunar_horizons.dark_crystal_shovel": "Тёмно-кристальная лопата",
-  "item.lunar_horizons.dark_crystal_hoe": "Тёмно-кристальная мотыга"
+  "item.lunar_horizons.dark_crystal_hoe": "Тёмно-кристальная мотыга",
+  "block.lunar_horizons.lunar_stems": "Лунные стебли",
+  "item.lunar_horizons.lunar_stick": "Лунная палка"
 }
