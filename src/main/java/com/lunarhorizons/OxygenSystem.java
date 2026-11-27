@@ -18,13 +18,13 @@ public final class OxygenSystem {
             && p.getEquippedStack(EquipmentSlot.LEGS).isOf(LunarHorizons.LEGS)
             && p.getEquippedStack(EquipmentSlot.FEET).isOf(LunarHorizons.BOOTS);
     }
-    public static boolean hasBackpack(PlayerEntity p){for(int i=0;i<36;i++)if(p.getInventory().getStack(i).isOf(LunarHorizons.BACKPACK))return true;return false;}
+    public static boolean hasBackpack(PlayerEntity p){for(int i=0;i<p.getInventory().size();i++)if(p.getInventory().getStack(i).isOf(LunarHorizons.BACKPACK))return true;return false;}
     public static int tankSlot(PlayerEntity p){
-        for(int i=0;i<36;i++){ItemStack s=p.getInventory().getStack(i);if(isTank(s)&&s.getDamage()<s.getMaxDamage())return i;}
+        for(int i=0;i<p.getInventory().size();i++){ItemStack s=p.getInventory().getStack(i);if(isTank(s)&&s.getDamage()<s.getMaxDamage())return i;}
         return -1;
     }
-    public static int remaining(PlayerEntity p){int total=0;for(int i=0;i<36;i++){ItemStack s=p.getInventory().getStack(i);if(isTank(s))total+=Math.max(0,s.getMaxDamage()-s.getDamage());}return total;}
-    public static int capacity(PlayerEntity p){int total=0;for(int i=0;i<36;i++){ItemStack s=p.getInventory().getStack(i);if(isTank(s))total+=s.getMaxDamage();}return total;}
+    public static int remaining(PlayerEntity p){int total=0;for(int i=0;i<p.getInventory().size();i++){ItemStack s=p.getInventory().getStack(i);if(isTank(s))total+=Math.max(0,s.getMaxDamage()-s.getDamage());}return total;}
+    public static int capacity(PlayerEntity p){int total=0;for(int i=0;i<p.getInventory().size();i++){ItemStack s=p.getInventory().getStack(i);if(isTank(s))total+=s.getMaxDamage();}return total;}
     public static boolean ready(PlayerEntity p){return hasSuit(p)&&hasBackpack(p)&&tankSlot(p)>=0;}
     public static void refill(ServerPlayerEntity p,ItemStack tank){
         if(tank.getDamage()==0){p.sendMessage(Text.translatable("message.lunar_horizons.tank_full"),true);return;}
