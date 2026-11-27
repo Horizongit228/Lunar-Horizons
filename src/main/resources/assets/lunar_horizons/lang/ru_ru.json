@@ -120,5 +120,11 @@
   "block.lunar_horizons.ejecta_rock": "Ударная брекчия",
   "item.lunar_horizons.dust_sweeper": "Пылеочиститель Moon Sweeper",
   "message.lunar_horizons.dust_swept": "Собрано блоков базальтовой пыли: %s",
-  "message.lunar_horizons.huge_meteor_warning": "ТРЕВОГА: приближается огромный метеорит!"
+  "message.lunar_horizons.huge_meteor_warning": "ТРЕВОГА: приближается огромный метеорит!",
+  "message.lunar_horizons.meteor_active": "Метеорит уже летит к Луне.",
+  "message.lunar_horizons.meteor_inactive": "Активных метеоритов нет.",
+  "message.lunar_horizons.meteor_cancelled": "Падение метеорита отменено.",
+  "message.lunar_horizons.meteor_moon_only": "Команда работает только в измерении Луны.",
+  "message.lunar_horizons.meteor_no_site": "Нет подходящего места для падения: нужна загруженная естественная поверхность без построек и пустот.",
+  "message.lunar_horizons.meteor_summoned": "Метеорит направлен к X %s, Y %s, Z %s."
 }

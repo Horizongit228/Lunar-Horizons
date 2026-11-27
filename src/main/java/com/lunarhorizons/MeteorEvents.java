@@ -37,22 +37,7 @@ final class MeteorEvents {
                 if(roll<HUGE_CHANCE+NORMAL_CHANCE){
                     boolean huge=roll<HUGE_CHANCE;
                     ServerPlayerEntity player=players.get(moon.getRandom().nextInt(players.size()));
-                    for(int i=0;i<20;i++){
-                        double angle=moon.getRandom().nextDouble()*Math.PI*2;
-                        int distance=(huge?30:14)+moon.getRandom().nextInt(huge?19:15);
-                        int x=player.getBlockX()+(int)Math.round(Math.cos(angle)*distance);
-                        int z=player.getBlockZ()+(int)Math.round(Math.sin(angle)*distance);
-                        if(!moon.isChunkLoaded(x>>4,z>>4))continue;
-                        int y=moon.getTopY(Heightmap.Type.MOTION_BLOCKING,x,z);
-                        BlockPos pos=new BlockPos(x,y,z);
-                        if(plan(moon,pos,huge)==null)continue;
-                        ACTIVE.add(new Meteor(moon,pos,tick,moon.getRandom().nextInt(21)-10,moon.getRandom().nextInt(21)-10,huge));
-                        for(ServerPlayerEntity nearby:players){
-                            double dx=nearby.getX()-x,dz=nearby.getZ()-z;
-                            if(dx*dx+dz*dz<128*128)nearby.sendMessage(Text.translatable(huge?"message.lunar_horizons.huge_meteor_warning":"message.lunar_horizons.meteor_warning"),false);
-                        }
-                        break;
-                    }
+                    summonNear(moon,player.getBlockPos(),huge,tick);
                 }
             }
         }
@@ -74,10 +59,34 @@ final class MeteorEvents {
             }
         }
     }
+    static boolean hasActive(){return !ACTIVE.isEmpty();}
+    static BlockPos summonNear(ServerWorld moon,BlockPos origin,boolean huge,int tick){
+        if(!moon.getRegistryKey().equals(LunarHorizons.MOON)||hasActive())return null;
+        for(int i=0;i<40;i++){
+            double angle=moon.getRandom().nextDouble()*Math.PI*2;
+            int distance=(huge?30:14)+moon.getRandom().nextInt(huge?19:15);
+            int x=origin.getX()+(int)Math.round(Math.cos(angle)*distance);
+            int z=origin.getZ()+(int)Math.round(Math.sin(angle)*distance);
+            BlockPos p=summonAt(moon,x,z,huge,tick);
+            if(p!=null)return p;
+        }
+        return null;
+    }
+    static BlockPos summonAt(ServerWorld moon,int x,int z,boolean huge,int tick){
+        if(!moon.getRegistryKey().equals(LunarHorizons.MOON)||hasActive()||!moon.isChunkLoaded(x>>4,z>>4))return null;
+        BlockPos p=new BlockPos(x,moon.getTopY(Heightmap.Type.MOTION_BLOCKING,x,z),z);
+        if(!moon.getWorldBorder().contains(p)||plan(moon,p,huge)==null)return null;
+        ACTIVE.add(new Meteor(moon,p,tick,moon.getRandom().nextInt(21)-10,moon.getRandom().nextInt(21)-10,huge));
+        for(ServerPlayerEntity nearby:moon.getPlayers()){
+            double dx=nearby.getX()-x,dz=nearby.getZ()-z;
+            if(dx*dx+dz*dz<128*128)nearby.sendMessage(Text.translatable(huge?"message.lunar_horizons.huge_meteor_warning":"message.lunar_horizons.meteor_warning"),false);
+        }
+        return p;
+    }
     /** Preflight the complete crater footprint and floor. Reject caves, structures and unloaded chunks. */
     private static List<Column> plan(ServerWorld w,BlockPos p,boolean huge){
         int radius=huge?12:3,maxDepth=huge?5:2;
-        if(p.getY()<5||p.getY()>w.getTopY()-12)return null;
+        if(p.getY()<5||p.getY()>w.getTopY()-12||w.getTopY(Heightmap.Type.MOTION_BLOCKING,p.getX(),p.getZ())!=p.getY())return null;
         List<Column> cuts=new ArrayList<>();
         for(int dx=-radius;dx<=radius;dx++)for(int dz=-radius;dz<=radius;dz++){
             double q=(dx*dx+dz*dz)/(double)(radius*radius);
@@ -89,7 +98,7 @@ final class MeteorEvents {
             BlockPos surface=new BlockPos(x,y,z);
             int depth=Math.max(0,(int)Math.round(maxDepth*(1-q)*(1-q)));
             for(int h=0;h<=depth+1;h++)if(!ImpactCraterFeature.natural(w,surface.down(h)))return null;
-            if(!w.isAir(surface.up()))return null;
+            if(!w.getWorldBorder().contains(surface)||!w.isAir(surface.up()))return null;
             cuts.add(new Column(surface,depth));
         }
         return cuts;

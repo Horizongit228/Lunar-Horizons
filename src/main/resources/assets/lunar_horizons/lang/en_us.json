@@ -120,5 +120,11 @@
   "block.lunar_horizons.ejecta_rock": "Impact Breccia",
   "item.lunar_horizons.dust_sweeper": "Moon Sweeper",
   "message.lunar_horizons.dust_swept": "Basalt dust blocks collected: %s",
-  "message.lunar_horizons.huge_meteor_warning": "ALERT: massive meteorite incoming!"
+  "message.lunar_horizons.huge_meteor_warning": "ALERT: massive meteorite incoming!",
+  "message.lunar_horizons.meteor_active": "A meteorite is already inbound.",
+  "message.lunar_horizons.meteor_inactive": "No active meteorites.",
+  "message.lunar_horizons.meteor_cancelled": "Meteorite impact cancelled.",
+  "message.lunar_horizons.meteor_moon_only": "This command works only in the Moon dimension.",
+  "message.lunar_horizons.meteor_no_site": "No suitable impact site: loaded natural terrain without buildings or voids is required.",
+  "message.lunar_horizons.meteor_summoned": "Meteorite inbound to X %s, Y %s, Z %s."
 }

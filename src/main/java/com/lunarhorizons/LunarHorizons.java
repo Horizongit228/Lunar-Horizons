@@ -113,6 +113,7 @@ public final class LunarHorizons implements ModInitializer {
     public static final Block ANORTHOSITE = block("anorthosite",AbstractBlock.Settings.copy(Blocks.STONE));
     public static final Block EJECTA_ROCK = block("ejecta_rock",AbstractBlock.Settings.copy(Blocks.STONE));
     public static final Feature<DefaultFeatureConfig> CAVE_NETWORK = Registry.register(Registries.FEATURE,id("cave_network"),new LunarCaveNetworkFeature(DefaultFeatureConfig.CODEC));
+    public static final Feature<DefaultFeatureConfig> HALL_DECOR = Registry.register(Registries.FEATURE,id("hall_decor"),new LunarHallDecorFeature(DefaultFeatureConfig.CODEC));
     public static final Block EXPEDITION_FLAG = flag("expedition_flag");
     public static final Block RED_FLAG = flag("red_flag");
     public static final Block BLUE_FLAG = flag("blue_flag");
@@ -165,6 +166,7 @@ public final class LunarHorizons implements ModInitializer {
     public static boolean hasHelmet(ServerPlayerEntity p) { return p.getEquippedStack(EquipmentSlot.HEAD).isOf(HELMET); }
     @Override public void onInitialize() {
         RocketControl.register();
+        LunarCommands.register();
         net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.SERVER_STOPPED.register(server -> MeteorEvents.clear());
         Registry.register(Registries.ITEM_GROUP, id("main"), GROUP);
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> !(entity instanceof ServerPlayerEntity player && player.getWorld().getRegistryKey().equals(MOON) && source.isIn(DamageTypeTags.IS_FALL)));
