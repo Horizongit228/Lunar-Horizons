@@ -79,7 +79,8 @@ public final class RoverEntity extends Entity {
         }
         if(!(getWorld() instanceof ServerWorld w))return;
         ServerPlayerEntity pilot=getFirstPassenger() instanceof ServerPlayerEntity p&&p.isAlive()?p:null;
-        int input=pilot!=null&&controller==pilot&&age-lastInput<=8?flags:0;
+        if(pilot==null||controller!=pilot||age-lastInput>8){controller=null;flags=0;}
+        int input=controller!=null?flags:0;
         boolean powered=pilot!=null&&(pilot.isCreative()||energy()>0);
         int throttle=((input&1)!=0?1:0)-((input&2)!=0?1:0);
         int steer=((input&8)!=0?1:0)-((input&4)!=0?1:0);
@@ -100,7 +101,7 @@ public final class RoverEntity extends Entity {
         if(horizontalCollision)drive*=.35;
         getDataTracker().set(SPEED,(int)Math.round(moved*200*(drive<0?-1:1)));
         if(powered&&!pilot.isCreative()&&(moved>.012||steer!=0))energy(energy()-1);
-        if(advanced()&&pilot==null&&age%20==0&&w.isSkyVisible(getBlockPos().up(2))&&(w.getRegistryKey().equals(LunarHorizons.MOON)||w.isDay()))energy(energy()+15);
+        if(advanced()&&pilot==null&&age%20==0&&w.isSkyVisible(getBlockPos().up(2))&&(LunarHorizons.vacuum(w)||w.isDay()))energy(energy()+15);
         if(pilot==null&&age%20==0&&energy()<capacity()){
             // Park within two blocks of a colony battery. Transfers are lossless and bounded.
             BlockPos center=getBlockPos();
