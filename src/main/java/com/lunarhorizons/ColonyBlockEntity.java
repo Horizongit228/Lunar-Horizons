@@ -12,7 +12,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 
 public final class ColonyBlockEntity extends BlockEntity {
-    enum Kind {BATTERY,GENERATOR,OXYGEN,REFINERY,FUEL,REFILL,LAMP,TERMINAL,ASSEMBLER}
+    enum Kind {BATTERY,GENERATOR,OXYGEN,REFINERY,FUEL,REFILL,LAMP,TERMINAL,ASSEMBLER,SERVER}
     int energy,input,output,progress,reserve,production,demand,stored;
     boolean active;
     boolean enabled=true,networkFault=false,automation=false;
@@ -21,17 +21,18 @@ public final class ColonyBlockEntity extends BlockEntity {
     public ColonyBlockEntity(BlockPos pos,BlockState state){super(LunarHorizons.COLONY_ENTITY,pos,state);}
     Kind kind(){return ((ColonyMachineBlock)getCachedState().getBlock()).kind;}
     int capacity(){return kind()==Kind.BATTERY?(getCachedState().isOf(LunarHorizons.INDUSTRIAL_BATTERY)?14400:3600):0;}
-    int cost(){return switch(kind()){case OXYGEN->20;case REFINERY->45;case FUEL->60;case REFILL->25;case LAMP->8;case ASSEMBLER->50;default->0;};}
-    int duration(){return switch(kind()){case REFINERY->6;case FUEL->10;case REFILL->5;case ASSEMBLER->8;default->1;};}
-    Item outputItem(){return switch(kind()){case REFINERY->LunarHorizons.TITANIUM_INGOT;case FUEL->LunarHorizons.FUEL;case ASSEMBLER->LunarHorizons.CIRCUIT;default->Items.AIR;};}
+    int cost(){return switch(kind()){case OXYGEN->20;case REFINERY->45;case FUEL->60;case REFILL->25;case LAMP->8;case ASSEMBLER->50;case SERVER->30;default->0;};}
+    int duration(){return switch(kind()){case REFINERY->6;case FUEL->10;case REFILL->5;case ASSEMBLER->8;case SERVER->60;default->1;};}
+    Item outputItem(){return switch(kind()){case REFINERY->LunarHorizons.TITANIUM_INGOT;case FUEL->LunarHorizons.FUEL;case ASSEMBLER->LunarHorizons.CIRCUIT;case SERVER->LunarHorizons.DATA_CORE;default->Items.AIR;};}
     boolean accepts(ItemStack stack){return switch(kind()){
         case GENERATOR,FUEL->stack.isOf(LunarHorizons.HELIUM);
         case OXYGEN,REFILL->stack.isOf(LunarHorizons.LUNAR_ICE.asItem())||stack.isOf(Items.ICE);
         case REFINERY->stack.isOf(LunarHorizons.RAW_TITANIUM);
         case ASSEMBLER->stack.isOf(LunarHorizons.TITANIUM_INGOT);
+        case SERVER->stack.isOf(LunarHorizons.CIRCUIT);
         default->false;
     };}
-    boolean supportsInput(){return switch(kind()){case GENERATOR,OXYGEN,REFINERY,FUEL,REFILL,ASSEMBLER->true;default->false;};}
+    boolean supportsInput(){return switch(kind()){case GENERATOR,OXYGEN,REFINERY,FUEL,REFILL,ASSEMBLER,SERVER->true;default->false;};}
     boolean supportsOutput(){return outputItem()!=Items.AIR;}
     void automaticTransfer(net.minecraft.server.world.ServerWorld w){
         if(!automation||!enabled)return;
@@ -73,14 +74,14 @@ public final class ColonyBlockEntity extends BlockEntity {
         if(kind()==Kind.TERMINAL)return 4;
         if((kind()==Kind.GENERATOR||kind()==Kind.OXYGEN)&&reserve==0&&input==0)return 5;
         if(kind()==Kind.GENERATOR)return 6;
-        if((kind()==Kind.REFINERY||kind()==Kind.FUEL||kind()==Kind.REFILL||kind()==Kind.ASSEMBLER)&&output>=32)return 7;
+        if((kind()==Kind.REFINERY||kind()==Kind.FUEL||kind()==Kind.REFILL||kind()==Kind.ASSEMBLER||kind()==Kind.SERVER)&&output>=32)return 7;
         if(supportsInput()&&input==0&&reserve==0)return 5;
         return 8;
     }
     boolean wants(){if(!enabled)return false;return switch(kind()){
         case OXYGEN->reserve>0||input>0;
         case LAMP->true;
-        case REFINERY,FUEL,REFILL,ASSEMBLER->input>0&&output<32;
+        case REFINERY,FUEL,REFILL,ASSEMBLER,SERVER->input>0&&output<32;
         default->false;
     };}
     void operate(){
