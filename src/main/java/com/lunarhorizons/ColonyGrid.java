@@ -8,7 +8,7 @@ import net.minecraft.world.World;
 
 /** Server-only, bounded face-connected electrical networks. One transaction per network per second. */
 final class ColonyGrid {
-    private static final int LIMIT=1024;
+    private static final int LIMIT=2048;
     private static final Map<ServerWorld,Frame> FRAMES=new WeakHashMap<>();
     private static final class Frame {long tick=Long.MIN_VALUE;final Set<BlockPos> visited=new HashSet<>();}
     static boolean loaded(ServerWorld w,BlockPos p){return p.getY()>=w.getBottomY()&&p.getY()<w.getTopY()&&w.isChunkLoaded(p.getX()>>4,p.getZ()>>4);}
@@ -38,7 +38,7 @@ final class ColonyGrid {
         for(var be:machines)be.automaticTransfer(w);
         int supply=solar;
         int target=0;
-        for(var be:machines){be.networkFault=false;if(be.wants())target+=be.cost();if(be.kind()==ColonyBlockEntity.Kind.BATTERY&&be.enabled)target+=Math.min(120,be.capacity()-be.energy);}
+        for(var be:machines){be.networkFault=false;if(be.wants())target+=be.cost();if(be.kind()==ColonyBlockEntity.Kind.BATTERY&&be.enabled)target+=Math.max(0,Math.min(120,be.capacity()/4-be.energy));}
         for(var be:machines)if(be.kind()==ColonyBlockEntity.Kind.GENERATOR){
             boolean needed=be.enabled&&supply<target;
             if(needed&&be.reserve==0&&be.input>0){be.input--;be.reserve=60;}
@@ -47,9 +47,9 @@ final class ColonyGrid {
         int generated=supply,available=supply,demand=0;
         List<ColonyBlockEntity> batteries=new ArrayList<>();
         for(var be:machines)if(be.kind()==ColonyBlockEntity.Kind.BATTERY){if(be.enabled){batteries.add(be);available+=be.energy;}else be.setActive(false);}
-        // Oxygen and illumination take priority over processing.
+        // Oxygen production and tank refill take priority over lights and industry.
         if(!machines.isEmpty())Collections.rotate(machines,(int)Math.floorMod(w.getTime()/20,machines.size()));
-        machines.sort(Comparator.comparingInt(be->be.kind()==ColonyBlockEntity.Kind.OXYGEN?0:be.kind()==ColonyBlockEntity.Kind.LAMP?1:2));
+        machines.sort(Comparator.comparingInt(be->be.kind()==ColonyBlockEntity.Kind.OXYGEN?0:be.kind()==ColonyBlockEntity.Kind.REFILL?1:be.kind()==ColonyBlockEntity.Kind.LAMP?2:3));
         int spent=0;
         for(var be:machines){
             if(be.kind()==ColonyBlockEntity.Kind.GENERATOR||be.kind()==ColonyBlockEntity.Kind.BATTERY||be.kind()==ColonyBlockEntity.Kind.TERMINAL)continue;
