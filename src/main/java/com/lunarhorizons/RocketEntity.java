@@ -236,9 +236,16 @@ public final class RocketEntity extends Entity {
         if(p.startRiding(this,true)){if(destination()==location(world))destination(location(world)==SPACE_DEST?EARTH_DEST:SPACE_DEST);phase(READY);message(p,"ready_launch");message(p,"destination",Text.translatable("hud.lunar_horizons.destination_"+destination()));}
     }
 
-    public void requestDestination(ServerPlayerEntity pilot){
-        if(getWorld().isClient||getFirstPassenger()!=pilot||phase()!=READY||!pilot.isAlive())return;
-        int next=(destination()+1)%3;if(next==location(getWorld()))next=(next+1)%3;
+    public boolean canChooseRoute(){return phase()==READY||phase()==COUNTDOWN||(phase()==ASCENT&&getY()<TRANSFER_Y);}
+    public int currentLocation(){return location(getWorld());}
+    public void requestDestination(ServerPlayerEntity pilot,int requested){
+        if(getWorld().isClient||getFirstPassenger()!=pilot||!pilot.isAlive()||pilot.isSpectator()||!canChooseRoute())return;
+        int next=requested;
+        if(next==-1){next=(destination()+1)%3;if(next==location(getWorld()))next=(next+1)%3;}
+        if(next<EARTH_DEST||next>SPACE_DEST||next==location(getWorld())||next==destination())return;
+        // A change during countdown cancels the launch; during ascent ensure survival at the new destination.
+        if(phase()==ASCENT&&next!=EARTH_DEST&&!pilot.isCreative()&&!OxygenSystem.ready(pilot)){message(pilot,"need_suit");return;}
+        if(phase()==COUNTDOWN){phase(READY);getDataTracker().set(COUNTDOWN_SYNC,0);}
         destination(next);message(pilot,"destination",Text.translatable("hud.lunar_horizons.destination_"+next));
     }
     public void requestLaunch(ServerPlayerEntity pilot){
@@ -273,7 +280,7 @@ public final class RocketEntity extends Entity {
         getDataTracker().set(ALTITUDE,(int)Math.floor(getY()));
         getDataTracker().set(COUNTDOWN_SYNC,phase()==COUNTDOWN?Math.max(0,(countdownTicks()-phaseTicks+19)/20):0);
         switch(phase()){
-            case READY -> { if(pilot==null && ++missingPilotTicks>60)phase(IDLE); else if(pilot!=null)missingPilotTicks=0; }
+            case READY -> { if(pilot==null)phase(IDLE); else missingPilotTicks=0; }
             case IDLE -> { if(hasPassengers() && pilot!=null){pilot.stopRiding();} }
             case COUNTDOWN -> {
                 if(pilot==null){phase(IDLE);getDataTracker().set(COUNTDOWN_SYNC,0);return;}
