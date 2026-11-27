@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "TCT",
+    "PFP",
+    "TCT"
+  ],
+  "key": {
+    "T": {
+      "item": "lunar_horizons:titanium_ingot"
+    },
+    "C": {
+      "item": "lunar_horizons:control_circuit"
+    },
+    "P": {
+      "item": "lunar_horizons:power_cell"
+    },
+    "F": {
+      "item": "lunar_horizons:machine_frame"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:server_block",
+    "count": 1
+  }
+}
