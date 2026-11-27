@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BTB",
+    "TBT",
+    "BTB"
+  ],
+  "key": {
+    "B": {
+      "item": "lunar_horizons:habitat_hull"
+    },
+    "T": {
+      "item": "lunar_horizons:titanium_ingot"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:reinforced_hull",
+    "count": 8
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "TPT",
+    "CFC",
+    "THT"
+  ],
+  "key": {
+    "T": {
+      "item": "lunar_horizons:titanium_ingot"
+    },
+    "P": {
+      "item": "lunar_horizons:power_cell"
+    },
+    "C": {
+      "item": "lunar_horizons:control_circuit"
+    },
+    "F": {
+      "item": "lunar_horizons:machine_frame"
+    },
+    "H": {
+      "item": "lunar_horizons:helium_3"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:fuel_synthesizer",
+    "count": 1
+  }
+}

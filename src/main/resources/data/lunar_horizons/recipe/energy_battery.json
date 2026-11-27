@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "TPT",
+    "PFP",
+    "TCT"
+  ],
+  "key": {
+    "T": {
+      "item": "lunar_horizons:titanium_ingot"
+    },
+    "P": {
+      "item": "lunar_horizons:power_cell"
+    },
+    "F": {
+      "item": "lunar_horizons:machine_frame"
+    },
+    "C": {
+      "item": "lunar_horizons:control_circuit"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:energy_battery",
+    "count": 1
+  }
+}

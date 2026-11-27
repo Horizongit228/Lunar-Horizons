@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "lunar_horizons:block/electric_refill"
+    },
+    "lit=true": {
+      "model": "lunar_horizons:block/electric_refill_on"
+    }
+  }
+}

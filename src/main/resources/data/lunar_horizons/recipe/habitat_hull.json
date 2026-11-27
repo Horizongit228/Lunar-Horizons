@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "III",
+    "T T",
+    "III"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "T": {
+      "item": "lunar_horizons:titanium_ingot"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:habitat_hull",
+    "count": 8
+  }
+}

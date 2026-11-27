@@ -23,7 +23,10 @@ final class MoonSurvival {
             boolean moon=p.getWorld().getRegistryKey().equals(LunarHorizons.MOON);
             modifier(p.getAttributeInstance(EntityAttributes.GENERIC_GRAVITY),GRAVITY,-.75,moon);
             modifier(p.getAttributeInstance(EntityAttributes.GENERIC_FALL_DAMAGE_MULTIPLIER),FALL,-1,moon);
-            if(!moon||!p.isAlive()||p.isCreative()||p.isSpectator()||p.getVehicle() instanceof RocketEntity||server.getTicks()%20!=0)continue;
+            if(server.getTicks()%20!=0)continue;
+            boolean habitat=moon&&p.isAlive()&&!(p.getVehicle() instanceof RocketEntity)&&ColonyAtmosphere.breathable(p.getServerWorld(),p.getBlockPos());
+            ColonyStatus.send(p,habitat);
+            if(!moon||!p.isAlive()||p.isCreative()||p.isSpectator()||p.getVehicle() instanceof RocketEntity||habitat)continue;
             if(OxygenSystem.ready(p)){
                 ItemStack tank=p.getInventory().getStack(OxygenSystem.tankSlot(p));
                 tank.setDamage(Math.min(tank.getMaxDamage(),tank.getDamage()+1));p.getInventory().markDirty();

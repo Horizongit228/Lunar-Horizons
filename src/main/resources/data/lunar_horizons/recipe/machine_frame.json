@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "TIT",
+    "I I",
+    "TIT"
+  ],
+  "key": {
+    "T": {
+      "item": "lunar_horizons:titanium_ingot"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:machine_frame",
+    "count": 2
+  }
+}

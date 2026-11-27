@@ -22,6 +22,23 @@
     "lunar_horizons:anorthosite",
     "lunar_horizons:ejecta_rock",
     "lunar_horizons:solar_panel",
-    "lunar_horizons:damaged_solar_panel"
+    "lunar_horizons:damaged_solar_panel",
+    "lunar_horizons:energy_battery",
+    "lunar_horizons:helium_generator",
+    "lunar_horizons:oxygen_generator",
+    "lunar_horizons:electric_refinery",
+    "lunar_horizons:fuel_synthesizer",
+    "lunar_horizons:electric_refill",
+    "lunar_horizons:powered_lamp",
+    "lunar_horizons:power_terminal",
+    "lunar_horizons:advanced_assembler",
+    "lunar_horizons:power_cable",
+    "lunar_horizons:oxygen_pipe",
+    "lunar_horizons:oxygen_vent",
+    "lunar_horizons:habitat_hull",
+    "lunar_horizons:reinforced_hull",
+    "lunar_horizons:habitat_floor",
+    "lunar_horizons:industrial_grate",
+    "lunar_horizons:airlock"
   ]
 }

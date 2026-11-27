@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "lunar_horizons:block/advanced_assembler"
+    },
+    "lit=true": {
+      "model": "lunar_horizons:block/advanced_assembler_on"
+    }
+  }
+}

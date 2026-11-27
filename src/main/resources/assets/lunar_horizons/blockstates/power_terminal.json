@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "lunar_horizons:block/power_terminal"
+    },
+    "lit=true": {
+      "model": "lunar_horizons:block/power_terminal_on"
+    }
+  }
+}

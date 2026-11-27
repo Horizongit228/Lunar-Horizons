@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "III",
+    "OCO",
+    "III"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "O": {
+      "item": "lunar_horizons:oxygen_filter"
+    },
+    "C": {
+      "item": "lunar_horizons:control_circuit"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:oxygen_vent",
+    "count": 2
+  }
+}

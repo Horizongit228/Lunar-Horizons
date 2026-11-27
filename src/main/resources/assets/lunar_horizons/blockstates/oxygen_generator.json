@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "lunar_horizons:block/oxygen_generator"
+    },
+    "lit=true": {
+      "model": "lunar_horizons:block/oxygen_generator_on"
+    }
+  }
+}

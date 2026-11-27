@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "TOT",
+    "CFC",
+    "TPT"
+  ],
+  "key": {
+    "T": {
+      "item": "lunar_horizons:titanium_ingot"
+    },
+    "O": {
+      "item": "lunar_horizons:oxygen_filter"
+    },
+    "C": {
+      "item": "lunar_horizons:control_circuit"
+    },
+    "F": {
+      "item": "lunar_horizons:machine_frame"
+    },
+    "P": {
+      "item": "lunar_horizons:power_cell"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:oxygen_generator",
+    "count": 1
+  }
+}

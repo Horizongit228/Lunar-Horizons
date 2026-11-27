@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "open=false": {
+      "model": "lunar_horizons:block/airlock"
+    },
+    "open=true": {
+      "model": "lunar_horizons:block/airlock_open"
+    }
+  }
+}

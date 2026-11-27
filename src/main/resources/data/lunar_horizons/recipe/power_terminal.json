@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IGI",
+    "CFC",
+    "IPI"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "C": {
+      "item": "lunar_horizons:control_circuit"
+    },
+    "F": {
+      "item": "lunar_horizons:machine_frame"
+    },
+    "P": {
+      "item": "lunar_horizons:power_cell"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:power_terminal",
+    "count": 1
+  }
+}

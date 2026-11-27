@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "lunar_horizons:block/electric_refinery"
+    },
+    "lit=true": {
+      "model": "lunar_horizons:block/electric_refinery_on"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BBB",
+    "III"
+  ],
+  "key": {
+    "B": {
+      "item": "lunar_horizons:habitat_hull"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:habitat_floor",
+    "count": 6
+  }
+}

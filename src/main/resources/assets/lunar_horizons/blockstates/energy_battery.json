@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "lunar_horizons:block/energy_battery"
+    },
+    "lit=true": {
+      "model": "lunar_horizons:block/energy_battery_on"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "lunar_horizons:block/powered_lamp"
+    },
+    "lit=true": {
+      "model": "lunar_horizons:block/powered_lamp_on"
+    }
+  }
+}

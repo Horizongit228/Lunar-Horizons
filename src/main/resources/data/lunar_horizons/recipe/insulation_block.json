@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "WWW",
+    "WBW",
+    "WWW"
+  ],
+  "key": {
+    "W": {
+      "item": "minecraft:white_wool"
+    },
+    "B": {
+      "item": "lunar_horizons:habitat_hull"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:insulation_block",
+    "count": 8
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "CRC",
+    "GTG",
+    "CRC"
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "T": {
+      "item": "lunar_horizons:titanium_ingot"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:control_circuit",
+    "count": 2
+  }
+}

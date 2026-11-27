@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "lunar_horizons:block/fuel_synthesizer"
+    },
+    "lit=true": {
+      "model": "lunar_horizons:block/fuel_synthesizer_on"
+    }
+  }
+}

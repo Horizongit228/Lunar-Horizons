@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "TCT",
+    "BFB",
+    "TCT"
+  ],
+  "key": {
+    "T": {
+      "item": "lunar_horizons:titanium_ingot"
+    },
+    "C": {
+      "item": "lunar_horizons:control_circuit"
+    },
+    "B": {
+      "item": "lunar_horizons:habitat_hull"
+    },
+    "F": {
+      "item": "lunar_horizons:machine_frame"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:airlock",
+    "count": 2
+  }
+}
