@@ -12,7 +12,7 @@ import static net.minecraft.server.command.CommandManager.argument;
 
 final class LunarCommands {
     static void register(){
-        CommandRegistrationCallback.EVENT.register((dispatcher,registryAccess,environment)->
+        CommandRegistrationCallback.EVENT.register((dispatcher,registryAccess,environment)->{
             dispatcher.register(literal("lunar").requires(s->s.hasPermissionLevel(2))
                 .then(literal("meteor")
                     .then(mode("normal",false))
@@ -23,7 +23,10 @@ final class LunarCommands {
                     .then(literal("cancel").executes(c->{
                         if(!MeteorEvents.hasActive()){c.getSource().sendError(Text.translatable("message.lunar_horizons.meteor_inactive"));return 0;}
                         MeteorEvents.clear();c.getSource().sendFeedback(()->Text.translatable("message.lunar_horizons.meteor_cancelled"),true);return 1;
-                    })))));
+                    }))));
+            dispatcher.register(literal("teleport").requires(s->s.hasPermissionLevel(2)).then(StructureTeleport.command("structure")).then(StructureTeleport.command("структура")));
+            dispatcher.register(literal("lunar").requires(s->s.hasPermissionLevel(2)).then(StructureTeleport.command("structure")).then(literal("repair_conduits").executes(c->StructureTeleport.repair(c.getSource()))));
+        });
     }
     private static LiteralArgumentBuilder<ServerCommandSource> mode(String name,boolean huge){
         return literal(name).executes(c->summon(c.getSource(),huge,null,null))
