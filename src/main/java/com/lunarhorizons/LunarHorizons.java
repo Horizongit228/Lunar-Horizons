@@ -69,7 +69,7 @@ public final class LunarHorizons implements ModInitializer {
     public static final EntityType<RocketEntity> ADVANCED_ROCKET_ENTITY=Registry.register(Registries.ENTITY_TYPE,id("advanced_rocket"),
         EntityType.Builder.<RocketEntity>create(RocketEntity::new,SpawnGroup.MISC).dimensions(3f,12f).maxTrackingRange(16).trackingTickInterval(1).makeFireImmune().build(ID+":advanced_rocket"));
     public static final EntityType<RoverEntity> ADVANCED_ROVER_ENTITY=Registry.register(Registries.ENTITY_TYPE,id("advanced_rover"),
-        EntityType.Builder.<RoverEntity>create(RoverEntity::new,SpawnGroup.MISC).dimensions(1.9f,1.35f).maxTrackingRange(12).trackingTickInterval(1).build(ID+":advanced_rover"));
+        EntityType.Builder.<RoverEntity>create(RoverEntity::new,SpawnGroup.MISC).dimensions(2.2f,1.75f).maxTrackingRange(12).trackingTickInterval(1).build(ID+":advanced_rover"));
     public static final Item ADVANCED_ROVER_ITEM=item("advanced_rover",new RoverItem(new Item.Settings().maxCount(1)));
     public static final Block ROCKET = Registry.register(Registries.BLOCK, id("rocket"),
             new Block(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).nonOpaque()));
