@@ -1,6 +1,8 @@
 package com.lunarhorizons;
 
 import java.util.*;
+import net.minecraft.block.Blocks;
+import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
@@ -13,45 +15,106 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Heightmap;
 
-/** Cosmetic falling meteor showers with recoverable fragments; no destructive explosions. */
+/** Live impacts: visible falling trails, excavated natural terrain and mineable remnants.
+ * One world event roll per minute while an eligible player is on the surface.
+ * Huge 1%, ordinary 10%, no event 89%. Never force-load chunks or use destructive explosions. */
 final class MeteorEvents {
-    private record Meteor(ServerWorld world,BlockPos pos,int start,int dx,int dz){}
+    private static final double HUGE_CHANCE=.01, NORMAL_CHANCE=.10;
+    private static final int CHECK_INTERVAL=1200;
+    private record Meteor(ServerWorld world,BlockPos pos,int start,int dx,int dz,boolean huge){}
+    private record Column(BlockPos surface,int depth){}
     private static final List<Meteor> ACTIVE=new ArrayList<>();
     static void clear(){ACTIVE.clear();}
     static void tick(MinecraftServer server){
         int tick=server.getTicks();
         ServerWorld moon=server.getWorld(LunarHorizons.MOON);
         if(moon==null)return;
-        if(tick%1200==0&&ACTIVE.isEmpty()&&moon.getRandom().nextInt(8)==0){
-            List<ServerPlayerEntity> players=moon.getPlayers(p->!p.isSpectator()&&p.getVehicle()==null&&p.isAlive());
+        if(tick%CHECK_INTERVAL==0&&ACTIVE.isEmpty()){
+            List<ServerPlayerEntity> players=moon.getPlayers(p->!p.isSpectator()&&p.getVehicle()==null&&p.isAlive()
+                &&p.getY()>=moon.getTopY(Heightmap.Type.MOTION_BLOCKING,p.getBlockX(),p.getBlockZ())-2);
             if(!players.isEmpty()){
-                ServerPlayerEntity p=players.get(moon.getRandom().nextInt(players.size()));
-                if(p.getY()>=moon.getTopY(Heightmap.Type.MOTION_BLOCKING,p.getBlockX(),p.getBlockZ())-3){
-                    for(int i=0;i<3;i++){
-                        int x=p.getBlockX()+moon.getRandom().nextInt(33)-16,z=p.getBlockZ()+moon.getRandom().nextInt(33)-16;
+                double roll=moon.getRandom().nextDouble();
+                if(roll<HUGE_CHANCE+NORMAL_CHANCE){
+                    boolean huge=roll<HUGE_CHANCE;
+                    ServerPlayerEntity player=players.get(moon.getRandom().nextInt(players.size()));
+                    for(int i=0;i<20;i++){
+                        double angle=moon.getRandom().nextDouble()*Math.PI*2;
+                        int distance=(huge?30:14)+moon.getRandom().nextInt(huge?19:15);
+                        int x=player.getBlockX()+(int)Math.round(Math.cos(angle)*distance);
+                        int z=player.getBlockZ()+(int)Math.round(Math.sin(angle)*distance);
                         if(!moon.isChunkLoaded(x>>4,z>>4))continue;
                         int y=moon.getTopY(Heightmap.Type.MOTION_BLOCKING,x,z);
                         BlockPos pos=new BlockPos(x,y,z);
-                        if(ImpactCraterFeature.natural(moon,pos.down())&&moon.isAir(pos))ACTIVE.add(new Meteor(moon,pos,tick+i*30,moon.getRandom().nextInt(15)-7,moon.getRandom().nextInt(15)-7));
+                        if(plan(moon,pos,huge)==null)continue;
+                        ACTIVE.add(new Meteor(moon,pos,tick,moon.getRandom().nextInt(21)-10,moon.getRandom().nextInt(21)-10,huge));
+                        for(ServerPlayerEntity nearby:players){
+                            double dx=nearby.getX()-x,dz=nearby.getZ()-z;
+                            if(dx*dx+dz*dz<128*128)nearby.sendMessage(Text.translatable(huge?"message.lunar_horizons.huge_meteor_warning":"message.lunar_horizons.meteor_warning"),false);
+                        }
+                        break;
                     }
-                    if(!ACTIVE.isEmpty())p.sendMessage(Text.translatable("message.lunar_horizons.meteor_warning"),false);
                 }
             }
         }
         for(Iterator<Meteor> it=ACTIVE.iterator();it.hasNext();){
-            Meteor meteor=it.next();int age=tick-meteor.start;
-            if(age<0)continue;
-            BlockPos p=meteor.pos;ServerWorld w=meteor.world;
+            Meteor meteor=it.next();int age=tick-meteor.start;BlockPos p=meteor.pos;ServerWorld w=meteor.world;
             if(!w.isChunkLoaded(p.getX()>>4,p.getZ()>>4)){it.remove();continue;}
-            if(age<60){
-                double t=1-age/60.0,x=p.getX()+.5+meteor.dx*t,z=p.getZ()+.5+meteor.dz*t,y=p.getY()+.5+40*t;
-                if(age%2==0){w.spawnParticles(ParticleTypes.FLAME,x,y,z,8,.22,.35,.22,.02);w.spawnParticles(ParticleTypes.SMOKE,x,y,z,5,.3,.4,.3,.02);}
+            int duration=meteor.huge?120:65;
+            if(age<duration){
+                double t=1-age/(double)duration,x=p.getX()+.5+meteor.dx*t,z=p.getZ()+.5+meteor.dz*t,y=p.getY()+.5+(meteor.huge?85:48)*t;
+                if(age%2==0){
+                    double size=meteor.huge?1.8:.35;
+                    w.spawnParticles(ParticleTypes.FLAME,x,y,z,meteor.huge?28:8,size,size,size,.03);
+                    w.spawnParticles(ParticleTypes.SMOKE,x,y,z,meteor.huge?35:7,size,size,size,.025);
+                    w.spawnParticles(new BlockStateParticleEffect(ParticleTypes.BLOCK,LunarHorizons.METEORITE_ROCK.getDefaultState()),x,y,z,meteor.huge?45:12,size*.65,size*.65,size*.65,.015);
+                }
             }else{
-                w.spawnParticles(ParticleTypes.EXPLOSION,p.getX()+.5,p.getY()+.6,p.getZ()+.5,1,0,0,0,0);
-                w.playSound(null,p,SoundEvents.ENTITY_GENERIC_EXPLODE.value(),SoundCategory.BLOCKS,1.3f,.8f);
-                if(w.isAir(p)&&ImpactCraterFeature.natural(w,p.down()))w.spawnEntity(new ItemEntity(w,p.getX()+.5,p.getY()+.3,p.getZ()+.5,new ItemStack(LunarHorizons.METEORITE_FRAGMENT,1+w.getRandom().nextInt(3))));
+                impact(w,p,meteor.huge);
                 it.remove();
             }
         }
+    }
+    /** Preflight the complete crater footprint and floor. Reject caves, structures and unloaded chunks. */
+    private static List<Column> plan(ServerWorld w,BlockPos p,boolean huge){
+        int radius=huge?12:3,maxDepth=huge?5:2;
+        if(p.getY()<5||p.getY()>w.getTopY()-12)return null;
+        List<Column> cuts=new ArrayList<>();
+        for(int dx=-radius;dx<=radius;dx++)for(int dz=-radius;dz<=radius;dz++){
+            double q=(dx*dx+dz*dz)/(double)(radius*radius);
+            if(q>1)continue;
+            int x=p.getX()+dx,z=p.getZ()+dz;
+            if(!w.isChunkLoaded(x>>4,z>>4))return null;
+            int y=w.getTopY(Heightmap.Type.MOTION_BLOCKING,x,z)-1;
+            if(Math.abs(y-(p.getY()-1))>(huge?6:3))return null;
+            BlockPos surface=new BlockPos(x,y,z);
+            int depth=Math.max(0,(int)Math.round(maxDepth*(1-q)*(1-q)));
+            for(int h=0;h<=depth+1;h++)if(!ImpactCraterFeature.natural(w,surface.down(h)))return null;
+            if(!w.isAir(surface.up()))return null;
+            cuts.add(new Column(surface,depth));
+        }
+        return cuts;
+    }
+    private static void impact(ServerWorld w,BlockPos pos,boolean huge){
+        List<Column> cuts=plan(w,pos,huge);
+        if(cuts==null)return; // A player may have built here during the warning.
+        int centerY=pos.getY()-1-(huge?5:2);
+        for(Column col:cuts){
+            BlockPos surface=col.surface;
+            for(int h=0;h<col.depth;h++)w.setBlockState(surface.down(h),Blocks.AIR.getDefaultState(),3);
+            int dx=surface.getX()-pos.getX(),dz=surface.getZ()-pos.getZ();
+            if(dx*dx+dz*dz<=(huge?9:1))w.setBlockState(surface.down(col.depth),LunarHorizons.METEORITE_ROCK.getDefaultState(),3);
+        }
+        // Irregular solid meteorite body resting on the center of the crater.
+        int r=huge?3:1;
+        for(int dx=-r;dx<=r;dx++)for(int dz=-r;dz<=r;dz++)for(int h=0;h<=r*2;h++){
+            double q=(dx*dx+dz*dz+(h-r*.65)*(h-r*.65))/(double)(r*r);
+            if(q>1.05)continue;
+            BlockPos p=new BlockPos(pos.getX()+dx,centerY+h,pos.getZ()+dz);
+            if(w.isAir(p))w.setBlockState(p,LunarHorizons.METEORITE_ROCK.getDefaultState(),3);
+        }
+        w.spawnParticles(ParticleTypes.EXPLOSION,pos.getX()+.5,pos.getY()+.6,pos.getZ()+.5,huge?18:2,huge?4:.5,huge?2:.3,huge?4:.5,0);
+        w.spawnParticles(ParticleTypes.SMOKE,pos.getX()+.5,pos.getY()+.6,pos.getZ()+.5,huge?150:30,huge?5:1,huge?2:1,huge?5:1,.08);
+        w.playSound(null,pos,SoundEvents.ENTITY_GENERIC_EXPLODE.value(),SoundCategory.BLOCKS,huge?5f:1.6f,huge?.55f:.9f);
+        w.spawnEntity(new ItemEntity(w,pos.getX()+.5,centerY+(huge?6:3),pos.getZ()+.5,new ItemStack(LunarHorizons.METEORITE_FRAGMENT,huge?12+w.getRandom().nextInt(13):1+w.getRandom().nextInt(3))));
     }
 }

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " IW",
+    " TI",
+    "S  "
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "W": {
+      "item": "minecraft:gray_wool"
+    },
+    "T": {
+      "item": "lunar_horizons:titanium_ingot"
+    },
+    "S": {
+      "item": "lunar_horizons:lunar_stick"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:dust_sweeper",
+    "count": 1
+  }
+}

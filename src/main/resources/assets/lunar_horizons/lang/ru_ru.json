@@ -107,7 +107,7 @@
   "message.lunar_horizons.scan_none": "Сигналов поблизости нет.",
   "message.lunar_horizons.radar_found": "Маяк: X %s, Z %s • расстояние %s м",
   "message.lunar_horizons.mineral_found": "Минерал в %s м: %s",
-  "message.lunar_horizons.meteor_warning": "ВНИМАНИЕ: метеоритный дождь поблизости!",
+  "message.lunar_horizons.meteor_warning": "Внимание: приближается метеорит!",
   "block.lunar_horizons.expedition_flag": "Флаг Lunar Horizons",
   "block.lunar_horizons.red_flag": "Красный экспедиционный флаг",
   "block.lunar_horizons.blue_flag": "Синий экспедиционный флаг",
@@ -117,5 +117,8 @@
   "biome.lunar_horizons.ejecta_fields": "Поля ударных выбросов",
   "block.lunar_horizons.basalt_dust": "Базальтовая пыль",
   "block.lunar_horizons.anorthosite": "Лунный анортозит",
-  "block.lunar_horizons.ejecta_rock": "Ударная брекчия"
+  "block.lunar_horizons.ejecta_rock": "Ударная брекчия",
+  "item.lunar_horizons.dust_sweeper": "Пылеочиститель Moon Sweeper",
+  "message.lunar_horizons.dust_swept": "Собрано блоков базальтовой пыли: %s",
+  "message.lunar_horizons.huge_meteor_warning": "ТРЕВОГА: приближается огромный метеорит!"
 }
