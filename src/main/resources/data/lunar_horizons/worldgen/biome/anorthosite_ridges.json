@@ -46,7 +46,9 @@
       "lunar_horizons:abandoned_outpost",
       "lunar_horizons:crashed_satellite",
       "lunar_horizons:buried_lab",
-      "lunar_horizons:lunar_geode"
+      "lunar_horizons:lunar_geode",
+      "lunar_horizons:old_lander",
+      "lunar_horizons:relay_tower"
     ],
     []
   ]

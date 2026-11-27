@@ -127,6 +127,8 @@ public final class LunarHorizons implements ModInitializer {
     public static final Block BASALT_DUST = block("basalt_dust",AbstractBlock.Settings.copy(Blocks.DIRT));
     public static final Block ANORTHOSITE = block("anorthosite",AbstractBlock.Settings.copy(Blocks.STONE));
     public static final Block EJECTA_ROCK = block("ejecta_rock",AbstractBlock.Settings.copy(Blocks.STONE));
+    public static final Feature<DefaultFeatureConfig> LANDER = Registry.register(Registries.FEATURE,id("old_lander"),new ExplorationSiteFeature(DefaultFeatureConfig.CODEC,4));
+    public static final Feature<DefaultFeatureConfig> RELAY = Registry.register(Registries.FEATURE,id("relay_tower"),new ExplorationSiteFeature(DefaultFeatureConfig.CODEC,5));
     public static final Feature<DefaultFeatureConfig> CAVE_NETWORK = Registry.register(Registries.FEATURE,id("cave_network"),new LunarCaveNetworkFeature(DefaultFeatureConfig.CODEC));
     public static final Feature<DefaultFeatureConfig> HALL_DECOR = Registry.register(Registries.FEATURE,id("hall_decor"),new LunarHallDecorFeature(DefaultFeatureConfig.CODEC));
     public static final Block SOLAR_PANEL = solarPanel("solar_panel",false);

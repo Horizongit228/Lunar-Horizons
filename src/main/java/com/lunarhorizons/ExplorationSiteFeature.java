@@ -123,7 +123,10 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
             case 0->outpost(w,r,cx,cz,x,z,rot);
             case 1->satellite(w,r,cx,cz,x,z,rot);
             case 2->laboratory(w,r,cx,cz,x,z,rot);
-            default->geode(w,r,cx,cz,x,z,rot);
+            case 3->geode(w,r,cx,cz,x,z,rot);
+            case 4->lander(w,r,cx,cz,x,z,rot);
+            case 5->relay(w,r,cx,cz,x,z,rot);
+            default->false;
         };
     }
     private static int surface(StructureWorldAccess w,int x,int z,int radius,int slope){
@@ -278,6 +281,91 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
         }
         return false;
     }
+    private boolean lander(StructureWorldAccess w,Random r,int cx,int cz,int x,int z,int rot){
+        int y=surface(w,x,z,6,4);if(y==-1000)return false;
+        Plan p=new Plan(w,new BlockPos(x,y,z),rot,cx,cz);
+        Block metal=LunarHorizons.TITANIUM_BLOCK,hull=LunarHorizons.HABITAT_HULL;
+        // Four footpads with individual load-bearing supports, diagonal legs, engine bell.
+        for(int a:new int[]{-1,1})for(int b:new int[]{-1,1}){
+            int fx=a*4,fz=b*4;
+            BlockPos foot=p.at(fx,0,fz);
+            int h=top(w,foot.getX(),foot.getZ())-y;
+            if(h>0||h<-4)return false;
+            p.fill(fx-1,h,fz-1,fx+1,h,fz+1,metal);
+            for(int dx=-1;dx<=1;dx++)for(int dz=-1;dz<=1;dz++)if(!p.supported(fx+dx,h,fz+dz,metal,4))return false;
+            p.fill(fx,h+1,fz,fx,1,fz,metal);
+            p.fill(Math.min(a*3,fx),1,Math.min(b*3,fz),Math.max(a*3,fx),1,Math.max(b*3,fz),metal);
+            p.put(a*3,2,b*3,metal);
+            p.put(a*2,2,b*3,metal);p.put(a*2,3,b*2,metal);
+            p.put(a*2,2,b*2,metal);
+        }
+        p.fill(-1,0,-1,1,0,1,LunarHorizons.REINFORCED_HULL);
+        p.fill(-1,1,-1,1,1,1,metal);
+        p.fill(-2,2,-2,2,2,2,metal);
+        p.room(-2,-2,2,2,3,7,hull,LunarHorizons.HABITAT_FLOOR);
+        p.put(-1,5,-2,LunarHorizons.PRESSURE_GLASS);p.put(1,5,-2,LunarHorizons.PRESSURE_GLASS);
+        p.put(-2,5,0,LunarHorizons.PRESSURE_GLASS);p.put(2,5,0,LunarHorizons.PRESSURE_GLASS);
+        p.door(0,4,-2);
+        p.chest(-1,4,1,6,Direction.NORTH);
+        p.machine(1,4,1,LunarHorizons.BATTERY,Direction.NORTH);
+        p.put(0,4,1,LunarHorizons.POWER_TERMINAL);
+        p.put(1,5,1,LunarHorizons.POWER_WIRE);p.put(1,6,1,LunarHorizons.POWER_WIRE);p.put(1,7,1,LunarHorizons.POWER_FEEDTHROUGH);
+        p.put(1,8,1,LunarHorizons.SOLAR_PANEL);p.put(0,8,1,r.nextBoolean()?LunarHorizons.DAMAGED_SOLAR_PANEL:LunarHorizons.SOLAR_PANEL);
+        p.put(-1,8,-1,LunarHorizons.SURVEY_BEACON);p.put(-1,9,-1,Blocks.LIGHTNING_ROD);
+        p.put(0,6,1,LunarHorizons.LUNAR_LANTERN);
+        // Ladder descends from the exterior hatch to a supported landing.
+        BlockPos ladderBase=p.at(0,0,-3);
+        int ladderGround=top(w,ladderBase.getX(),ladderBase.getZ())-y;
+        for(int h=ladderGround;h<=3;h++){
+            p.put(0,h,-2,metal);
+            p.put(0,h,-3,Blocks.LADDER.getDefaultState().with(Properties.HORIZONTAL_FACING,rotated(rot,Direction.NORTH)));
+        }
+        p.put(0,3,-4,LunarHorizons.INDUSTRIAL_GRATE);
+        
+        // Ground equipment sits on natural terrain, independent of the cabin height.
+        BlockPos cache=p.at(-5,0,0);int gy=top(w,cache.getX(),cache.getZ())-y;
+        p.put(-5,gy,0,LunarHorizons.TITANIUM_BLOCK);p.chest(-5,gy+1,0,8,Direction.SOUTH);
+        return p.commit(r);
+    }
+    private boolean relay(StructureWorldAccess w,Random r,int cx,int cz,int x,int z,int rot){
+        int y=surface(w,x,z,6,5);if(y==-1000)return false;
+        Plan p=new Plan(w,new BlockPos(x,y,z),rot,cx,cz);
+        Block wall=LunarHorizons.REINFORCED_HULL,metal=LunarHorizons.TITANIUM_BLOCK,deck=LunarHorizons.HABITAT_FLOOR;
+        p.room(-4,-3,4,3,0,4,wall,deck);p.door(0,1,-3);
+        p.put(-2,2,-3,LunarHorizons.PRESSURE_GLASS);p.put(2,2,-3,LunarHorizons.PRESSURE_GLASS);
+        p.machine(2,1,2,LunarHorizons.BATTERY,Direction.NORTH);
+        p.machine(1,1,2,LunarHorizons.POWER_TERMINAL,Direction.NORTH);
+        p.put(2,2,2,LunarHorizons.POWER_CABLE);p.put(2,3,2,LunarHorizons.POWER_CABLE);p.put(2,4,2,LunarHorizons.POWER_FEEDTHROUGH);
+        for(int a=2;a<=4;a++)for(int b=1;b<=2;b++)p.put(a,5,b,r.nextInt(5)==0?LunarHorizons.DAMAGED_SOLAR_PANEL:LunarHorizons.SOLAR_PANEL);
+        p.chest(-3,1,2,7,Direction.NORTH);p.put(-3,3,-2,LunarHorizons.LUNAR_LANTERN);
+        // Four-legged antenna mast with periodic bracing and a climbable service column.
+        int height=17+r.nextInt(5);
+        for(int h=5;h<=height;h++){
+            for(int a:new int[]{-1,1})for(int b:new int[]{-1,1})p.put(a,h,b,metal);
+            if(h%4==1){p.fill(-1,h,-1,1,h,-1,metal);p.fill(-1,h,1,1,h,1,metal);p.put(-1,h,0,metal);}
+            p.put(1,h,0,metal);
+            p.put(2,h,0,Blocks.LADDER.getDefaultState().with(Properties.HORIZONTAL_FACING,rotated(rot,Direction.EAST)));
+        }
+        p.fill(-2,height+1,-2,2,height+1,2,LunarHorizons.INDUSTRIAL_GRATE);
+        p.put(2,height+1,0,Blocks.LADDER.getDefaultState().with(Properties.HORIZONTAL_FACING,rotated(rot,Direction.EAST)));p.put(1,height+1,0,metal);
+        p.put(0,height+2,0,LunarHorizons.SURVEY_BEACON);
+        p.put(0,height+3,0,Blocks.LIGHTNING_ROD);
+        for(int side:new int[]{-1,1}){
+            p.fill(0,height-2,Math.min(side,side*4),0,height-2,Math.max(side,side*4),metal);
+            p.put(0,height-1,side*4,Blocks.LIGHTNING_ROD);
+        }
+        BlockPos ladderBase=p.at(5,0,0);
+        int ladderGround=top(w,ladderBase.getX(),ladderBase.getZ())-y;
+        for(int h=ladderGround;h<=5;h++){
+            if(h<0||h==5)p.put(4,h,0,metal);
+            p.put(5,h,0,Blocks.LADDER.getDefaultState().with(Properties.HORIZONTAL_FACING,rotated(rot,Direction.EAST)));
+        }
+        for(int a=-4;a<=4;a++)for(int b=-3;b<=3;b++)if(!p.supported(a,0,b,LunarHorizons.MOON_BRICKS,6))return false;
+        BlockPos entrance=p.at(0,0,-4);int g=top(w,entrance.getX(),entrance.getZ());
+        if(y-g>3||g>y)return false;
+        for(int step=0;step<=y-g;step++){p.put(0,-step,-4-step,deck);if(!p.supported(0,-step,-4-step,wall,6))return false;}
+        return p.commit(r);
+    }
     private boolean geode(StructureWorldAccess w,Random r,int cx,int cz,int x,int z,int rot){
         for(int attempt=0;attempt<5;attempt++){
             int rx=5+r.nextInt(8),rz=Math.max(4,rx-2+r.nextInt(3)),ry=Math.max(4,(int)(rx*(.65+r.nextDouble()*.22)));
@@ -311,7 +399,7 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
     }
     private static void loot(StructureWorldAccess w,BlockPos pos,Random r,int type){
         if(!(w.getBlockEntity(pos) instanceof ChestBlockEntity chest))return;
-        chest.setStack(0,ExpeditionJournal.create(type,r,pos));
+        if(type!=8)chest.setStack(0,ExpeditionJournal.create(type,r,pos));
         chest.setStack(4,new ItemStack(LunarHorizons.TITANIUM_INGOT,1+r.nextInt(4)));
         switch(type){
             case 0->{chest.setStack(8,new ItemStack(LunarHorizons.OXYGEN));chest.setStack(12,new ItemStack(LunarHorizons.LUNAR_ICE,2+r.nextInt(4)));chest.setStack(18,new ItemStack(Items.BREAD,2+r.nextInt(4)));}
@@ -319,6 +407,9 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
             case 2->{chest.setStack(8,new ItemStack(LunarHorizons.METEORITE_FRAGMENT,1+r.nextInt(3)));chest.setStack(12,new ItemStack(LunarHorizons.CIRCUIT,1+r.nextInt(3)));chest.setStack(18,new ItemStack(LunarHorizons.FUEL));}
             case 3->{chest.setStack(8,new ItemStack(LunarHorizons.CRYSTAL,2+r.nextInt(4)));chest.setStack(12,new ItemStack(LunarHorizons.LUNAR_ICE,2+r.nextInt(3)));}
             case 4->{chest.setStack(8,new ItemStack(LunarHorizons.CIRCUIT,1+r.nextInt(3)));chest.setStack(12,new ItemStack(LunarHorizons.MACHINE_FRAME));}
+            case 6->{chest.setStack(8,new ItemStack(LunarHorizons.OXYGEN));chest.setStack(12,new ItemStack(LunarHorizons.FUEL,1+r.nextInt(2)));chest.setStack(18,new ItemStack(LunarHorizons.POWER_CELL));}
+            case 8->{chest.setStack(8,new ItemStack(LunarHorizons.OXYGEN));chest.setStack(12,new ItemStack(LunarHorizons.FUEL));}
+            case 7->{chest.setStack(8,new ItemStack(LunarHorizons.CIRCUIT,1+r.nextInt(2)));chest.setStack(12,new ItemStack(LunarHorizons.POWER_CELL));chest.setStack(18,new ItemStack(LunarHorizons.BACKPACK));}
             case 5->{chest.setStack(8,new ItemStack(LunarHorizons.DARK_CRYSTAL,1+r.nextInt(2)));chest.setStack(12,new ItemStack(LunarHorizons.HELIUM,1+r.nextInt(3)));chest.setStack(18,new ItemStack(LunarHorizons.LARGE_OXYGEN));}
         }
         chest.markDirty();

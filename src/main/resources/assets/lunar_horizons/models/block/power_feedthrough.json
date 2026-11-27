@@ -1,6 +1,12 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube",
   "textures": {
-    "all": "lunar_horizons:block/power_feedthrough"
+    "particle": "lunar_horizons:block/power_feedthrough_side",
+    "north": "lunar_horizons:block/power_feedthrough_side",
+    "south": "lunar_horizons:block/power_feedthrough_side",
+    "east": "lunar_horizons:block/power_feedthrough_side",
+    "west": "lunar_horizons:block/power_feedthrough_side",
+    "up": "lunar_horizons:block/power_feedthrough",
+    "down": "lunar_horizons:block/power_feedthrough"
   }
 }
