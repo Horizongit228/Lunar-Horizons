@@ -165,7 +165,30 @@ public final class OrbitalStationFeature extends Feature<DefaultFeatureConfig> {
         int cx=ctx.getOrigin().getX()&~15,cz=ctx.getOrigin().getZ()&~15;
         if(cx>80||cx+15< -80||cz>53||cz+15< -53)return false;
         Blueprint p=new Blueprint(cx,cz);p.layout();
-        StructureWorldAccess w=ctx.getWorld();
+        writeBlueprint(ctx.getWorld(),p);
+        return !p.cells.isEmpty();
+    }
+
+    /** Old void chunks may predate the station. Recreate only completely empty
+     * portions of the original blueprint, never replace player blocks or inventories. */
+    static void restoreMissingStation(net.minecraft.server.world.ServerWorld w){
+        if(!w.getRegistryKey().equals(LunarHorizons.SPACE))return;
+        w.getChunk(0,0);
+        // Existing central deck means this is an established station, not an empty old void.
+        if(!w.isAir(new BlockPos(0,DECK,0)))return;
+        for(int cx=-80;cx<=80;cx+=16)for(int cz=-64;cz<=48;cz+=16){
+            Blueprint p=new Blueprint(cx,cz);p.layout();
+            if(p.cells.entrySet().stream().noneMatch(e->p.local(e.getKey())&&!e.getValue().isAir()))continue;
+            w.getChunk(cx>>4,cz>>4);
+            boolean empty=true;
+            for(var e:p.cells.entrySet()){
+                if(p.local(e.getKey())&&!w.isAir(e.getKey())){empty=false;break;}
+            }
+            if(empty)writeBlueprint(w,p);
+        }
+    }
+
+    private static void writeBlueprint(StructureWorldAccess w,Blueprint p){
         var sides=new net.minecraft.state.property.BooleanProperty[]{Properties.DOWN,Properties.UP,Properties.NORTH,Properties.SOUTH,Properties.WEST,Properties.EAST};
         for(var e:p.cells.entrySet()){
             BlockPos pos=e.getKey();if(!p.local(pos))continue;
@@ -186,6 +209,5 @@ public final class OrbitalStationFeature extends Feature<DefaultFeatureConfig> {
             if(t==0||t==3)chest.setStack(15,new ItemStack(LunarHorizons.BACKPACK));
             chest.markDirty();
         }
-        return !p.cells.isEmpty();
     }
 }
