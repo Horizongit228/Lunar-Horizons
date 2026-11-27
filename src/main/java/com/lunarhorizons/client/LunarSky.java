@@ -11,7 +11,7 @@ import java.util.Random;
 
 final class LunarSky {
     private static final Identifier EARTH = LunarHorizons.id("textures/environment/earth.png");
-    private static final int COUNT = 1800;
+    private static final int COUNT = 2600;
     private static final float[][] STARS = makeStars();
 
     private static float[][] makeStars() {
@@ -22,9 +22,11 @@ final class LunarSky {
             double az = random.nextDouble()*Math.PI*2;
             float radius = (float)Math.sqrt(1-y*y);
             float x = radius*(float)Math.cos(az), z = radius*(float)Math.sin(az);
-            float size = .035f+random.nextFloat()*.12f;
-            float light = .40f+random.nextFloat()*.60f;
-            result[i] = new float[]{x,y,z,size,light};
+            float magnitude=random.nextFloat();
+            float size = .025f+.115f*magnitude*magnitude*magnitude;
+            float light = .16f+.84f*magnitude*magnitude;
+            float tint=random.nextFloat();
+            result[i] = new float[]{x,y,z,size,light,tint};
         }
         return result;
     }
@@ -57,7 +59,9 @@ final class LunarSky {
                 int light = (int)(star[4]*255);
                 for (int[] sign:new int[][]{{-1,-1},{1,-1},{1,1},{-1,1}}) {
                     Vector3f p = new Vector3f(center).fma(sign[0],right).fma(sign[1],up);
-                    stars.vertex(matrix,p.x,p.y,p.z).color(light,light,Math.min(255,light+10),255);
+                    int red=(int)(light*(star[5]<.28f?.86f:1f));
+                    int blue=(int)(light*(star[5]>.72f?.84f:1f));
+                    stars.vertex(matrix,p.x,p.y,p.z).color(red,light,blue,255);
                 }
             }
             BufferRenderer.drawWithGlobalProgram(stars.end());
@@ -68,7 +72,7 @@ final class LunarSky {
             // Fixed celestial direction: Earth is visible above the lunar horizon.
             Matrix4f earth = new Matrix4f(matrix).rotateY((float)Math.toRadians(32)).rotateX((float)Math.toRadians(38));
             BufferBuilder b = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
-            float r=11, z=-90;
+            float r=7.5f, z=-90;
             b.vertex(earth,-r,r,z).texture(0,0);
             b.vertex(earth,-r,-r,z).texture(0,1);
             b.vertex(earth,r,-r,z).texture(1,1);
