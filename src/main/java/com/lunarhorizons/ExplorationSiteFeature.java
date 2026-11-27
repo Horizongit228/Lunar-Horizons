@@ -88,7 +88,7 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
             return true;
         }
         boolean commit(Random random){
-            SiteFinisher.finish(this,kind);
+            if(kind!=19)SiteFinisher.finish(this,kind); // Ultra halls have explicit isolated utility circuits.
             if(!valid())return false;
             // Worldgen does not reliably send neighbor updates: compute connections from the complete plan.
             net.minecraft.state.property.BooleanProperty[] sides={Properties.DOWN,Properties.UP,Properties.NORTH,Properties.SOUTH,Properties.WEST,Properties.EAST};
@@ -392,7 +392,7 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
     }
     // Native starts support large layouts. Pieces are subsequently divided at chunk boundaries.
     private boolean expandedSite(Terrain w,Random r,int cx,int cz,int x,int z,int rot){
-        int radius=switch(kind){case 6->17;case 7->21;case 8->12;case 9,10,11,13,14->17;case 12->12;case 15->44;case 16->36;case 17->30;case 18->55;default->21;};
+        int radius=switch(kind){case 6->17;case 7->21;case 8->12;case 9,10,11,13,14->17;case 12->12;case 15->44;case 16->36;case 17->30;case 18->55;case 19->60;default->21;};
         boolean buried=kind==10||kind==11||kind==12||kind==13||kind==14||kind==17;
         int y;
         if(buried){
@@ -424,6 +424,7 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
             case 16->spaceport(p,r);
             case 17->reactor(p,r);
             case 18->alienShip(p,r);
+            case 19->UltraDataCenter.layout(p,r);
             default->{return false;}
         }
         // Every structural floor at y=0 rests on natural rock or a bounded foundation.
@@ -451,7 +452,7 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
         }
         if(buried&&!accessShaft(p,0,kind==17?-24:kind==12?-4:-5))return false;
         if(kind==8){if(!garageApproach(p))return false;}
-        else if(!buried&&kind!=18&&!surfaceApproach(p,0,switch(kind){case 6->-17;case 7->-21;case 9->-16;case 15->-43;case 16->-35;default->-21;}))return false;
+        else if(!buried&&kind!=18&&!surfaceApproach(p,0,switch(kind){case 6->-17;case 7->-21;case 9->-16;case 15->-43;case 16->-35;case 19->-60;default->-21;}))return false;
         return p.commit(r);
     }
     private void light(Plan p,int x,int y,int z){p.put(x,y,z,LunarHorizons.LUNAR_LANTERN);}
@@ -636,7 +637,7 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
                     p.put(x,4,z,LunarHorizons.OXYGEN_PIPE);
                     if(z%2==0){
                         p.put(x,1,z,LunarHorizons.POWER_FEEDTHROUGH);
-                        p.machine(x,2,z,LunarHorizons.POWER_TERMINAL,side<0?Direction.EAST:Direction.WEST);
+                        p.machine(x,2,z,LunarHorizons.SERVER_BLOCK,side<0?Direction.EAST:Direction.WEST);
                         p.put(x,3,z,LunarHorizons.INDUSTRIAL_GRATE);
                         p.put(x+(side<0?-1:1),1,z,LunarHorizons.POWER_WIRE);
                     }
@@ -1097,6 +1098,8 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
             case 18->{chest.setStack(8,new ItemStack(LunarHorizons.EXTREME_OXYGEN));chest.setStack(12,new ItemStack(LunarHorizons.CIRCUIT,1+r.nextInt(4)));chest.setStack(18,new ItemStack(LunarHorizons.MACHINE_FRAME,1+r.nextInt(4)));}
             case 19->{chest.setStack(8,new ItemStack(LunarHorizons.FUEL,1+r.nextInt(4)));chest.setStack(12,new ItemStack(LunarHorizons.POWER_CELL,1+r.nextInt(4)));chest.setStack(18,new ItemStack(LunarHorizons.CIRCUIT,1+r.nextInt(4)));}
             case 20->{chest.setStack(8,new ItemStack(LunarHorizons.DARK_CRYSTAL,1+r.nextInt(2)));chest.setStack(12,new ItemStack(LunarHorizons.HELIUM,1+r.nextInt(4)));chest.setStack(18,new ItemStack(LunarHorizons.POWER_CELL,1+r.nextInt(4)));}
+            case 22->{chest.setStack(8,new ItemStack(LunarHorizons.CIRCUIT,8+r.nextInt(9)));chest.setStack(12,new ItemStack(LunarHorizons.LUNAR_ICE,16));chest.setStack(18,new ItemStack(LunarHorizons.HELIUM,4+r.nextInt(5)));chest.setStack(22,new ItemStack(LunarHorizons.POWER_CELL,4));}
+            case 23->{chest.setStack(8,new ItemStack(LunarHorizons.DATA_CORE,2+r.nextInt(4)));chest.setStack(12,new ItemStack(LunarHorizons.DARK_CRYSTAL,3+r.nextInt(5)));chest.setStack(18,new ItemStack(LunarHorizons.CIRCUIT,8));chest.setStack(22,new ItemStack(LunarHorizons.EXTREME_OXYGEN));}
             case 21->{chest.setStack(8,new ItemStack(LunarHorizons.DARK_CRYSTAL,1+r.nextInt(2)));chest.setStack(12,new ItemStack(LunarHorizons.METEORITE_FRAGMENT,1+r.nextInt(4)));chest.setStack(18,new ItemStack(LunarHorizons.CRYSTAL,1+r.nextInt(4)));}
             case 5->{chest.setStack(8,new ItemStack(LunarHorizons.DARK_CRYSTAL,1+r.nextInt(2)));chest.setStack(12,new ItemStack(LunarHorizons.HELIUM,1+r.nextInt(3)));chest.setStack(18,new ItemStack(LunarHorizons.LARGE_OXYGEN));}
         }
