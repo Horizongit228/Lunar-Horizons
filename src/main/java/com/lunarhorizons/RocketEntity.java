@@ -172,7 +172,9 @@ public final class RocketEntity extends Entity {
         return flightObstruction(world,center,height)==null;
     }
     private static void reportObstruction(ServerPlayerEntity pilot,ServerWorld world,BlockPos p){
-        message(pilot,"flight_obstruction",p.getX(),p.getY(),p.getZ(),world.getBlockState(p).getBlock().getName());
+        Text detail=Text.translatable("message.lunar_horizons.flight_obstruction",p.getX(),p.getY(),p.getZ(),world.getBlockState(p).getBlock().getName());
+        pilot.sendMessage(detail,false);
+        pilot.sendMessage(detail,true);
     }
     private static boolean occupied(ServerWorld world,BlockPos pos,int height){
         return occupied(world,pos,height,null);
@@ -434,7 +436,7 @@ public final class RocketEntity extends Entity {
                 if(Math.max(Math.abs(dx),Math.abs(dz))!=ring)continue;
                 BlockPos p=center.add(dx,0,dz);
                 int h=descentHeight(world,p);
-                if(h>=12&&hasPad(world,p)&&flightClear(world,p,h+hullHeight())
+                if(h>=12&&hasPad(world,p)&&flightClear(world,p,TRANSFER_Y-p.getY()+hullHeight())
                     &&!occupied(world,p,h+hullHeight(),this))return p;
             }
         }
