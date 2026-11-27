@@ -31,11 +31,13 @@ final class ColonyAtmosphere {
     }
     private static boolean passable(ServerWorld w,BlockPos p){
         BlockState s=w.getBlockState(p);
+        if(!w.getFluidState(p).isEmpty())return false;
+        if(s.isOf(LunarHorizons.PRESSURE_GLASS))return false;
         if(s.isOf(LunarHorizons.AIRLOCK))return s.get(Properties.OPEN);
-        return w.getFluidState(p).isEmpty()&&(s.isAir()||s.getBlock() instanceof ColonyConduitBlock||!s.isFullCube(w,p));
+        return s.isAir()||s.getBlock() instanceof ColonyConduitBlock||!s.isFullCube(w,p);
     }
     private static boolean powered(ServerWorld w,BlockPos p){
-        return w.getBlockEntity(p) instanceof ColonyBlockEntity be&&be.kind()==ColonyBlockEntity.Kind.OXYGEN&&be.active&&be.lastPowered>=w.getTime()-40;
+        return w.getBlockEntity(p) instanceof ColonyBlockEntity be&&be.kind()==ColonyBlockEntity.Kind.OXYGEN&&be.active&&be.lastPowered>=w.getTime()-40&&be.lastPowered<=w.getTime();
     }
     private static boolean supplied(ServerWorld w,BlockPos vent){
         Set<BlockPos> seen=new HashSet<>();ArrayDeque<BlockPos> queue=new ArrayDeque<>();
