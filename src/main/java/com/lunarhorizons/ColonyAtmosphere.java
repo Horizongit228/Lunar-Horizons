@@ -26,7 +26,8 @@ final class ColonyAtmosphere {
             }
         }
         if(oxygen)return true;
-        for(BlockPos vent:vents)if(supplied(w,vent))return true;
+        Set<BlockPos> exhausted=new HashSet<>();
+        for(BlockPos vent:vents)if(!exhausted.contains(vent)&&supplied(w,vent,exhausted))return true;
         return false;
     }
     private static boolean passable(ServerWorld w,BlockPos p){
@@ -37,15 +38,15 @@ final class ColonyAtmosphere {
         return s.isAir()||s.getBlock() instanceof ColonyConduitBlock||!s.isFullCube(w,p);
     }
     private static boolean powered(ServerWorld w,BlockPos p){
-        return w.getBlockEntity(p) instanceof ColonyBlockEntity be&&be.kind()==ColonyBlockEntity.Kind.OXYGEN&&be.active&&be.lastPowered>=w.getTime()-40&&be.lastPowered<=w.getTime();
+        return w.getBlockEntity(p) instanceof ColonyBlockEntity be&&be.kind()==ColonyBlockEntity.Kind.OXYGEN&&be.enabled&&be.active&&be.lastPowered>=w.getTime()-40&&be.lastPowered<=w.getTime();
     }
-    private static boolean supplied(ServerWorld w,BlockPos vent){
+    private static boolean supplied(ServerWorld w,BlockPos vent,Set<BlockPos> exhausted){
         Set<BlockPos> seen=new HashSet<>();ArrayDeque<BlockPos> queue=new ArrayDeque<>();
         seen.add(vent);queue.add(vent);
         while(!queue.isEmpty()){
             BlockPos p=queue.remove();
             for(Direction d:Direction.values()){
-                BlockPos q=p.offset(d);if(!ColonyGrid.loaded(w,q)||seen.contains(q))continue;
+                BlockPos q=p.offset(d);if(!ColonyGrid.loaded(w,q)||seen.contains(q)||exhausted.contains(q))continue;
                 BlockState s=w.getBlockState(q);
                 if(s.isOf(LunarHorizons.OXYGEN_GENERATOR)&&powered(w,q))return true;
                 if(s.isOf(LunarHorizons.OXYGEN_PIPE)||s.isOf(LunarHorizons.OXYGEN_VENT)){
@@ -55,6 +56,7 @@ final class ColonyAtmosphere {
                 }
             }
         }
+        exhausted.addAll(seen);
         return false;
     }
 }
