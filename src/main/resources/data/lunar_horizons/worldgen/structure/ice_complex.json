@@ -1,0 +1,8 @@
+{
+  "type": "lunar_horizons:lunar_site",
+  "site": 11,
+  "biomes": "#lunar_horizons:has_ice_complex",
+  "step": "top_layer_modification",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none"
+}

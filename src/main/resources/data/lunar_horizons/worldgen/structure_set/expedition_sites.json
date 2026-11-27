@@ -1,0 +1,87 @@
+{
+  "structures": [
+    {
+      "structure": "lunar_horizons:abandoned_outpost",
+      "weight": 16
+    },
+    {
+      "structure": "lunar_horizons:crashed_satellite",
+      "weight": 17
+    },
+    {
+      "structure": "lunar_horizons:buried_lab",
+      "weight": 12
+    },
+    {
+      "structure": "lunar_horizons:lunar_geode",
+      "weight": 16
+    },
+    {
+      "structure": "lunar_horizons:old_lander",
+      "weight": 14
+    },
+    {
+      "structure": "lunar_horizons:relay_tower",
+      "weight": 12
+    },
+    {
+      "structure": "lunar_horizons:radio_observatory",
+      "weight": 7
+    },
+    {
+      "structure": "lunar_horizons:solar_farm",
+      "weight": 9
+    },
+    {
+      "structure": "lunar_horizons:rover_garage",
+      "weight": 10
+    },
+    {
+      "structure": "lunar_horizons:helium_station",
+      "weight": 7
+    },
+    {
+      "structure": "lunar_horizons:abandoned_mine",
+      "weight": 9
+    },
+    {
+      "structure": "lunar_horizons:ice_complex",
+      "weight": 7
+    },
+    {
+      "structure": "lunar_horizons:emergency_bunker",
+      "weight": 9
+    },
+    {
+      "structure": "lunar_horizons:data_center",
+      "weight": 6
+    },
+    {
+      "structure": "lunar_horizons:alien_ruins",
+      "weight": 4
+    },
+    {
+      "structure": "lunar_horizons:abandoned_colony",
+      "weight": 2
+    },
+    {
+      "structure": "lunar_horizons:lunar_spaceport",
+      "weight": 2
+    },
+    {
+      "structure": "lunar_horizons:reactor_complex",
+      "weight": 1
+    },
+    {
+      "structure": "lunar_horizons:crashed_alien_ship",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 20,
+    "separation": 9,
+    "salt": 763124821,
+    "spread_type": "linear"
+  }
+}

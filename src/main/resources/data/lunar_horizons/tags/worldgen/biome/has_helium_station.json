@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "lunar_horizons:basalt_seas",
+    "lunar_horizons:dark_wastes",
+    "lunar_horizons:lunar_plains"
+  ]
+}

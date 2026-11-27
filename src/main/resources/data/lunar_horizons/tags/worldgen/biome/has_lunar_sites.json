@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "lunar_horizons:anorthosite_ridges",
+    "lunar_horizons:basalt_seas",
+    "lunar_horizons:crater_fields",
+    "lunar_horizons:dark_wastes",
+    "lunar_horizons:ejecta_fields",
+    "lunar_horizons:frozen_poles",
+    "lunar_horizons:lunar_highlands",
+    "lunar_horizons:lunar_plains"
+  ]
+}

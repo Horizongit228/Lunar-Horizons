@@ -20,7 +20,7 @@ public final class ColonyMachineBlock extends Block implements BlockEntityProvid
     }
     @Override protected BlockState rotate(BlockState s,net.minecraft.util.BlockRotation r){return s.with(Properties.HORIZONTAL_FACING,r.rotate(s.get(Properties.HORIZONTAL_FACING)));}
     @Override protected BlockState mirror(BlockState s,net.minecraft.util.BlockMirror m){return s.rotate(m.getRotation(s.get(Properties.HORIZONTAL_FACING)));}
-    private boolean topConnection(BlockState s){
+    boolean topConnection(BlockState s){
         return s.isOf(LunarHorizons.POWER_CABLE)||s.isOf(LunarHorizons.POWER_WIRE)||(kind==ColonyBlockEntity.Kind.OXYGEN&&s.isOf(LunarHorizons.OXYGEN_PIPE));
     }
     @Override protected BlockState getStateForNeighborUpdate(BlockState s,net.minecraft.util.math.Direction d,BlockState neighbor,net.minecraft.world.WorldAccess w,BlockPos pos,BlockPos other){

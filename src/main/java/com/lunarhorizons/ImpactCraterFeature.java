@@ -32,6 +32,23 @@ public final class ImpactCraterFeature extends Feature<DefaultFeatureConfig>{
         return Math.hypot(a,b)/(1+.065*Math.sin(angle*3+c.phase)+.035*Math.cos(angle*5-c.phase));
     }
     private static double smooth(double t){t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);}
+    /** Same deterministic displacement as the terrain feature, sampled without loading chunks. */
+    static int estimateDelta(long seed,int x,int z){
+        int gx=Math.floorDiv(x,GRID),gz=Math.floorDiv(z,GRID);
+        Crater c=null;double t=1.5;
+        for(int a=-1;a<=1;a++)for(int b=-1;b<=1;b++){
+            Crater q=crater(seed,gx+a,gz+b);
+            if(q==null)continue;double v=distance(q,x,z);
+            if(v<t){c=q;t=v;}
+        }
+        if(c==null||t>1.28)return 0;
+        double irregular=.5*Math.sin(x*.31+c.phase)*Math.cos(z*.27-c.phase);
+        double displacement=-c.depth*(1-smooth((t-.20)/.80));
+        if(t>.80)displacement+=Math.min(2.6,c.rx*.065)*Math.exp(-Math.pow((t-.99)/.13,2))*(.85+.15*Math.sin(Math.atan2(z-c.z,x-c.x)*4+c.phase));
+        if(t<1.17)displacement+=irregular*(1-smooth((t-.80)/.37));
+        if(t>1.13)displacement*=1-smooth((t-1.13)/.15);
+        return (int)Math.round(displacement);
+    }
     @Override public boolean generate(FeatureContext<DefaultFeatureConfig> ctx){
         StructureWorldAccess w=ctx.getWorld();int ox=ctx.getOrigin().getX()&~15,oz=ctx.getOrigin().getZ()&~15;
         List<Crater> list=new ArrayList<>();int gx=Math.floorDiv(ox,GRID),gz=Math.floorDiv(oz,GRID);

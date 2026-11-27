@@ -42,25 +42,7 @@
     [
       "lunar_horizons:hall_decor",
       "lunar_horizons:crystal_grotto",
-      "lunar_horizons:lunar_stem_patch",
-      "lunar_horizons:abandoned_outpost",
-      "lunar_horizons:crashed_satellite",
-      "lunar_horizons:buried_lab",
-      "lunar_horizons:lunar_geode",
-      "lunar_horizons:old_lander",
-      "lunar_horizons:relay_tower",
-      "lunar_horizons:radio_observatory",
-      "lunar_horizons:solar_farm",
-      "lunar_horizons:rover_garage",
-      "lunar_horizons:helium_station",
-      "lunar_horizons:abandoned_mine",
-      "lunar_horizons:emergency_bunker",
-      "lunar_horizons:data_center",
-      "lunar_horizons:alien_ruins",
-      "lunar_horizons:abandoned_colony",
-      "lunar_horizons:lunar_spaceport",
-      "lunar_horizons:reactor_complex",
-      "lunar_horizons:crashed_alien_ship"
+      "lunar_horizons:lunar_stem_patch"
     ],
     []
   ]

@@ -142,6 +142,8 @@ public final class LunarHorizons implements ModInitializer {
     public static final Feature<DefaultFeatureConfig> SITE_16=Registry.register(Registries.FEATURE,id("lunar_spaceport"),new ExplorationSiteFeature(DefaultFeatureConfig.CODEC,16));
     public static final Feature<DefaultFeatureConfig> SITE_17=Registry.register(Registries.FEATURE,id("reactor_complex"),new ExplorationSiteFeature(DefaultFeatureConfig.CODEC,17));
     public static final Feature<DefaultFeatureConfig> SITE_18=Registry.register(Registries.FEATURE,id("crashed_alien_ship"),new ExplorationSiteFeature(DefaultFeatureConfig.CODEC,18));
+    public static final net.minecraft.world.gen.structure.StructureType<LunarSiteStructure> LUNAR_SITE_TYPE=Registry.register(Registries.STRUCTURE_TYPE,id("lunar_site"),(net.minecraft.world.gen.structure.StructureType<LunarSiteStructure>)()->LunarSiteStructure.CODEC);
+    public static final net.minecraft.structure.StructurePieceType LUNAR_SITE_PIECE=Registry.register(Registries.STRUCTURE_PIECE,id("lunar_site_piece"),(net.minecraft.structure.StructurePieceType.Simple)LunarSitePiece::new);
     public static final Feature<DefaultFeatureConfig> CAVE_NETWORK = Registry.register(Registries.FEATURE,id("cave_network"),new LunarCaveNetworkFeature(DefaultFeatureConfig.CODEC));
     public static final Feature<DefaultFeatureConfig> HALL_DECOR = Registry.register(Registries.FEATURE,id("hall_decor"),new LunarHallDecorFeature(DefaultFeatureConfig.CODEC));
     public static final Block SOLAR_PANEL = solarPanel("solar_panel",false);

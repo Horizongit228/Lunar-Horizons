@@ -1,0 +1,8 @@
+{
+  "type": "lunar_horizons:lunar_site",
+  "site": 2,
+  "biomes": "#lunar_horizons:has_lunar_sites",
+  "step": "top_layer_modification",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none"
+}
