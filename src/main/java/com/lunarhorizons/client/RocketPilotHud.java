@@ -16,10 +16,12 @@ import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 final class RocketPilotHud {
-    private static KeyBinding launch;
+    private static KeyBinding launch,destination;
     static void register(){
         launch=KeyBindingHelper.registerKeyBinding(new KeyBinding("key.lunar_horizons.launch",InputUtil.Type.KEYSYM,GLFW.GLFW_KEY_R,"category.lunar_horizons"));
+        destination=KeyBindingHelper.registerKeyBinding(new KeyBinding("key.lunar_horizons.destination",InputUtil.Type.KEYSYM,GLFW.GLFW_KEY_G,"category.lunar_horizons"));
         ClientTickEvents.END_CLIENT_TICK.register(mc->{
+            while(destination.wasPressed())if(mc.player!=null&&mc.currentScreen==null&&mc.player.getVehicle() instanceof RocketEntity&&ClientPlayNetworking.canSend(com.lunarhorizons.RocketDestination.ID))ClientPlayNetworking.send(com.lunarhorizons.RocketDestination.INSTANCE);
             while(launch.wasPressed())if(mc.player!=null&&mc.currentScreen==null&&mc.player.getVehicle() instanceof RocketEntity&&ClientPlayNetworking.canSend(RocketControl.ID))
                 ClientPlayNetworking.send(RocketControl.INSTANCE);
         });
@@ -32,7 +34,7 @@ final class RocketPilotHud {
         int fuel=0;for(int i=0;i<36;i++){var stack=mc.player.getInventory().getStack(i);if(stack.isOf(LunarHorizons.FUEL))fuel+=stack.getCount();}
         String phase=switch(r.phase()){case RocketEntity.READY->"ready";case RocketEntity.COUNTDOWN->"countdown";case RocketEntity.ASCENT->"ascent";case RocketEntity.DESCENT->"descent";default->"idle";};
         int color=r.enginesOn()?0xfff4bc4d:0xff59cfe8;
-        ctx.fill(x,y,x+width,y+92,0xe0182332);
+        ctx.fill(x,y,x+width,y+116,0xe0182332);
         ctx.fill(x+1,y+1,x+width-1,y+2,color);
         ctx.drawTextWithShadow(mc.textRenderer,Text.translatable(r.advanced()?"hud.lunar_horizons.advanced_rocket":"hud.lunar_horizons.rocket"),x+6,y+6,color);
         Text status=Text.translatable("hud.lunar_horizons.rocket_"+phase,r.countdownSeconds());
@@ -42,6 +44,8 @@ final class RocketPilotHud {
         ctx.drawTextWithShadow(mc.textRenderer,Text.translatable("hud.lunar_horizons.rocket_reserve",r.fuelReserve(),r.fuelCapacity()),x+6,y+54,0xffc7d7e7);
         for(int i=0;i<r.fuelCapacity();i++){int cell=172/r.fuelCapacity(),left=x+6+i*cell;ctx.fill(left,y+66,left+cell-2,y+72,i<r.fuelReserve()?0xff72b8bd:0xff354653);}
         ctx.drawTextWithShadow(mc.textRenderer,Text.translatable("hud.lunar_horizons.rocket_fuel",fuel),x+6,y+78,0xffc7d7e7);
+        ctx.drawTextWithShadow(mc.textRenderer,Text.translatable("hud.lunar_horizons.destination_"+r.destination()),x+6,y+90,0xff80d2ed);
+        if(r.phase()==RocketEntity.READY)ctx.drawTextWithShadow(mc.textRenderer,Text.translatable("hud.lunar_horizons.destination_hint",destination.getBoundKeyLocalizedText()),x+6,y+102,0xffc7d7e7);
         if(r.phase()==RocketEntity.ASCENT)
             ctx.drawCenteredTextWithShadow(mc.textRenderer,Text.translatable("hud.lunar_horizons.abort_hint",launch.getBoundKeyLocalizedText()),ctx.getScaledWindowWidth()/2,ctx.getScaledWindowHeight()-74,0xffffbf72);
         if(r.phase()==RocketEntity.READY||r.phase()==RocketEntity.COUNTDOWN)

@@ -11,6 +11,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 final class MoonSurvival {
+    private static final Identifier SPACE_GRAVITY=LunarHorizons.id("space_gravity");
     private static final Identifier GRAVITY=LunarHorizons.id("moon_gravity"), FALL=LunarHorizons.id("moon_fall");
     private static void modifier(EntityAttributeInstance a,Identifier id,double value,boolean on){
         if(a==null)return;
@@ -21,13 +22,17 @@ final class MoonSurvival {
     static void tick(MinecraftServer server){
         for(ServerPlayerEntity p:server.getPlayerManager().getPlayerList()){
             boolean moon=p.getWorld().getRegistryKey().equals(LunarHorizons.MOON);
+            boolean space=p.getWorld().getRegistryKey().equals(LunarHorizons.SPACE),vacuum=moon||space;
             modifier(p.getAttributeInstance(EntityAttributes.GENERIC_GRAVITY),GRAVITY,-.75,moon);
-            modifier(p.getAttributeInstance(EntityAttributes.GENERIC_FALL_DAMAGE_MULTIPLIER),FALL,-1,moon);
+            modifier(p.getAttributeInstance(EntityAttributes.GENERIC_GRAVITY),SPACE_GRAVITY,-1,space&&!SpaceFlight.stationGravity(p));
+            modifier(p.getAttributeInstance(EntityAttributes.GENERIC_FALL_DAMAGE_MULTIPLIER),FALL,-1,vacuum);
             if(server.getTicks()%20!=0)continue;
             ExpeditionJournal.upgradeInventory(p);
-            boolean habitat=moon&&p.isAlive()&&!(p.getVehicle() instanceof RocketEntity)&&ColonyAtmosphere.breathable(p.getServerWorld(),p.getBlockPos());
+            boolean habitat=vacuum&&p.isAlive()&&!(p.getVehicle() instanceof RocketEntity)&&ColonyAtmosphere.breathable(p.getServerWorld(),p.getBlockPos());
+            SpaceFlight.setStationGravity(p,space&&habitat);
+            modifier(p.getAttributeInstance(EntityAttributes.GENERIC_GRAVITY),SPACE_GRAVITY,-1,space&&!habitat);
             ColonyStatus.send(p,habitat);
-            if(!moon||!p.isAlive()||p.isCreative()||p.isSpectator()||p.getVehicle() instanceof RocketEntity||habitat)continue;
+            if(!vacuum||!p.isAlive()||p.isCreative()||p.isSpectator()||p.getVehicle() instanceof RocketEntity||habitat)continue;
             if(OxygenSystem.ready(p)){
                 ItemStack tank=p.getInventory().getStack(OxygenSystem.tankSlot(p));
                 tank.setDamage(Math.min(tank.getMaxDamage(),tank.getDamage()+1));p.getInventory().markDirty();

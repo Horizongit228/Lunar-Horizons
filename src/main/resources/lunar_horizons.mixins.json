@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "com.lunarhorizons.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "SpaceFloatingMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

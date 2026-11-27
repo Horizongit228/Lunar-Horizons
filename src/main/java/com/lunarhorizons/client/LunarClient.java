@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry;
 public final class LunarClient implements ClientModInitializer {
     @Override public void onInitializeClient() {
         RocketPilotHud.register();
+        SpaceFlightClient.register();
         VehicleClient.register();
         EngineeringScreen.register();
         LunarGuideScreen.register();
@@ -22,6 +23,8 @@ public final class LunarClient implements ClientModInitializer {
         EntityRendererRegistry.register(LunarHorizons.ROCKET_ENTITY, RocketRenderer::new);
         EntityRendererRegistry.register(LunarHorizons.METEOR_ENTITY,MeteorRenderer::new);
         EntityRendererRegistry.register(LunarHorizons.HUGE_METEOR_ENTITY,MeteorRenderer::new);
+        DimensionRenderingRegistry.registerSkyRenderer(LunarHorizons.SPACE, LunarSky::renderOrbit);
+        DimensionRenderingRegistry.registerCloudRenderer(LunarHorizons.SPACE, context -> {});
         DimensionRenderingRegistry.registerSkyRenderer(LunarHorizons.MOON, LunarSky::render);
         DimensionRenderingRegistry.registerCloudRenderer(LunarHorizons.MOON, context -> {});
     }

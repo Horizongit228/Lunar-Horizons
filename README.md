@@ -1,4 +1,4 @@
-# Lunar Horizons — 0.8.0: Megastructure Horizons
+# Lunar Horizons — 0.9.0: Orbital Horizons
 
 Minecraft Java 1.21.1 / Fabric / Java 21. Экспериментальный мод; компиляция и тесты в игре необходимы.
 
@@ -195,3 +195,11 @@ JDK 21, Gradle 8.8: `build.bat` или `bash build.sh`; либо `gradle build`.
 - Expanded footprints: Outpost 23×17; Satellite до 21; Laboratory 31×23; Geode 11–25; Lander 11×11; Relay 20–24 в высоту; Observatory 31×33; Solar farm 41×41; Garage 23×23; Helium station 31×24; Mine 31×30; Ice complex 29×25; Bunker 23×25; Data center 31×29; Ruins 35×33; Colony 89×85; Spaceport 71×70; Energy complex 59×61; Unknown ship 111×45. The colony has six wings, transit hall, research, sleeping, maintenance and power modules; spaceport has two 17×17 pads and two hangars with a panoramic tower; reactor has a 19-block-high hall, control gallery and a 29-block core; alien ship has two decks and a torn flank. Actual occupied extents vary by orientation, access and foundations.
 - Underlying machinery, loot and readable journals retained. Reactors and alien equipment remain decorative, not new production systems. Large habitats may require internal subdivisions to fit the atmosphere simulation's room size limit. Existing chunk boundaries cannot retroactively receive pieces: a fresh moon/world is recommended.
 - Compilation and in-game multi-chunk generation require verification.
+
+## 0.9.0 — Orbital Horizons
+- New playable void dimension `lunar_horizons:space`, with no ground, no natural mobs, a large Earth disc, Moon, Sun and stars; planets are sky scenery, not traversable spheres.
+- A fixed orbital station at X=0, Y=112 (deck), Z=0, with six main modules, a subdivided transit spine, three docking pads (0/-48/48, 113, -46), photovoltaic wings, antenna and pressure windows. Overall footprint approximately 153×98 blocks including trusses. The station is generated independently per chunk with a one-block connection halo; existing station chunks are not rewritten.
+- Both rockets use G to cycle available destinations (Earth, Moon, station); R launches/cancels. Default departure destination is orbit, on arrival the rocket keeps its previous surface location. Existing direct Earth–Moon trips remain available. Every departure uses one fuel, except creative. Dock choice checks clearance and other rockets. Travel remains scripted ascent/descent and a dimension transfer, not continuous orbital simulation.
+- EVA: player gravity zero in vacuum; pressurized powered rooms simulate normal gravity. Suit and backpack enable directional thrusters (WASD, Space/Shift, Ctrl brake); standard Minecraft movement drag remains. Oxygen is consumed outside powered airtight rooms and rocket cabins. Vertical dimension boundary rescue returns the player to the central dock. A narrowly scoped mixin prevents the vanilla floating timeout in space only.
+- Existing solar, battery, oxygen, refill and habitat systems support orbit. Stations start with ice reserves and emergency supplies. Large PV wings supplement local arrays. No separate jetpack item; the existing oxygen backpack enables thrusters.
+- Testing: new dimension /execute in lunar_horizons:space run tp @s 3 114 -46 (operator). A new world is recommended for the first orbit test. Build and in-game multiplayer verification required.

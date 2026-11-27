@@ -11,6 +11,7 @@ import java.util.Random;
 
 final class LunarSky {
     private static final Identifier EARTH = LunarHorizons.id("textures/environment/earth.png");
+    private static final Identifier MOON=LunarHorizons.id("textures/environment/moon.png"),SUN=LunarHorizons.id("textures/environment/sun.png");
     private static final int COUNT = 2600;
     private static final float[][] STARS = makeStars();
 
@@ -31,7 +32,9 @@ final class LunarSky {
         return result;
     }
 
-    static void render(WorldRenderContext context) {
+    static void render(WorldRenderContext context){render(context,false);}
+    static void renderOrbit(WorldRenderContext context){render(context,true);}
+    private static void render(WorldRenderContext context,boolean orbit) {
         Matrix4f matrix = context.positionMatrix();
         float oldStart = RenderSystem.getShaderFogStart(), oldEnd = RenderSystem.getShaderFogEnd();
         RenderSystem.depthMask(false);
@@ -69,15 +72,16 @@ final class LunarSky {
             RenderSystem.defaultBlendFunc();
             RenderSystem.setShader(GameRenderer::getPositionTexProgram);
             RenderSystem.setShaderTexture(0, EARTH);
-            // Fixed celestial direction: Earth is visible above the lunar horizon.
-            Matrix4f earth = new Matrix4f(matrix).rotateY((float)Math.toRadians(32)).rotateX((float)Math.toRadians(38));
+            // In orbit the Earth fills a large portion of the lower sky.
+            Matrix4f earth = new Matrix4f(matrix).rotateY((float)Math.toRadians(32)).rotateX((float)Math.toRadians(orbit?-62:38));
             BufferBuilder b = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
-            float r=7.5f, z=-90;
+            float r=orbit?58f:7.5f, z=-90;
             b.vertex(earth,-r,r,z).texture(0,0);
             b.vertex(earth,-r,-r,z).texture(0,1);
             b.vertex(earth,r,-r,z).texture(1,1);
             b.vertex(earth,r,r,z).texture(1,0);
             BufferRenderer.drawWithGlobalProgram(b.end());
+            if(orbit){disc(matrix,MOON,-110,24,7.5f);disc(matrix,SUN,112,32,5f);}
         } finally {
             RenderSystem.setShaderFogStart(oldStart);
             RenderSystem.setShaderFogEnd(oldEnd);
@@ -86,5 +90,13 @@ final class LunarSky {
             RenderSystem.enableCull();
             RenderSystem.depthMask(true);
         }
+    }
+    private static void disc(Matrix4f matrix,Identifier tex,float yaw,float pitch,float r){
+        RenderSystem.setShaderTexture(0,tex);
+        Matrix4f m=new Matrix4f(matrix).rotateY((float)Math.toRadians(yaw)).rotateX((float)Math.toRadians(pitch));
+        BufferBuilder b=Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS,VertexFormats.POSITION_TEXTURE);
+        b.vertex(m,-r,r,-90).texture(0,0);b.vertex(m,-r,-r,-90).texture(0,1);
+        b.vertex(m,r,-r,-90).texture(1,1);b.vertex(m,r,r,-90).texture(1,0);
+        BufferRenderer.drawWithGlobalProgram(b.end());
     }
 }

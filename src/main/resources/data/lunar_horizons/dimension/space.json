@@ -1,0 +1,18 @@
+{
+  "type": "lunar_horizons:space",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "biome": "lunar_horizons:outer_space",
+      "features": true,
+      "lakes": false,
+      "structure_overrides": [],
+      "layers": [
+        {
+          "height": 1,
+          "block": "minecraft:air"
+        }
+      ]
+    }
+  }
+}

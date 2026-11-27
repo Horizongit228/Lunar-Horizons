@@ -14,9 +14,9 @@ final class OxygenHud {
         MinecraftClient mc=MinecraftClient.getInstance();
         if(mc.player==null||mc.world==null||mc.options.hudHidden||mc.player.isCreative()||mc.player.isSpectator())return;
         boolean cabin=mc.player.getVehicle() instanceof RocketEntity;
-        boolean safe=habitat&&mc.world.getRegistryKey().equals(LunarHorizons.MOON);
+        boolean safe=habitat&&LunarHorizons.vacuum(mc.world);
         boolean protectedAir=cabin||safe;
-        if(!cabin&&!mc.world.getRegistryKey().equals(LunarHorizons.MOON))return;
+        if(!cabin&&!LunarHorizons.vacuum(mc.world))return;
         int left=10,top=10,w=130;
         int remaining=OxygenSystem.remaining(mc.player),capacity=OxygenSystem.capacity(mc.player);
         boolean suit=OxygenSystem.hasSuit(mc.player)&&OxygenSystem.hasBackpack(mc.player);

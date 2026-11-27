@@ -3,7 +3,7 @@
   "id": "lunar_horizons",
   "version": "${version}",
   "name": "Lunar Horizons",
-  "description": "Launch a rocket and explore the Moon. Early prototype.",
+  "description": "Explore the Moon, build lunar colonies and travel to an orbital station.",
   "environment": "*",
   "entrypoints": {
     "main": [
@@ -19,5 +19,8 @@
     "java": ">=21",
     "fabric-api": "*"
   },
-  "icon": "assets/lunar_horizons/icon.png"
+  "icon": "assets/lunar_horizons/icon.png",
+  "mixins": [
+    "lunar_horizons.mixins.json"
+  ]
 }

@@ -23,7 +23,7 @@ final class ColonyGrid {
         while(!queue.isEmpty()){
             BlockPos p=queue.remove();BlockState state=w.getBlockState(p);ColonyConduitBlock.refresh(w,p,state);SolarPanelBlock.refresh(w,p,state);ColonyMachineBlock.refresh(w,p,w.getBlockState(p));
             if(w.getBlockEntity(p) instanceof ColonyBlockEntity be)machines.add(be);
-            if((state.isOf(LunarHorizons.SOLAR_PANEL)||state.isOf(LunarHorizons.DAMAGED_SOLAR_PANEL)||state.isOf(LunarHorizons.ADVANCED_SOLAR_PANEL))&&w.isSkyVisible(p.up())&&(w.getRegistryKey().equals(LunarHorizons.MOON)||w.isDay()))solar+=state.isOf(LunarHorizons.ADVANCED_SOLAR_PANEL)?90:state.isOf(LunarHorizons.SOLAR_PANEL)?30:8;
+            if((state.isOf(LunarHorizons.SOLAR_PANEL)||state.isOf(LunarHorizons.DAMAGED_SOLAR_PANEL)||state.isOf(LunarHorizons.ADVANCED_SOLAR_PANEL))&&w.isSkyVisible(p.up())&&(LunarHorizons.vacuum(w)||w.isDay()))solar+=state.isOf(LunarHorizons.ADVANCED_SOLAR_PANEL)?90:state.isOf(LunarHorizons.SOLAR_PANEL)?30:8;
             for(Direction dir:Direction.values()){
                 BlockPos q=p.offset(dir);
                 if(!loaded(w,q)||nodes.contains(q)||!conductor(w.getBlockState(q)))continue;

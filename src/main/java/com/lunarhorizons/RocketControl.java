@@ -12,6 +12,7 @@ public record RocketControl() implements CustomPayload {
     public static final PacketCodec<RegistryByteBuf,RocketControl> CODEC=PacketCodec.unit(INSTANCE);
     @Override public CustomPayload.Id<? extends CustomPayload> getId(){return ID;}
     public static void register(){
+        RocketDestination.register();
         PayloadTypeRegistry.playC2S().register(ID,CODEC);
         ServerPlayNetworking.registerGlobalReceiver(ID,(payload,context)->{
             var p=context.player();

@@ -42,6 +42,8 @@ import net.minecraft.server.world.ServerWorld;
 
 public final class LunarHorizons implements ModInitializer {
     public static final String ID = "lunar_horizons";
+    public static final RegistryKey<World> SPACE = RegistryKey.of(RegistryKeys.WORLD,id("space"));
+    public static boolean vacuum(World w){return w.getRegistryKey().equals(MOON)||w.getRegistryKey().equals(SPACE);}
     public static final RegistryKey<World> MOON = RegistryKey.of(RegistryKeys.WORLD, id("moon"));
     public static final Block REGOLITH = block("regolith", AbstractBlock.Settings.copy(Blocks.DIRT));
     public static final Block MOON_ROCK = block("moon_rock", AbstractBlock.Settings.copy(Blocks.STONE));
@@ -144,6 +146,7 @@ public final class LunarHorizons implements ModInitializer {
     public static final Feature<DefaultFeatureConfig> SITE_18=Registry.register(Registries.FEATURE,id("crashed_alien_ship"),new ExplorationSiteFeature(DefaultFeatureConfig.CODEC,18));
     public static final net.minecraft.world.gen.structure.StructureType<LunarSiteStructure> LUNAR_SITE_TYPE=Registry.register(Registries.STRUCTURE_TYPE,id("lunar_site"),(net.minecraft.world.gen.structure.StructureType<LunarSiteStructure>)()->LunarSiteStructure.CODEC);
     public static final net.minecraft.structure.StructurePieceType LUNAR_SITE_PIECE=Registry.register(Registries.STRUCTURE_PIECE,id("lunar_site_piece"),(net.minecraft.structure.StructurePieceType.Simple)LunarSitePiece::new);
+    public static final Feature<DefaultFeatureConfig> ORBITAL_STATION=Registry.register(Registries.FEATURE,id("orbital_station"),new OrbitalStationFeature(DefaultFeatureConfig.CODEC));
     public static final Feature<DefaultFeatureConfig> CAVE_NETWORK = Registry.register(Registries.FEATURE,id("cave_network"),new LunarCaveNetworkFeature(DefaultFeatureConfig.CODEC));
     public static final Feature<DefaultFeatureConfig> HALL_DECOR = Registry.register(Registries.FEATURE,id("hall_decor"),new LunarHallDecorFeature(DefaultFeatureConfig.CODEC));
     public static final Block SOLAR_PANEL = solarPanel("solar_panel",false);
@@ -257,6 +260,7 @@ public final class LunarHorizons implements ModInitializer {
     public static boolean hasHelmet(ServerPlayerEntity p) { return p.getEquippedStack(EquipmentSlot.HEAD).isOf(HELMET); }
     @Override public void onInitialize() {
         RocketControl.register();
+        SpaceFlight.register();
         RoverControl.register();
         ColonyStatus.register();
         EngineeringPackets.register();
@@ -265,8 +269,8 @@ public final class LunarHorizons implements ModInitializer {
         LunarCommands.register();
         net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.SERVER_STOPPED.register(server -> MeteorEvents.clear());
         Registry.register(Registries.ITEM_GROUP, id("main"), GROUP);
-        ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> !(entity instanceof ServerPlayerEntity player && player.getWorld().getRegistryKey().equals(MOON) && source.isIn(DamageTypeTags.IS_FALL)));
-        net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents.ALLOW_SLEEP_TIME.register((player,pos,vanilla)->player.getWorld().getRegistryKey().equals(MOON)?ActionResult.SUCCESS:ActionResult.PASS);
+        ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> !(entity instanceof ServerPlayerEntity player && vacuum(player.getWorld()) && source.isIn(DamageTypeTags.IS_FALL)));
+        net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents.ALLOW_SLEEP_TIME.register((player,pos,vanilla)->vacuum(player.getWorld())?ActionResult.SUCCESS:ActionResult.PASS);
         UseBlockCallback.EVENT.register((player, world, hand, hit) -> {
             if(!player.isSpectator()&&hand==Hand.MAIN_HAND){
                 var pos=hit.getBlockPos();
@@ -303,6 +307,7 @@ public final class LunarHorizons implements ModInitializer {
         });
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             MoonSurvival.tick(server);
+            SpaceFlight.tick(server);
             MeteorEvents.tick(server);
         });
     }

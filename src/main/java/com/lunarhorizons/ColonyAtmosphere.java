@@ -7,7 +7,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.state.property.Properties;
 final class ColonyAtmosphere {
     static boolean breathable(ServerWorld w,BlockPos origin){
-        if(!w.getRegistryKey().equals(LunarHorizons.MOON)||!ColonyGrid.loaded(w,origin)||!passable(w,origin))return false;
+        if(!LunarHorizons.vacuum(w)||!ColonyGrid.loaded(w,origin)||!passable(w,origin))return false;
         Set<BlockPos> seen=new HashSet<>(),vents=new HashSet<>();ArrayDeque<BlockPos> queue=new ArrayDeque<>();
         queue.add(origin);seen.add(origin);boolean oxygen=false;
         while(!queue.isEmpty()){
