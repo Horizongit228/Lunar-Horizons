@@ -59,10 +59,14 @@ final class ColonyGrid {
             be.setActive(on);
         }
         int balance=generated-spent;
+        // Rotate the first battery each transaction so one unit does not take every cycle.
+        if(!batteries.isEmpty())Collections.rotate(batteries,(int)Math.floorMod(w.getTime()/20,batteries.size()));
         for(var b:batteries){
+            int previousEnergy=b.energy;
             if(balance>=0){int add=Math.min(balance,b.capacity()-b.energy);b.energy+=add;balance-=add;}
             else {int take=Math.min(-balance,b.energy);b.energy-=take;balance+=take;}
-            b.setActive(b.energy>0);b.markDirty();
+            b.setActive(b.energy>0);
+            if(b.energy!=previousEnergy)b.markDirty();
         }
         int stored=batteries.stream().mapToInt(b->b.energy).sum();
         int capacity=batteries.stream().mapToInt(ColonyBlockEntity::capacity).sum();
