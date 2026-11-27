@@ -107,6 +107,20 @@ public final class LunarSitePiece extends StructurePiece {
                 }
             }
         }
+        // Seed the rare facility with finite startup supplies. Never modify old sites.
+        if(kind==19)for(int i=0;i+1<cells.length;i+=2){
+            BlockPos p=unpack(cells[i]);if(!box.contains(p))continue;
+            if(world.getBlockEntity(p) instanceof ColonyBlockEntity be){
+                switch(be.kind()){
+                    case BATTERY -> be.energy=be.capacity()/2;
+                    case OXYGEN -> be.input=16;
+                    case GENERATOR -> be.input=8;
+                    case SERVER -> {if(Math.floorMod(p.asLong()^seed,4)==0)be.input=1;}
+                    default -> {}
+                }
+                be.markDirty();
+            }
+        }
         // Stable per-chest loot stream, independent of chunk visitation order.
         for(int i=0;i+1<loot.length;i+=2){
             BlockPos p=unpack(loot[i]);if(box.contains(p)&&world.getBlockState(p).isOf(Blocks.CHEST))
