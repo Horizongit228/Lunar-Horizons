@@ -147,7 +147,7 @@ final class SiteFinisher {
     }
     private static boolean source(BlockState s,boolean oxygen){
         if(oxygen)return s.isOf(LunarHorizons.OXYGEN_GENERATOR);
-        return s.isOf(LunarHorizons.BATTERY)||s.isOf(LunarHorizons.INDUSTRIAL_BATTERY)||s.isOf(LunarHorizons.HELIUM_GENERATOR)||s.getBlock() instanceof SolarPanelBlock;
+        return s.isOf(LunarHorizons.HELIUM_GENERATOR)||s.getBlock() instanceof SolarPanelBlock;
     }
     private static boolean clearRouteCell(ExplorationSiteFeature.Plan p,BlockPos q,boolean oxygen){
         if(!empty(p,q)||q.getY()<p.origin.getY()+1)return false;
@@ -172,7 +172,8 @@ final class SiteFinisher {
             if(source(s,oxygen)){parent.put(q,q);distance.put(q,0);queue.add(q);}
             else if(port(s,oxygen))targets.add(q);
         }
-        if(queue.isEmpty())return;
+        // Battery-only wrecks may still have a valid local circuit.
+        if(queue.isEmpty()&&!oxygen)for(BlockPos q:targets){BlockState s=p.blocks.get(q);if(s.isOf(LunarHorizons.BATTERY)||s.isOf(LunarHorizons.INDUSTRIAL_BATTERY)){parent.put(q,q);distance.put(q,0);queue.add(q);}}
         while(!queue.isEmpty()&&parent.size()<60000){
             BlockPos q=queue.remove();int n=distance.get(q);if(n>=40)continue;
             for(Direction d:Direction.values()){
