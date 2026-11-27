@@ -79,7 +79,7 @@ public final class RoverEntity extends Entity {
     @Override public void tick(){
         super.tick();
         if(getWorld().isClient){
-            previousWheelAngle=wheelAngle;wheelAngle+=speed()/200f/(advanced()?.36f:.30f);
+            previousWheelAngle=wheelAngle;wheelAngle+=speed()/200f/(advanced()?.3125f:.30f);
             if(Math.abs(wheelAngle)>Math.PI*2){float shift=(float)(Math.PI*2)*Math.signum(wheelAngle);wheelAngle-=shift;previousWheelAngle-=shift;}
             previousSteeringAngle=steeringAngle;steeringAngle+=(getDataTracker().get(STEERING)/1000f-steeringAngle)*.32f;
             if(steps>0){setPosition(getX()+(lx-getX())/steps,getY()+(ly-getY())/steps,getZ()+(lz-getZ())/steps);setYaw(getYaw()+MathHelper.wrapDegrees(lyaw-getYaw())/steps);steps--;}
@@ -120,9 +120,10 @@ public final class RoverEntity extends Entity {
         if(powered&&!pilot.isCreative()&&grounded&&(throttle!=0&&!brake||steer!=0&&!brake))energy(energy()-1);
         boolean parked=pilot==null&&isOnGround()&&Math.abs(drive)<.005;
         int mode=precision?PRECISION:0;
-        boolean sunlight=advanced()&&parked&&w.isSkyVisible(getBlockPos().up(2))&&(LunarHorizons.vacuum(w)||w.isDay());
-        if(sunlight&&energy()<capacity()){mode|=SOLAR;if(age%20==0)energy(energy()+15);}
-        if(parked&&energy()<capacity()){
+        if(parked&&energy()<capacity()&&age%20!=0)mode|=status()&(CHARGING|SOLAR);
+        boolean sunlight=advanced()&&parked&&age%20==0&&w.isSkyVisible(getBlockPos().up(2))&&(LunarHorizons.vacuum(w)||w.isDay());
+        if(sunlight&&energy()<capacity()){mode|=SOLAR;energy(energy()+15);}
+        if(parked&&age%20==0&&energy()<capacity()){
             // Select the nearest enabled battery, with deterministic tie breaking.
             BlockPos center=getBlockPos();
             ColonyBlockEntity nearest=null;int best=Integer.MAX_VALUE;
@@ -139,6 +140,7 @@ public final class RoverEntity extends Entity {
                 }
             }
         }
+        if(energy()>=capacity())mode&=~(CHARGING|SOLAR);
         if(energy()*10<=capacity())mode|=LOW_ENERGY;
         getDataTracker().set(STATUS,mode);
         setVelocity(Vec3d.ZERO);
