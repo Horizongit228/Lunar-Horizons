@@ -1,0 +1,15 @@
+{
+  "structures": [
+    {
+      "structure": "lunar_horizons:ultra_data_center",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 256,
+    "separation": 192,
+    "salt": 194632719,
+    "frequency": 0.25
+  }
+}
