@@ -18,7 +18,7 @@ final class ExpeditionJournal {
     private static void page(List<RawFilteredPair<Text>> pages,String key,Object... values){pages.add(RawFilteredPair.<Text>of(tr(key,values)));}
     static ItemStack create(int type,Random r,BlockPos pos){
         List<RawFilteredPair<Text>> pages=new ArrayList<>();
-        String id=(type==2?"SAT":type==6?"LND":type==7?"RLY":type<2?"OUT":"LAB")+"-"+(100+r.nextInt(900));
+        String id=(type>=9?"EXP":type==2?"SAT":type==6?"LND":type==7?"RLY":type<2?"OUT":"LAB")+"-"+(100+r.nextInt(900));
         int power=5+r.nextInt(56),signal=2+r.nextInt(39),damage=30+r.nextInt(61);
         String time=String.format(Locale.ROOT,"%02d:%02d:%02d",r.nextInt(24),r.nextInt(60),r.nextInt(60));
         page(pages,"record",tr(type+".title"),id,time);
@@ -33,6 +33,7 @@ final class ExpeditionJournal {
             if(type>=3&&type<=5)page(pages,"lab_samples",3+r.nextInt(29),1+r.nextInt(5),tr("sample."+r.nextInt(3)));
             else if(type==7)page(pages,"relay_data",signal,1+r.nextInt(12));
             else if(type==6)page(pages,"lander_data",2+r.nextInt(12),power);
+            else if(type>=9)page(pages,"site_record",1+r.nextInt(80),signal,1+r.nextInt(12));
             else page(pages,"outpost_reserve",12+r.nextInt(89),1+r.nextInt(9));
         }
         if(pos==null)page(pages,"unknown_location");else page(pages,"location",pos.getX(),pos.getY(),pos.getZ());

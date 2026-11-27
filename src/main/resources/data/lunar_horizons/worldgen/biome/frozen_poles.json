@@ -49,7 +49,19 @@
       "lunar_horizons:buried_lab",
       "lunar_horizons:lunar_geode",
       "lunar_horizons:old_lander",
-      "lunar_horizons:relay_tower"
+      "lunar_horizons:relay_tower",
+      "lunar_horizons:radio_observatory",
+      "lunar_horizons:solar_farm",
+      "lunar_horizons:rover_garage",
+      "lunar_horizons:abandoned_mine",
+      "lunar_horizons:ice_complex",
+      "lunar_horizons:emergency_bunker",
+      "lunar_horizons:data_center",
+      "lunar_horizons:alien_ruins",
+      "lunar_horizons:abandoned_colony",
+      "lunar_horizons:lunar_spaceport",
+      "lunar_horizons:reactor_complex",
+      "lunar_horizons:crashed_alien_ship"
     ],
     []
   ]
