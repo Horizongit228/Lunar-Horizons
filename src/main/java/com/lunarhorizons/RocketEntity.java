@@ -32,7 +32,11 @@ public final class RocketEntity extends Entity {
     private static final TrackedData<Integer> PHASE = DataTracker.registerData(RocketEntity.class, TrackedDataHandlerRegistry.INTEGER);
     private static final TrackedData<Integer> ALTITUDE = DataTracker.registerData(RocketEntity.class, TrackedDataHandlerRegistry.INTEGER);
     private static final TrackedData<Integer> COUNTDOWN_SYNC = DataTracker.registerData(RocketEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    private static final TrackedData<Integer> FUEL_RESERVE = DataTracker.registerData(RocketEntity.class,TrackedDataHandlerRegistry.INTEGER);
+    private static final TrackedData<Integer> SPEED = DataTracker.registerData(RocketEntity.class,TrackedDataHandlerRegistry.INTEGER);
+    public static final int FUEL_CAPACITY=8;
     private static final int COUNTDOWN_TICKS = 100;
+    private double lastFlightY=Double.NaN;
     private BlockPos landing = BlockPos.ORIGIN;
     private BlockPos home = null;
     private int phaseTicks, missingPilotTicks;
@@ -45,11 +49,15 @@ public final class RocketEntity extends Entity {
         setNoGravity(true);
     }
 
-    @Override protected void initDataTracker(DataTracker.Builder builder) { builder.add(PHASE, IDLE); builder.add(ALTITUDE,0); builder.add(COUNTDOWN_SYNC,0); }
+    @Override protected void initDataTracker(DataTracker.Builder builder) { builder.add(PHASE, IDLE); builder.add(ALTITUDE,0); builder.add(COUNTDOWN_SYNC,0); builder.add(FUEL_RESERVE,0); builder.add(SPEED,0); }
     public int phase() { return getDataTracker().get(PHASE); }
     private void phase(int value) { getDataTracker().set(PHASE,value); phaseTicks=0; missingPilotTicks=0; }
     public int flightAltitude(){return getDataTracker().get(ALTITUDE);}
     public int countdownSeconds(){return getDataTracker().get(COUNTDOWN_SYNC);}
+    public int fuelReserve(){return getDataTracker().get(FUEL_RESERVE);}
+    private void fuelReserve(int fuel){getDataTracker().set(FUEL_RESERVE,MathHelper.clamp(fuel,0,FUEL_CAPACITY));}
+    public int flightSpeedTenths(){return getDataTracker().get(SPEED);}
+    public boolean warmingUp(){return phase()==COUNTDOWN&&countdownSeconds()<=2;}
     public boolean enginesOn() { return phase()==ASCENT || phase()==DESCENT; }
 
     @Override protected void readCustomDataFromNbt(NbtCompound nbt) {
@@ -57,12 +65,14 @@ public final class RocketEntity extends Entity {
         home = nbt.contains("Home") ? BlockPos.fromLong(nbt.getLong("Home")) : null;
         phase(MathHelper.clamp(nbt.getInt("Phase"), IDLE, READY));
         phaseTicks = Math.max(0, nbt.getInt("PhaseTicks"));
+        fuelReserve(nbt.getInt("FuelReserve"));
     }
     @Override protected void writeCustomDataToNbt(NbtCompound nbt) {
         nbt.putLong("Landing",landing.asLong());
         if (home!=null) nbt.putLong("Home",home.asLong());
         nbt.putInt("Phase",phase());
         nbt.putInt("PhaseTicks",phaseTicks);
+        nbt.putInt("FuelReserve",fuelReserve());
     }
 
     @Override public boolean canHit() { return isAlive(); }
@@ -149,7 +159,21 @@ public final class RocketEntity extends Entity {
         if(getWorld().isClient) return ActionResult.SUCCESS;
         if(!(player instanceof ServerPlayerEntity p) || !(getWorld() instanceof ServerWorld world)) return ActionResult.PASS;
         if(phase()!=IDLE || hasPassengers()) {message(p,"busy");return ActionResult.CONSUME;}
+        ItemStack held=p.getStackInHand(hand);
+        if(held.isOf(LunarHorizons.FUEL)){
+            int add=Math.min(FUEL_CAPACITY-fuelReserve(),p.isSneaking()?held.getCount():1);
+            if(add<=0){message(p,"rocket_tank_full");return ActionResult.CONSUME;}
+            fuelReserve(fuelReserve()+add);
+            if(!p.isCreative())held.decrement(add);
+            message(p,"rocket_refueled",fuelReserve(),FUEL_CAPACITY);
+            return ActionResult.CONSUME;
+        }
         if(p.isSneaking()) {
+            if(fuelReserve()>0){
+                ItemStack reserve=new ItemStack(LunarHorizons.FUEL,fuelReserve());
+                if(!p.getInventory().insertStack(reserve)&&!reserve.isEmpty())p.dropItem(reserve,false);
+                fuelReserve(0);
+            }
             ItemStack stack = new ItemStack(LunarHorizons.ROCKET_ITEM);
             if(!p.getInventory().insertStack(stack) && !stack.isEmpty()) p.dropItem(stack,false);
             discard();
@@ -165,7 +189,7 @@ public final class RocketEntity extends Entity {
         if(!clear(world,landing,8) || world.getTopY()-landing.getY()<18){message(p,"big_blocked");return false;}
         int height = Math.min(64, world.getTopY()-landing.getY());
         if(!clear(world,landing,height)){message(p,"launch_corridor");return false;}
-        if(!p.isCreative() && fuelSlot(p)<0){message(p,"need_fuel");return false;}
+        if(!p.isCreative() && fuelReserve()==0 && fuelSlot(p)<0){message(p,"need_fuel");return false;}
         if(!p.isCreative() && world.getRegistryKey().equals(World.OVERWORLD) &&
                 !OxygenSystem.ready(p)){message(p,"need_suit");return false;}
         return true;
@@ -180,6 +204,7 @@ public final class RocketEntity extends Entity {
         if(getWorld().isClient || !(getWorld() instanceof ServerWorld world) || getFirstPassenger()!=pilot || !pilot.isAlive())return;
         if(phase()==READY && ready(pilot,world)){phase(COUNTDOWN);getDataTracker().set(COUNTDOWN_SYNC,5);message(pilot,"countdown",5);}
         else if(phase()==COUNTDOWN){phase(READY);getDataTracker().set(COUNTDOWN_SYNC,0);message(pilot,"launch_cancelled");}
+        else if(phase()==ASCENT){phase(DESCENT);message(pilot,"rocket_abort");}
     }
 
     @Override public void updateTrackedPositionAndAngles(double x,double y,double z,float yaw,float pitch,int steps) {
@@ -201,6 +226,9 @@ public final class RocketEntity extends Entity {
         setVelocity(Vec3d.ZERO);
         ServerPlayerEntity pilot=getFirstPassenger() instanceof ServerPlayerEntity p && p.isAlive()?p:null;
         phaseTicks++;
+        int speed=Double.isNaN(lastFlightY)?0:(int)Math.round((getY()-lastFlightY)*200);
+        getDataTracker().set(SPEED,enginesOn()?speed:0);
+        lastFlightY=getY();
         getDataTracker().set(ALTITUDE,Math.max(0,(int)Math.ceil(getY()-landing.getY())));
         getDataTracker().set(COUNTDOWN_SYNC,phase()==COUNTDOWN?Math.max(0,(COUNTDOWN_TICKS-phaseTicks+19)/20):0);
         switch(phase()){
@@ -217,8 +245,8 @@ public final class RocketEntity extends Entity {
                 if(phaseTicks>=COUNTDOWN_TICKS){
                     if(!ready(pilot,world)){phase(READY);return;}
                     if(!pilot.isCreative()){
-                        pilot.getInventory().getStack(fuelSlot(pilot)).decrement(1);
-                        pilot.getInventory().markDirty();
+                        if(fuelReserve()>0)fuelReserve(fuelReserve()-1);
+                        else {pilot.getInventory().getStack(fuelSlot(pilot)).decrement(1);pilot.getInventory().markDirty();}
                     }
                     if(world.getRegistryKey().equals(World.OVERWORLD)) home=landing;
                     phase(ASCENT);
@@ -230,7 +258,7 @@ public final class RocketEntity extends Entity {
                 if(pilot==null){if(++missingPilotTicks>60)phase(DESCENT);return;}
                 missingPilotTicks=0;
                 double travel=Math.min(48,world.getTopY()-landing.getY()-9);
-                double rise=Math.min(.85,.055+phaseTicks*.009);
+                double rise=Math.min(1.05,.045+phaseTicks*.0075);
                 double next=Math.min(landing.getY()+travel,getY()+rise);
                 // Entire sweep is checked for obstructions; no blocks are broken.
                 if(!clear(world,landing,Math.min(world.getTopY()-landing.getY(),(int)Math.ceil(next-landing.getY())+8))){message(pilot,"launch_corridor");phase(DESCENT);return;}
@@ -241,13 +269,13 @@ public final class RocketEntity extends Entity {
             }
             case DESCENT -> {
                 double remaining=getY()-landing.getY();
-                double speed=Math.min(.55,Math.max(.055,remaining*.10));
-                double next=Math.max(landing.getY(),getY()-speed);
+                double descentSpeed=Math.min(.72,Math.max(.035,remaining*.085));
+                double next=Math.max(landing.getY(),getY()-descentSpeed);
                 int y=(int)Math.floor(next);
                 if(!clear(world,new BlockPos(landing.getX(),y,landing.getZ()),9)){
                     // Stop over new terrain instead of clipping through a newly built roof.
                     BlockPos alternate=findLanding(world,landing);
-                    if(alternate==null){if(pilot!=null)message(pilot,"no_landing");return;}
+                    if(alternate==null){if(pilot!=null&&phaseTicks%40==0)message(pilot,"no_landing");return;}
                     landing=alternate;setPosition(landing.getX()+.5,landing.getY()+descentHeight(world,landing),landing.getZ()+.5);
                     return;
                 }
@@ -290,11 +318,30 @@ public final class RocketEntity extends Entity {
             if(!existing)pos=pos.up();
             int h=descentHeight(world,pos);
             if(h<12 || !clear(world,pos,h+8)||occupied(world,pos,h+8))continue;
-            if(!existing && !world.getBlockState(pos.down(2)).isSolidBlock(world,pos.down(2)))continue;
             if(!existing){
                 if(!clear(world,pos.down(),1))continue;
-                for(int a=-1;a<=1;a++)for(int b=-1;b<=1;b++)
+                // Require a solid footing within three blocks under every pad column.
+                boolean supported=true;
+                for(int a=-1;a<=1;a++)for(int b=-1;b<=1;b++){
+                    BlockPos footing=pos.add(a,-2,b);
+                    boolean found=false;
+                    for(int drop=0;drop<=2;drop++){
+                        BlockPos q=footing.down(drop);
+                        if(world.getBlockState(q).isSolidBlock(world,q)&&world.getFluidState(q).isEmpty()){found=true;break;}
+                        if(!world.isAir(q))break;
+                    }
+                    if(!found)supported=false;
+                }
+                if(!supported)continue;
+                for(int a=-1;a<=1;a++)for(int b=-1;b<=1;b++){
+                    BlockPos footing=pos.add(a,-2,b);
+                    for(int drop=0;drop<=2;drop++){
+                        BlockPos q=footing.down(drop);
+                        if(!world.isAir(q))break;
+                        world.setBlockState(q,LunarHorizons.MOON_BRICKS.getDefaultState());
+                    }
                     world.setBlockState(pos.add(a,-1,b),LunarHorizons.LAUNCH_PAD.getDefaultState());
+                }
             }
             return pos;
         }
@@ -309,7 +356,7 @@ public final class RocketEntity extends Entity {
         BlockPos dest=findLanding(target,!moon&&home!=null?home:landing);
         if(dest==null){message(pilot,"no_landing");phase(DESCENT);return;}
         RocketEntity arrival=new RocketEntity(LunarHorizons.ROCKET_ENTITY,target);
-        arrival.landing=dest;arrival.home=home;arrival.phase(DESCENT);
+        arrival.landing=dest;arrival.home=home;arrival.fuelReserve(fuelReserve());arrival.phase(DESCENT);
         double x=dest.getX()+.5,y=dest.getY()+descentHeight(target,dest),z=dest.getZ()+.5;
         arrival.refreshPositionAndAngles(x,y,z,getYaw(),0);
         if(!target.spawnEntity(arrival)){phase(DESCENT);message(pilot,"no_landing");return;}

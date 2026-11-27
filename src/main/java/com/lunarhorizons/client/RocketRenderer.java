@@ -135,10 +135,10 @@ public final class RocketRenderer extends EntityRenderer<RocketEntity> {
             RenderLayer layer=piece.glass?RenderLayer.getEntityTranslucent(CLEAR_TEXTURE):RenderLayer.getEntityCutoutNoCull(TEXTURE);
             piece.model.render(matrices,vertices.getBuffer(layer),light,OverlayTexture.DEFAULT_UV,piece.color);
         }
-        if(entity.enginesOn()){
+        if(entity.enginesOn()||entity.warmingUp()){
             matrices.push();
             float pulse=.80f+.20f*(float)Math.sin((entity.age+tickDelta)*1.3);
-            matrices.scale(1,pulse,1);
+            matrices.scale(1,pulse*(entity.warmingUp()?.22f:entity.phase()==RocketEntity.DESCENT?.66f:1f),1);
             for(Piece flame:new Piece[]{flameOuter,flameCore})
                 flame.model.render(matrices,vertices.getBuffer(RenderLayer.getEntityTranslucent(CLEAR_TEXTURE)),0x00F000F0,OverlayTexture.DEFAULT_UV,flame.color);
             matrices.pop();

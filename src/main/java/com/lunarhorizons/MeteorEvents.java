@@ -21,10 +21,10 @@ import net.minecraft.world.Heightmap;
 final class MeteorEvents {
     private static final double HUGE_CHANCE=.01, NORMAL_CHANCE=.10;
     private static final int CHECK_INTERVAL=1200;
-    private record Meteor(ServerWorld world,BlockPos pos,int start,int dx,int dz,boolean huge){}
+    private record Meteor(ServerWorld world,BlockPos pos,int start,int dx,int dz,boolean huge,double height,MeteorEntity body){}
     private record Column(BlockPos surface,int depth){}
     private static final List<Meteor> ACTIVE=new ArrayList<>();
-    static void clear(){ACTIVE.clear();}
+    static void clear(){for(Meteor m:ACTIVE)m.body.discard();ACTIVE.clear();}
     static void tick(MinecraftServer server){
         int tick=server.getTicks();
         ServerWorld moon=server.getWorld(LunarHorizons.MOON);
@@ -43,17 +43,20 @@ final class MeteorEvents {
         }
         for(Iterator<Meteor> it=ACTIVE.iterator();it.hasNext();){
             Meteor meteor=it.next();int age=tick-meteor.start;BlockPos p=meteor.pos;ServerWorld w=meteor.world;
-            if(!w.isChunkLoaded(p.getX()>>4,p.getZ()>>4)){it.remove();continue;}
+            if(meteor.body.isRemoved()||!w.isChunkLoaded(p.getX()>>4,p.getZ()>>4)){meteor.body.discard();it.remove();continue;}
             int duration=meteor.huge?120:65;
             if(age<duration){
-                double t=1-age/(double)duration,x=p.getX()+.5+meteor.dx*t,z=p.getZ()+.5+meteor.dz*t,y=p.getY()+.5+(meteor.huge?85:48)*t;
+                double t=1-age/(double)duration,x=p.getX()+.5+meteor.dx*t,z=p.getZ()+.5+meteor.dz*t,y=p.getY()+meteor.height*t;
+                if(!w.isChunkLoaded(((int)Math.floor(x))>>4,((int)Math.floor(z))>>4)){meteor.body.discard();it.remove();continue;}
+                meteor.body.setPosition(x,y,z);
                 if(age%2==0){
-                    double size=meteor.huge?1.8:.35;
-                    w.spawnParticles(ParticleTypes.FLAME,x,y,z,meteor.huge?28:8,size,size,size,.03);
-                    w.spawnParticles(ParticleTypes.SMOKE,x,y,z,meteor.huge?35:7,size,size,size,.025);
-                    w.spawnParticles(new BlockStateParticleEffect(ParticleTypes.BLOCK,LunarHorizons.METEORITE_ROCK.getDefaultState()),x,y,z,meteor.huge?45:12,size*.65,size*.65,size*.65,.015);
+                    double size=meteor.huge?1.2:.25;
+                    w.spawnParticles(ParticleTypes.FLAME,x,y,z,meteor.huge?12:4,size,size,size,.03);
+                    w.spawnParticles(ParticleTypes.SMOKE,x,y,z,meteor.huge?16:4,size,size,size,.025);
+                    w.spawnParticles(new BlockStateParticleEffect(ParticleTypes.BLOCK,LunarHorizons.METEORITE_ROCK.getDefaultState()),x,y,z,meteor.huge?8:2,size*.65,size*.65,size*.65,.015);
                 }
             }else{
+                meteor.body.discard();
                 impact(w,p,meteor.huge);
                 it.remove();
             }
@@ -76,7 +79,14 @@ final class MeteorEvents {
         if(!moon.getRegistryKey().equals(LunarHorizons.MOON)||hasActive()||!moon.isChunkLoaded(x>>4,z>>4))return null;
         BlockPos p=new BlockPos(x,moon.getTopY(Heightmap.Type.MOTION_BLOCKING,x,z),z);
         if(!moon.getWorldBorder().contains(p)||plan(moon,p,huge)==null)return null;
-        ACTIVE.add(new Meteor(moon,p,tick,moon.getRandom().nextInt(21)-10,moon.getRandom().nextInt(21)-10,huge));
+        int dx=moon.getRandom().nextInt(21)-10,dz=moon.getRandom().nextInt(21)-10;
+        double height=Math.min(huge?85:48,moon.getTopY()-p.getY()-7);
+        if(height<12||!moon.isChunkLoaded((x+dx)>>4,(z+dz)>>4))return null;
+        MeteorEntity body=new MeteorEntity(huge?LunarHorizons.HUGE_METEOR_ENTITY:LunarHorizons.METEOR_ENTITY,moon);
+        body.managed=true;
+        body.refreshPositionAndAngles(x+.5+dx,p.getY()+height,z+.5+dz,0,0);
+        if(!moon.spawnEntity(body))return null;
+        ACTIVE.add(new Meteor(moon,p,tick,dx,dz,huge,height,body));
         for(ServerPlayerEntity nearby:moon.getPlayers()){
             double dx=nearby.getX()-x,dz=nearby.getZ()-z;
             if(dx*dx+dz*dz<128*128)nearby.sendMessage(Text.translatable(huge?"message.lunar_horizons.huge_meteor_warning":"message.lunar_horizons.meteor_warning"),false);

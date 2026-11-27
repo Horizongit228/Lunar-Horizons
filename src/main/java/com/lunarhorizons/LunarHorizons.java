@@ -54,6 +54,12 @@ public final class LunarHorizons implements ModInitializer {
             EntityType.Builder.<RocketEntity>create(RocketEntity::new, SpawnGroup.MISC)
                     .dimensions(3.0F, 8.0F).maxTrackingRange(16).trackingTickInterval(1)
                     .makeFireImmune().build(ID + ":rocket"));
+    public static final EntityType<MeteorEntity> METEOR_ENTITY = Registry.register(Registries.ENTITY_TYPE,id("meteor"),
+        EntityType.Builder.<MeteorEntity>create(MeteorEntity::new,SpawnGroup.MISC)
+            .dimensions(1.4F,1.4F).maxTrackingRange(16).trackingTickInterval(1).makeFireImmune().disableSaving().build(ID+":meteor"));
+    public static final EntityType<MeteorEntity> HUGE_METEOR_ENTITY = Registry.register(Registries.ENTITY_TYPE,id("huge_meteor"),
+        EntityType.Builder.<MeteorEntity>create(MeteorEntity::new,SpawnGroup.MISC)
+            .dimensions(5.5F,5.5F).maxTrackingRange(16).trackingTickInterval(1).makeFireImmune().disableSaving().build(ID+":huge_meteor"));
     public static final Block ROCKET = Registry.register(Registries.BLOCK, id("rocket"),
             new Block(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).nonOpaque()));
     public static final Item ROCKET_ITEM = item("rocket", new RocketItem(ROCKET, new Item.Settings().maxCount(1)));
@@ -118,12 +124,11 @@ public final class LunarHorizons implements ModInitializer {
     public static final Block RED_FLAG = flag("red_flag");
     public static final Block BLUE_FLAG = flag("blue_flag");
     public static final Block ORANGE_FLAG = flag("orange_flag");
-    public static final Item DUST_SWEEPER = item("dust_sweeper",new DustSweeperItem(new Item.Settings().maxDamage(384)));
     public static final ItemGroup GROUP = FabricItemGroup.builder()
             .icon(() -> new ItemStack(ROCKET)).displayName(Text.translatable("itemGroup.lunar_horizons"))
             .entries((context, entries) -> {
                 for (Block b : new Block[]{ROCKET, LAUNCH_PAD, REGOLITH, MOON_ROCK, CRYSTAL_ORE, MOON_BRICKS, REFILL_STATION, CRYSTAL_CLUSTER, CRYSTAL_STONE, DARK_CRYSTAL_ORE, LUNAR_STEMS, HIGHLAND_ROCK, DARK_REGOLITH, FROSTED_REGOLITH, LUNAR_ICE, TITANIUM_ORE, HELIUM_ORE, METEORITE_ROCK, LUNAR_LANTERN, SURVEY_BEACON, TITANIUM_BLOCK, BASALT_DUST, ANORTHOSITE, EJECTA_ROCK, EXPEDITION_FLAG, RED_FLAG, BLUE_FLAG, ORANGE_FLAG}) entries.add(b);
-                for (Item i : new Item[]{FUEL, OXYGEN, LARGE_OXYGEN, BACKPACK, HELMET, CHEST, LEGS, BOOTS, LUNAR_STICK, CRYSTAL, CRYSTAL_SWORD, CRYSTAL_PICKAXE, CRYSTAL_AXE, CRYSTAL_SHOVEL, CRYSTAL_HOE, DARK_CRYSTAL, DARK_CRYSTAL_SWORD, DARK_CRYSTAL_PICKAXE, DARK_CRYSTAL_AXE, DARK_CRYSTAL_SHOVEL, DARK_CRYSTAL_HOE, RAW_TITANIUM, TITANIUM_INGOT, HELIUM, METEORITE_FRAGMENT, EXTREME_OXYGEN, MINERAL_DETECTOR, LUNAR_RADAR, TITANIUM_DRILL, DUST_SWEEPER}) entries.add(i);
+                for (Item i : new Item[]{FUEL, OXYGEN, LARGE_OXYGEN, BACKPACK, HELMET, CHEST, LEGS, BOOTS, LUNAR_STICK, CRYSTAL, CRYSTAL_SWORD, CRYSTAL_PICKAXE, CRYSTAL_AXE, CRYSTAL_SHOVEL, CRYSTAL_HOE, DARK_CRYSTAL, DARK_CRYSTAL_SWORD, DARK_CRYSTAL_PICKAXE, DARK_CRYSTAL_AXE, DARK_CRYSTAL_SHOVEL, DARK_CRYSTAL_HOE, RAW_TITANIUM, TITANIUM_INGOT, HELIUM, METEORITE_FRAGMENT, EXTREME_OXYGEN, MINERAL_DETECTOR, LUNAR_RADAR, TITANIUM_DRILL}) entries.add(i);
             }).build();
 
     public static Identifier id(String path) { return Identifier.of(ID, path); }

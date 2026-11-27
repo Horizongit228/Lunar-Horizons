@@ -10,6 +10,8 @@ public final class LunarClient implements ClientModInitializer {
         RocketPilotHud.register();
         net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback.EVENT.register(OxygenHud::render);
         EntityRendererRegistry.register(LunarHorizons.ROCKET_ENTITY, RocketRenderer::new);
+        EntityRendererRegistry.register(LunarHorizons.METEOR_ENTITY,MeteorRenderer::new);
+        EntityRendererRegistry.register(LunarHorizons.HUGE_METEOR_ENTITY,MeteorRenderer::new);
         DimensionRenderingRegistry.registerSkyRenderer(LunarHorizons.MOON, LunarSky::render);
         DimensionRenderingRegistry.registerCloudRenderer(LunarHorizons.MOON, context -> {});
     }
