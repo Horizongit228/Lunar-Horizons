@@ -142,7 +142,7 @@ public final class RocketEntity extends Entity {
         return new Box(p.getX()-1,p.getY(),p.getZ()-1,p.getX()+2,p.getY()+height,p.getZ()+2);
     }
     private static boolean clear(ServerWorld world, BlockPos center, int height) {
-        if(!world.isInBuildLimit(center) || !world.isInBuildLimit(center.up(height-1))) return false;
+        if(height<=0 || !world.isInBuildLimit(center) || !world.isInBuildLimit(center.up(height-1))) return false;
         for(int x=-1;x<=1;x++) for(int z=-1;z<=1;z++) {
             if(!world.getWorldBorder().contains(center.add(x,0,z))) return false;
             for(int y=0;y<height;y++) if(!world.getBlockState(center.add(x,y,z)).isAir()) return false;
@@ -260,7 +260,7 @@ public final class RocketEntity extends Entity {
             case READY -> { if(pilot==null && ++missingPilotTicks>60)phase(IDLE); else if(pilot!=null)missingPilotTicks=0; }
             case IDLE -> { if(hasPassengers() && pilot!=null){pilot.stopRiding();} }
             case COUNTDOWN -> {
-                if(pilot==null){ if(++missingPilotTicks>60)phase(IDLE); return; }
+                if(pilot==null){phase(IDLE);getDataTracker().set(COUNTDOWN_SYNC,0);return;}
                 missingPilotTicks=0;
                 if(phaseTicks==1 || phaseTicks%20==0 && phaseTicks<countdownTicks()){
                     message(pilot,"countdown",Math.max(1,(countdownTicks()-phaseTicks+19)/20));
