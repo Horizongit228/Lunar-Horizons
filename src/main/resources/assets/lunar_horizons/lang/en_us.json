@@ -456,5 +456,5 @@
   "journal.lunar_horizons.23.line2": "Target unresolved: Moon or Earth. Activation prohibited pending research.",
   "message.lunar_horizons.flight_obstruction": "Rocket obstruction: X=%s, Y=%s, Z=%s — %s.",
   "message.lunar_horizons.launch_too_high": "Launch pad must be below Y=500.",
-  "message.lunar_horizons.orbit_no_dock": "No clear orbital berth with an open flight corridor. Check the station and parked rockets."
+  "message.lunar_horizons.orbit_no_dock": "All primary and reserve orbital berths are unavailable. Check blocks and the world border."
 }
