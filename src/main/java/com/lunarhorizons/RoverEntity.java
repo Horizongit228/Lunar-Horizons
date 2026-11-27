@@ -107,7 +107,7 @@ public final class RoverEntity extends Entity {
         else drive*=.995;
         if(Math.abs(drive)<.005)drive=0;
         double angle=Math.toRadians(getYaw());
-        vertical=grounded?-.04:Math.max(-1.1,vertical-(w.getRegistryKey().equals(LunarHorizons.SPACE)?0:w.getRegistryKey().equals(LunarHorizons.MOON)?.022:.075));
+        vertical=grounded?-.04:w.getRegistryKey().equals(LunarHorizons.SPACE)?Math.min(-.025,vertical):Math.max(-1.1,vertical-(w.getRegistryKey().equals(LunarHorizons.MOON)?.022:.075));
         Vec3d movement=new Vec3d(-Math.sin(angle)*drive,vertical,Math.cos(angle)*drive);
         BlockPos next=BlockPos.ofFloored(getPos().add(movement));
         if(!ColonyGrid.loaded(w,next)||!w.getWorldBorder().contains(next)){movement=Vec3d.ZERO;drive=0;vertical=0;}
