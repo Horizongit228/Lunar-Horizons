@@ -119,7 +119,7 @@ public final class ColonyBlockEntity extends BlockEntity {
         if(kind()==Kind.BATTERY&&held.isOf(LunarHorizons.POWER_CELL)){
             int cells=Math.min((capacity()-energy)/600,p.isSneaking()?held.getCount():1);
             if(cells>0){energy+=cells*600;if(!p.isCreative())held.decrement(cells);markDirty();p.getInventory().markDirty();}
-            p.sendMessage(Text.translatable("message.lunar_horizons.rover_charge",energy,capacity()),true);
+            p.sendMessage(Text.translatable("message.lunar_horizons.battery_charge",energy,capacity()),true);
             return;
         }
         if(accepts(held)&&input<64){
