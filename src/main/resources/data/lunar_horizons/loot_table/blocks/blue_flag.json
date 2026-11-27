@@ -11,6 +11,25 @@
       ],
       "conditions": [
         {
+          "condition": "minecraft:any_of",
+          "terms": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "lunar_horizons:blue_flag",
+              "properties": {
+                "part": "0"
+              }
+            },
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "lunar_horizons:blue_flag",
+              "properties": {
+                "part": "4"
+              }
+            }
+          ]
+        },
+        {
           "condition": "minecraft:survives_explosion"
         }
       ]

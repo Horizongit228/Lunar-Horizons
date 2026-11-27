@@ -39,16 +39,16 @@ public final class CaveEntranceFeature extends Feature<DefaultFeatureConfig> {
     @Override public boolean generate(FeatureContext<DefaultFeatureConfig> c){
         StructureWorldAccess w=c.getWorld();Random r=c.getRandom();
         int cx=c.getOrigin().getX()&~15,cz=c.getOrigin().getZ()&~15;
-        // Search inward from a chunk edge. Length 8–11, grade at most 1 block per 2 horizontal blocks.
-        for(int attempt=0;attempt<48;attempt++){
-            int side=r.nextInt(4),along=4+r.nextInt(8),length=8+r.nextInt(4),bend=r.nextBoolean()?1:-1;
+        // Search inward from a chunk edge. Length 9–11, occasional steeper grades; no artificial spiral steps.
+        for(int attempt=0;attempt<72;attempt++){
+            int side=r.nextInt(4),along=4+r.nextInt(8),length=9+r.nextInt(3),bend=r.nextBoolean()?1:-1;
             int dx=side==0?1:side==1?-1:0,dz=side==2?1:side==3?-1:0;
             int sx=cx+(dx==1?2:dx==-1?13:along),sz=cz+(dz==1?2:dz==-1?13:along);
             int ex=sx+dx*length,ez=sz+dz*length;
             int start=height(w,sx,sz),endSurface=height(w,ex,ez);
             if(start<10||start>150||!ImpactCraterFeature.natural(w,new BlockPos(sx,start-1,sz)))continue;
             int end=-999;
-            for(int drop=3;drop<=length/2;drop++){
+            for(int drop=3;drop<=Math.min(7,length-3);drop++){
                 int y=start-drop;
                 if(y<=endSurface-3&&caveFloor(w,new BlockPos(ex,y,ez))){end=y;break;}
             }
@@ -60,7 +60,7 @@ public final class CaveEntranceFeature extends Feature<DefaultFeatureConfig> {
                 int x=sx+dx*i+dz*wiggle,z=sz+dz*i-dx*wiggle;
                 int floor=(int)Math.round(start+(end-start)*t)-1;
                 // Broad irregular mouth; a narrower rounded passage deeper inside.
-                int radius=i<=2?2:1;
+                int radius=i<=3?2:1;
                 for(int a=-radius;a<=radius;a++)for(int b=-radius;b<=radius;b++){
                     int xx=x+a,zz=z+b;
                     if(xx<cx||xx>=cx+16||zz<cz||zz>=cz+16)continue;

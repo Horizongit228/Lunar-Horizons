@@ -22,7 +22,8 @@
   "carvers": {
     "air": [
       "lunar_horizons:lunar_tunnels",
-      "lunar_horizons:lunar_shallow_caves"
+      "lunar_horizons:lunar_shallow_caves",
+      "lunar_horizons:lunar_deep_caves"
     ]
   },
   "features": [

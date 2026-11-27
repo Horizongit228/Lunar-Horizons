@@ -1,18 +1,78 @@
 {
   "variants": {
-    "facing=north": {
-      "model": "lunar_horizons:block/expedition_flag"
+    "facing=north,part=0": {
+      "model": "lunar_horizons:block/expedition_flag_0"
     },
-    "facing=east": {
-      "model": "lunar_horizons:block/expedition_flag",
+    "facing=east,part=0": {
+      "model": "lunar_horizons:block/expedition_flag_0",
       "y": 90
     },
-    "facing=south": {
-      "model": "lunar_horizons:block/expedition_flag",
+    "facing=south,part=0": {
+      "model": "lunar_horizons:block/expedition_flag_0",
       "y": 180
     },
-    "facing=west": {
-      "model": "lunar_horizons:block/expedition_flag",
+    "facing=west,part=0": {
+      "model": "lunar_horizons:block/expedition_flag_0",
+      "y": 270
+    },
+    "facing=north,part=1": {
+      "model": "lunar_horizons:block/expedition_flag_1"
+    },
+    "facing=east,part=1": {
+      "model": "lunar_horizons:block/expedition_flag_1",
+      "y": 90
+    },
+    "facing=south,part=1": {
+      "model": "lunar_horizons:block/expedition_flag_1",
+      "y": 180
+    },
+    "facing=west,part=1": {
+      "model": "lunar_horizons:block/expedition_flag_1",
+      "y": 270
+    },
+    "facing=north,part=2": {
+      "model": "lunar_horizons:block/expedition_flag_2"
+    },
+    "facing=east,part=2": {
+      "model": "lunar_horizons:block/expedition_flag_2",
+      "y": 90
+    },
+    "facing=south,part=2": {
+      "model": "lunar_horizons:block/expedition_flag_2",
+      "y": 180
+    },
+    "facing=west,part=2": {
+      "model": "lunar_horizons:block/expedition_flag_2",
+      "y": 270
+    },
+    "facing=north,part=3": {
+      "model": "lunar_horizons:block/expedition_flag_3"
+    },
+    "facing=east,part=3": {
+      "model": "lunar_horizons:block/expedition_flag_3",
+      "y": 90
+    },
+    "facing=south,part=3": {
+      "model": "lunar_horizons:block/expedition_flag_3",
+      "y": 180
+    },
+    "facing=west,part=3": {
+      "model": "lunar_horizons:block/expedition_flag_3",
+      "y": 270
+    },
+    "facing=north,part=4": {
+      "model": "lunar_horizons:block/expedition_flag_4"
+    },
+    "facing=east,part=4": {
+      "model": "lunar_horizons:block/expedition_flag_4",
+      "y": 90
+    },
+    "facing=south,part=4": {
+      "model": "lunar_horizons:block/expedition_flag_4",
+      "y": 180
+    },
+    "facing=west,part=4": {
+      "model": "lunar_horizons:block/expedition_flag_4",
       "y": 270
     }
   }

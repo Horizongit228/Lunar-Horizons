@@ -65,7 +65,7 @@ public final class LunarHorizons implements ModInitializer {
     public static final Item BACKPACK = item("oxygen_backpack",new Item(new Item.Settings().maxCount(1)));
     public static final Block REFILL_STATION = block("oxygen_station",AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).luminance(s -> 4));
     public static final Item LUNAR_STICK = item("lunar_stick",new Item(new Item.Settings()));
-    public static final Block LUNAR_STEMS = block("lunar_stems",AbstractBlock.Settings.copy(Blocks.AMETHYST_CLUSTER).strength(.5F).noCollision().nonOpaque().luminance(s -> 2));
+    public static final Block LUNAR_STEMS = stemBlock();
     public static final Feature<DefaultFeatureConfig> LUNAR_STEM_PATCH = Registry.register(Registries.FEATURE,id("lunar_stem_patch"),new LunarStemFeature(DefaultFeatureConfig.CODEC));
     public static final Block CRYSTAL_CLUSTER = block("crystal_cluster",AbstractBlock.Settings.copy(Blocks.AMETHYST_CLUSTER).noCollision().nonOpaque().luminance(s -> 12));
     public static final Block CRYSTAL_STONE = block("crystal_stone",AbstractBlock.Settings.copy(Blocks.AMETHYST_BLOCK).luminance(s -> 8));
@@ -132,6 +132,12 @@ public final class LunarHorizons implements ModInitializer {
     private static Block block(String path, AbstractBlock.Settings settings) {
         Block block = Registry.register(Registries.BLOCK, id(path), new Block(settings));
         item(path, new BlockItem(block, new Item.Settings()));
+        return block;
+    }
+    private static Block stemBlock() {
+        Block block=Registry.register(Registries.BLOCK,id("lunar_stems"),
+            new LunarStemBlock(AbstractBlock.Settings.copy(Blocks.STONE).strength(.5F).nonOpaque().luminance(s -> 2)));
+        item("lunar_stems",new BlockItem(block,new Item.Settings()));
         return block;
     }
     private static Block flag(String path) {

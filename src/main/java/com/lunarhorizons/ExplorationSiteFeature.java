@@ -22,17 +22,31 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
     private static void set(StructureWorldAccess w,BlockPos p,BlockState s){w.setBlockState(p,s,2);}
     @Override public boolean generate(FeatureContext<DefaultFeatureConfig> c){
         StructureWorldAccess w=c.getWorld();Random r=c.getRandom();
-        int x=(c.getOrigin().getX()&~15)+8,z=(c.getOrigin().getZ()&~15)+8;
-        int radius=kind==1?3:kind==3?4:3;
-        int y=w.getTopY(Heightmap.Type.WORLD_SURFACE_WG,x,z);
-        if(kind>=2)y=kind==2?-18+r.nextInt(25):-32+r.nextInt(22);
-        if(y<-50||y>160)return false;
-        BlockPos p=new BlockPos(x,y,z);
-        for(int dx=-radius;dx<=radius;dx++)for(int dz=-radius;dz<=radius;dz++)for(int h=-1;h<=5;h++){
-            BlockPos pos=p.add(dx,h,dz);
-            if(!replaceable(w,pos))return false;
-            if(kind<2&&h==-1&&!ImpactCraterFeature.natural(w,pos))return false;
-            if(kind<2&&h>=0&&!w.isAir(pos))return false;
+        int cx=c.getOrigin().getX()&~15,cz=c.getOrigin().getZ()&~15;
+        int radius=kind==3?4:3;
+        BlockPos p=null;
+        // The entire envelope stays in this chunk. Search several alternatives.
+        for(int attempt=0;attempt<24&&p==null;attempt++){
+            int margin=radius+2;
+            int x=cx+margin+r.nextInt(16-2*margin),z=cz+margin+r.nextInt(16-2*margin);
+            if(kind<2)p=surfaceSite(w,x,z,radius);
+            else {
+                int y=kind==2?-27+r.nextInt(39):-45+r.nextInt(27);
+                BlockPos candidate=new BlockPos(x,y,z);
+                if(buriedSite(w,candidate,radius))p=candidate;
+            }
+        }
+        if(p==null)return false;
+        if(kind<2){
+            // A supported foundation, never a floating platform or a filled cave.
+            for(int dx=-radius;dx<=radius;dx++)for(int dz=-radius;dz<=radius;dz++){
+                BlockPos col=p.add(dx,-1,dz);
+                for(int h=0;h<=2;h++){
+                    BlockPos q=col.down(h);
+                    if(!w.isAir(q))break;
+                    set(w,q,LunarHorizons.MOON_BRICKS.getDefaultState());
+                }
+            }
         }
         if(kind==3){
             for(int dx=-4;dx<=4;dx++)for(int dz=-4;dz<=4;dz++)for(int h=-1;h<=5;h++){
@@ -40,8 +54,7 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
                 if(v>1)continue;
                 set(w,p.add(dx,h,dz),v>.63?LunarHorizons.CRYSTAL_STONE.getDefaultState():Blocks.AIR.getDefaultState());
             }
-            // An opening to mine through and a limited number of crystals.
-            for(int dx=2;dx<=4;dx++)for(int h=1;h<=2;h++)set(w,p.add(dx,h,0),Blocks.AIR.getDefaultState());
+            // Keep the geode shell intact; players discover it by mining.
             for(int i=0;i<5;i++){int dx=r.nextInt(5)-2,dz=r.nextInt(5)-2;BlockPos at=p.add(dx,0,dz);if(w.isAir(at)&&!w.isAir(at.down()))set(w,at,LunarHorizons.CRYSTAL_CLUSTER.getDefaultState());}
             return true;
         }
@@ -57,13 +70,37 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
             boolean shell=h==-1||h==3||Math.abs(dx)==3||Math.abs(dz)==3;
             BlockState s=shell?LunarHorizons.MOON_BRICKS.getDefaultState():Blocks.AIR.getDefaultState();
             if(h==1&&Math.abs(dx)==3&&dz==0)s=Blocks.GLASS.getDefaultState();
-            if(dz==-3&&dx==0&&(h==0||h==1))s=Blocks.AIR.getDefaultState();
+            if(dz==-3&&dx==0&&(h==0||h==1))s=kind==2?LunarHorizons.MOON_BRICKS.getDefaultState():Blocks.AIR.getDefaultState();
             set(w,p.add(dx,h,dz),s);
         }
         set(w,p.add(-2,2,2),LunarHorizons.LUNAR_LANTERN.getDefaultState());
         set(w,p.add(2,0,2),LunarHorizons.REFILL_STATION.getDefaultState());
         set(w,p.up(4),LunarHorizons.SURVEY_BEACON.getDefaultState());
         loot(w,p.add(-2,0,-1),r);
+        return true;
+    }
+    private static BlockPos surfaceSite(StructureWorldAccess w,int x,int z,int radius){
+        int high=Integer.MIN_VALUE,low=Integer.MAX_VALUE;
+        for(int dx=-radius;dx<=radius;dx++)for(int dz=-radius;dz<=radius;dz++){
+            int top=w.getTopY(Heightmap.Type.WORLD_SURFACE_WG,x+dx,z+dz);
+            high=Math.max(high,top);low=Math.min(low,top);
+            // At least three natural blocks directly under every surface column.
+            for(int h=1;h<=3;h++)if(!ImpactCraterFeature.natural(w,new BlockPos(x+dx,top-h,z+dz)))return null;
+        }
+        if(high-low>2||high<10||high>160)return null;
+        BlockPos p=new BlockPos(x,high,z);
+        for(int dx=-radius;dx<=radius;dx++)for(int dz=-radius;dz<=radius;dz++)for(int h=0;h<=5;h++)
+            if(!w.isAir(p.add(dx,h,dz)))return null;
+        return p;
+    }
+    private static boolean buriedSite(StructureWorldAccess w,BlockPos p,int radius){
+        // All six faces plus a two-block natural buffer. Interior may be rock or ore,
+        // but never open cave air or another structure. Ores in the room volume are
+        // rejected too, to avoid deleting valuable deposits.
+        int rim=radius+2;
+        for(int dx=-rim;dx<=rim;dx++)for(int dz=-rim;dz<=rim;dz++)for(int h=-3;h<=7;h++){
+            if(!ImpactCraterFeature.natural(w,p.add(dx,h,dz)))return false;
+        }
         return true;
     }
     private void loot(StructureWorldAccess w,BlockPos pos,Random r){
