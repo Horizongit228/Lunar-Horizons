@@ -44,6 +44,7 @@
     "lunar_horizons:advanced_solar_panel",
     "lunar_horizons:power_switch",
     "lunar_horizons:power_feedthrough",
-    "lunar_horizons:power_wire"
+    "lunar_horizons:power_wire",
+    "lunar_horizons:server_block"
   ]
 }
