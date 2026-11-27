@@ -16,8 +16,8 @@ final class EngineeringScreen extends Screen{
     private EngineeringPackets.Snapshot data;
     private final RegistryKey<World> dimension;
     private int tick,stale,left,top;
-    private ButtonWidget toggle,load,collect,refill;
-    private static final int W=292,H=216;
+    private ButtonWidget toggle,load,collect,refill,automatic;
+    private static final int W=292,H=234;
     private EngineeringScreen(EngineeringPackets.Snapshot data){
         super(Text.translatable("screen.lunar_horizons.engineering"));this.data=data;
         dimension=MinecraftClient.getInstance().world.getRegistryKey();
@@ -35,11 +35,13 @@ final class EngineeringScreen extends Screen{
         return addDrawableChild(ButtonWidget.builder(tr(name),b->request(action)).dimensions(left+x,top+y,width,20).build());
     }
     @Override protected void init(){
-        left=(width-W)/2;top=(height-H)/2;
-        toggle=button("toggle",10,161,132,1);
-        load=button("load",150,161,132,2);
-        collect=button("collect",10,187,132,3);
-        refill=button("refill",150,187,132,4);
+        left=(width-W)/2;top=(height-H)/2;stale=0;request(0);
+        toggle=button("toggle",10,158,132,1);
+        load=button("load",150,158,132,2);
+        collect=button("collect",10,182,132,3);
+        refill=button("refill",150,182,132,4);
+        automatic=button("auto_off",10,206,132,5);
+        addDrawableChild(ButtonWidget.builder(tr("help"),b->client.setScreen(new LunarGuideScreen(this,9+data.kind()))).dimensions(left+150,top+206,132,20).build());
         updateButtons();
     }
     private void updateButtons(){
@@ -49,6 +51,8 @@ final class EngineeringScreen extends Screen{
         load.active=(k==1||k==2||k==3||k==4||k==5||k==8)&&data.input()<64;
         collect.active=(k==3||k==4||k==8)&&data.output()>0;
         refill.active=k==5&&data.output()>0;
+        automatic.active=k==1||k==2||k==3||k==4||k==5||k==8;
+        automatic.setMessage(tr(data.automation()?"auto_on":"auto_off"));
     }
     @Override public boolean shouldPause(){return false;}
     @Override public void tick(){
@@ -66,13 +70,14 @@ final class EngineeringScreen extends Screen{
         c.fill(left,top,left+W,top+2,0xff81bfc3);
         if(client!=null&&client.world!=null)line(c,client.world.getBlockState(data.pos()).getBlock().getName(),10,9,0xffdce9ec);
         line(c,tr(data.fault()?"fault":!data.enabled()?"disabled":data.active()?"running":"standby"),10,23,data.fault()?0xffff927f:data.active()?0xff85c7b6:0xffb5c1c8);
-        line(c,tr("input_output",data.input(),data.output()),10,42,0xffdce9ec);
-        line(c,tr("progress",data.progress(),data.duration()),10,54,0xffb5c1c8);bar(c,left+10,top+66,272,data.progress(),data.duration(),0xff81bfc3);
-        line(c,tr("reserve",data.reserve(),data.energy(),data.capacity()),10,79,0xffdce9ec);
-        line(c,tr("power",data.production(),data.served(),data.demand()),10,94,0xffdce9ec);
+        line(c,tr("machine_io_"+data.kind()),10,37,0xffa8c9ca);
+        line(c,tr("input_output",data.input(),data.output()),10,49,0xffdce9ec);
+        line(c,tr("progress",data.progress(),data.duration()),10,61,0xffb5c1c8);bar(c,left+10,top+73,272,data.progress(),data.duration(),0xff81bfc3);
+        line(c,tr("reserve",data.reserve(),data.energy(),data.capacity()),10,84,0xffdce9ec);
+        line(c,tr("power",data.production(),data.served(),data.demand()),10,96,0xffdce9ec);
         line(c,tr("storage",data.stored(),data.networkCapacity()),10,108,0xffdce9ec);bar(c,left+10,top+120,272,data.stored(),data.networkCapacity(),0xffc7a263);
         line(c,tr("nodes",data.nodes()),10,134,0xff9aaeb9);
-        line(c,tr("close_hint"),10,147,0xff9aaeb9);
+        line(c,tr("diagnostic_"+data.diagnostic()),10,145,data.diagnostic()==3?0xff85c7b6:0xffe6c18a);
         super.render(c,mx,my,delta);
     }
 }

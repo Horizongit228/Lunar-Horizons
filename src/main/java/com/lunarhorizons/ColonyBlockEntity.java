@@ -15,7 +15,7 @@ public final class ColonyBlockEntity extends BlockEntity {
     enum Kind {BATTERY,GENERATOR,OXYGEN,REFINERY,FUEL,REFILL,LAMP,TERMINAL,ASSEMBLER}
     int energy,input,output,progress,reserve,production,demand,stored;
     boolean active;
-    boolean enabled=true,networkFault=false;
+    boolean enabled=true,networkFault=false,automation=false;
     int served,networkCapacity,networkNodes;
     long lastPowered=Long.MIN_VALUE;
     public ColonyBlockEntity(BlockPos pos,BlockState state){super(LunarHorizons.COLONY_ENTITY,pos,state);}
@@ -31,6 +31,49 @@ public final class ColonyBlockEntity extends BlockEntity {
         case ASSEMBLER->stack.isOf(LunarHorizons.TITANIUM_INGOT);
         default->false;
     };}
+    boolean supportsInput(){return switch(kind()){case GENERATOR,OXYGEN,REFINERY,FUEL,REFILL,ASSEMBLER->true;default->false;};}
+    boolean supportsOutput(){return outputItem()!=Items.AIR;}
+    void automaticTransfer(net.minecraft.server.world.ServerWorld w){
+        if(!automation||!enabled)return;
+        // Only ordinary chests and barrels; one item per direction each second.
+        var above=ColonyGrid.loaded(w,pos.up())?w.getBlockEntity(pos.up()):null;
+        if(supportsInput()&&input<64&&ColonyGrid.loaded(w,pos.up())&&isStorage(above)&&above instanceof net.minecraft.inventory.Inventory inv){
+            for(int i=0;i<inv.size();i++){
+                ItemStack stack=inv.getStack(i);
+                if(!accepts(stack))continue;
+                ItemStack taken=inv.removeStack(i,1);
+                if(!taken.isEmpty()){input++;inv.markDirty();markDirty();}
+                break;
+            }
+        }
+        if(!supportsOutput()||output<=0||!ColonyGrid.loaded(w,pos.down()))return;
+        var below=w.getBlockEntity(pos.down());
+        if(!isStorage(below)||!(below instanceof net.minecraft.inventory.Inventory inv))return;
+        ItemStack product=new ItemStack(outputItem());
+        for(int i=0;i<inv.size();i++){
+            ItemStack stack=inv.getStack(i);
+            if(!inv.isValid(i,product))continue;
+            if(stack.isEmpty()){inv.setStack(i,product);output--;inv.markDirty();markDirty();return;}
+            if(ItemStack.areItemsAndComponentsEqual(stack,product)&&stack.getCount()<Math.min(stack.getMaxCount(),inv.getMaxCountPerStack())){
+                stack.increment(1);output--;inv.markDirty();markDirty();return;
+            }
+        }
+    }
+    private static boolean isStorage(net.minecraft.block.entity.BlockEntity be){
+        return be instanceof net.minecraft.block.entity.ChestBlockEntity||be instanceof net.minecraft.block.entity.BarrelBlockEntity;
+    }
+    int diagnose(){
+        if(networkFault)return 1;
+        if(!enabled)return 2;
+        if(active)return 3;
+        if(kind()==Kind.BATTERY)return energy==0?4:0;
+        if(kind()==Kind.TERMINAL)return 4;
+        if((kind()==Kind.GENERATOR||kind()==Kind.OXYGEN)&&reserve==0&&input==0)return 5;
+        if(kind()==Kind.GENERATOR)return 6;
+        if((kind()==Kind.REFINERY||kind()==Kind.FUEL||kind()==Kind.REFILL||kind()==Kind.ASSEMBLER)&&output>=32)return 7;
+        if(supportsInput()&&input==0&&reserve==0)return 5;
+        return 8;
+    }
     boolean wants(){if(!enabled)return false;return switch(kind()){
         case OXYGEN->reserve>0||input>0;
         case LAMP->true;
@@ -83,9 +126,9 @@ public final class ColonyBlockEntity extends BlockEntity {
         if(kind()==Kind.TERMINAL)p.sendMessage(Text.translatable("message.lunar_horizons.grid_status",production,demand,stored),false);
     }
     @Override protected void writeNbt(NbtCompound nbt,RegistryWrapper.WrapperLookup lookup){
-        super.writeNbt(nbt,lookup);nbt.putInt("Energy",energy);nbt.putInt("Input",input);nbt.putInt("Output",output);nbt.putInt("Progress",progress);nbt.putInt("Reserve",reserve);nbt.putBoolean("Enabled",enabled);
+        super.writeNbt(nbt,lookup);nbt.putInt("Energy",energy);nbt.putInt("Input",input);nbt.putInt("Output",output);nbt.putInt("Progress",progress);nbt.putInt("Reserve",reserve);nbt.putBoolean("Enabled",enabled);nbt.putBoolean("Automation",automation);
     }
     @Override protected void readNbt(NbtCompound nbt,RegistryWrapper.WrapperLookup lookup){
-        super.readNbt(nbt,lookup);energy=Math.max(0,Math.min(capacity(),nbt.getInt("Energy")));input=Math.max(0,Math.min(64,nbt.getInt("Input")));output=Math.max(0,Math.min(32,nbt.getInt("Output")));progress=Math.max(0,Math.min(duration()-1,nbt.getInt("Progress")));reserve=Math.max(0,Math.min(120,nbt.getInt("Reserve")));active=false;enabled=!nbt.contains("Enabled")||nbt.getBoolean("Enabled");
+        super.readNbt(nbt,lookup);energy=Math.max(0,Math.min(capacity(),nbt.getInt("Energy")));input=Math.max(0,Math.min(64,nbt.getInt("Input")));output=Math.max(0,Math.min(32,nbt.getInt("Output")));progress=Math.max(0,Math.min(duration()-1,nbt.getInt("Progress")));reserve=Math.max(0,Math.min(120,nbt.getInt("Reserve")));active=false;enabled=!nbt.contains("Enabled")||nbt.getBoolean("Enabled");automation=nbt.getBoolean("Automation");
     }
 }

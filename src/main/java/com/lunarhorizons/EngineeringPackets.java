@@ -12,14 +12,15 @@ public final class EngineeringPackets {
     private EngineeringPackets(){}
     public record Snapshot(BlockPos pos,boolean open,int kind,boolean active,boolean enabled,boolean fault,
                            int input,int output,int progress,int duration,int reserve,int energy,int capacity,
-                           int production,int demand,int served,int stored,int networkCapacity,int nodes) implements CustomPayload {
+                           int production,int demand,int served,int stored,int networkCapacity,int nodes,boolean automation,int diagnostic) implements CustomPayload {
         public static final CustomPayload.Id<Snapshot> ID=new CustomPayload.Id<>(LunarHorizons.id("machine_snapshot"));
         public static final PacketCodec<RegistryByteBuf,Snapshot> CODEC=new PacketCodec<>(){
             public Snapshot decode(RegistryByteBuf b){return new Snapshot(b.readBlockPos(),b.readBoolean(),b.readVarInt(),b.readBoolean(),b.readBoolean(),b.readBoolean(),
-                b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt());}
+                b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readVarInt(),b.readBoolean(),b.readVarInt());}
             public void encode(RegistryByteBuf b,Snapshot s){
                 b.writeBlockPos(s.pos);b.writeBoolean(s.open);b.writeVarInt(s.kind);b.writeBoolean(s.active);b.writeBoolean(s.enabled);b.writeBoolean(s.fault);
                 for(int n:new int[]{s.input,s.output,s.progress,s.duration,s.reserve,s.energy,s.capacity,s.production,s.demand,s.served,s.stored,s.networkCapacity,s.nodes})b.writeVarInt(n);
+                b.writeBoolean(s.automation);b.writeVarInt(s.diagnostic);
             }
         };
         @Override public CustomPayload.Id<? extends CustomPayload> getId(){return ID;}
@@ -35,7 +36,7 @@ public final class EngineeringPackets {
     static void send(ServerPlayerEntity p,ColonyBlockEntity be,boolean open){
         if(!ServerPlayNetworking.canSend(p,Snapshot.ID))return;
         ServerPlayNetworking.send(p,new Snapshot(be.getPos(),open,be.kind().ordinal(),be.active,be.enabled,be.networkFault,
-            be.input,be.output,be.progress,be.duration(),be.reserve,be.energy,be.capacity(),be.production,be.demand,be.served,be.stored,be.networkCapacity,be.networkNodes));
+            be.input,be.output,be.progress,be.duration(),be.reserve,be.energy,be.capacity(),be.production,be.demand,be.served,be.stored,be.networkCapacity,be.networkNodes,be.automation,be.diagnose()));
     }
     static void register(){
         PayloadTypeRegistry.playS2C().register(Snapshot.ID,Snapshot.CODEC);
@@ -49,6 +50,7 @@ public final class EngineeringPackets {
                 case 2 -> be.loadInventory(p);
                 case 3 -> be.collect(p);
                 case 4 -> be.refillInventory(p);
+                case 5 -> {if(be.supportsInput()||be.supportsOutput()){be.automation=!be.automation;be.markDirty();}}
                 default -> {return;}
             }
             send(p,be,false);

@@ -35,6 +35,7 @@ final class ColonyGrid {
         f.visited.addAll(nodes);
         if(overflow||overlaps){for(var be:machines){be.networkFault=true;be.production=be.demand=be.served=be.stored=be.networkCapacity=0;be.networkNodes=nodes.size();be.setActive(false);}return;}
         machines.sort(Comparator.comparingLong(be->be.getPos().asLong()));
+        for(var be:machines)be.automaticTransfer(w);
         int supply=solar;
         int target=0;
         for(var be:machines){be.networkFault=false;if(be.wants())target+=be.cost();if(be.kind()==ColonyBlockEntity.Kind.BATTERY&&be.enabled)target+=Math.min(120,be.capacity()-be.energy);}
