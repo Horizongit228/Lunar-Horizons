@@ -42,7 +42,8 @@ public final class RocketEntity extends Entity {
     public int hullHeight(){return height(advanced());}
     private static int height(boolean advanced){return advanced?12:8;}
     public double cabinHeight(){return advanced()?7.5:4.5;}
-    private int countdownTicks(){return advanced()?60:COUNTDOWN_TICKS;}
+    public static final int TRANSFER_Y=500;
+    private int countdownTicks(){return COUNTDOWN_TICKS;}
     private static final int COUNTDOWN_TICKS = 100;
     private double lastFlightY=Double.NaN;
     private BlockPos landing = BlockPos.ORIGIN;
@@ -152,6 +153,18 @@ public final class RocketEntity extends Entity {
         }
         return true;
     }
+    // Entities may fly above the block placement limit. Only scan the portion of the
+    // flight corridor in which blocks can exist; still enforce the horizontal border.
+    private static boolean flightClear(ServerWorld world, BlockPos center, int height) {
+        if(height<=0 || center.getY()<world.getBottomY())return false;
+        int top=Math.min(world.getTopY(),center.getY()+height);
+        for(int x=-1;x<=1;x++)for(int z=-1;z<=1;z++){
+            if(!world.getWorldBorder().contains(center.add(x,0,z)))return false;
+            for(int y=center.getY();y<top;y++)
+                if(!world.getBlockState(new BlockPos(center.getX()+x,y,center.getZ()+z)).isAir())return false;
+        }
+        return true;
+    }
     private static boolean occupied(ServerWorld world, BlockPos pos, int height) {
         return !world.getEntitiesByClass(RocketEntity.class,boxAt(pos,height), Entity::isAlive).isEmpty();
     }
@@ -209,9 +222,9 @@ public final class RocketEntity extends Entity {
         if(!travelWorld(world)){message(p,"wrong_world");return false;}
         if(destination()==location(world)){message(p,"wrong_destination");return false;}
         if(!hasPad(world,landing)){message(p,"big_pad");return false;}
-        if(!clear(world,landing,hullHeight()) || world.getTopY()-landing.getY()<hullHeight()+10){message(p,"big_blocked");return false;}
-        int height = Math.min(64, world.getTopY()-landing.getY());
-        if(!clear(world,landing,height)){message(p,"launch_corridor");return false;}
+        if(!clear(world,landing,hullHeight()) || landing.getY()>=TRANSFER_Y){message(p,"big_blocked");return false;}
+        int height = TRANSFER_Y-landing.getY()+hullHeight();
+        if(!flightClear(world,landing,height)){message(p,"launch_corridor");return false;}
         if(!p.isCreative() && fuelReserve()==0 && fuelSlot(p)<0){message(p,"need_fuel");return false;}
         if(!p.isCreative() && destination()!=EARTH_DEST &&
                 !OxygenSystem.ready(p)){message(p,"need_suit");return false;}
@@ -257,7 +270,7 @@ public final class RocketEntity extends Entity {
         int speed=Double.isNaN(lastFlightY)?0:(int)Math.round((getY()-lastFlightY)*200);
         getDataTracker().set(SPEED,enginesOn()?speed:0);
         lastFlightY=getY();
-        getDataTracker().set(ALTITUDE,Math.max(0,(int)Math.ceil(getY()-landing.getY())));
+        getDataTracker().set(ALTITUDE,(int)Math.floor(getY()));
         getDataTracker().set(COUNTDOWN_SYNC,phase()==COUNTDOWN?Math.max(0,(countdownTicks()-phaseTicks+19)/20):0);
         switch(phase()){
             case READY -> { if(pilot==null && ++missingPilotTicks>60)phase(IDLE); else if(pilot!=null)missingPilotTicks=0; }
@@ -286,22 +299,24 @@ public final class RocketEntity extends Entity {
             case ASCENT -> {
                 if(pilot==null){if(++missingPilotTicks>60)phase(DESCENT);return;}
                 missingPilotTicks=0;
-                double travel=Math.min(48,world.getTopY()-landing.getY()-hullHeight()-1);
+                if(getY()>=TRANSFER_Y){transfer(world,pilot);return;}
                 double rise=advanced()?Math.min(1.55,.08+phaseTicks*.015):Math.min(1.05,.045+phaseTicks*.0075);
-                double next=Math.min(landing.getY()+travel,getY()+rise);
-                // Entire sweep is checked for obstructions; no blocks are broken.
-                if(!clear(world,landing,Math.min(world.getTopY()-landing.getY(),(int)Math.ceil(next-landing.getY())+hullHeight()))){message(pilot,"launch_corridor");phase(DESCENT);return;}
+                double next=Math.min(TRANSFER_Y,getY()+rise);
+                // Check the swept hull, including newly placed blocks, without scanning empty sky.
+                int fromY=(int)Math.floor(getY());
+                if(!flightClear(world,new BlockPos(landing.getX(),fromY,landing.getZ()),(int)Math.ceil(next)-fromY+hullHeight())){message(pilot,"launch_corridor");phase(DESCENT);return;}
                 setPosition(getX(),next,getZ());
                 exhaust(world,true);
-                if(phaseTicks%20==0)message(pilot,"altitude",(int)(getY()-landing.getY()));
-                if(next>=landing.getY()+travel) transfer(world,pilot);
+                getDataTracker().set(ALTITUDE,(int)Math.floor(getY()));
+                if(phaseTicks%20==0||next>=TRANSFER_Y)message(pilot,"altitude",(int)Math.floor(getY()));
+                // Transfer on the next tick, after actually reaching Y=500.
             }
             case DESCENT -> {
                 double remaining=getY()-landing.getY();
                 double descentSpeed=Math.min(advanced()?1.0:.72,Math.max(.035,remaining*.085));
                 double next=Math.max(landing.getY(),getY()-descentSpeed);
                 int y=(int)Math.floor(next);
-                if(!clear(world,new BlockPos(landing.getX(),y,landing.getZ()),hullHeight()+1)){
+                if(!flightClear(world,new BlockPos(landing.getX(),y,landing.getZ()),(int)Math.ceil(getY())-y+hullHeight())){
                     // Stop over new terrain instead of clipping through a newly built roof.
                     BlockPos alternate=world.getRegistryKey().equals(LunarHorizons.SPACE)?findDock(world):findLanding(world,landing);
                     if(alternate==null){if(pilot!=null&&phaseTicks%40==0)message(pilot,"no_landing");return;}
