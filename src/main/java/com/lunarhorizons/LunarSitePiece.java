@@ -63,6 +63,20 @@ public final class LunarSitePiece extends StructurePiece {
         for(BlockState state:palette)list.add(NbtHelper.fromBlockState(state));
         nbt.put("Palette",list);
     }
+    void visitCandidates(List<BlockPos> out,BlockPos center){
+        Map<Integer,BlockState> states=new HashMap<>();
+        for(int i=0;i+1<cells.length;i+=2){
+            int index=cells[i+1];if(index>=0&&index<palette.size())states.put(cells[i],palette.get(index));
+        }
+        for(var e:states.entrySet()){
+            int n=e.getKey();
+            if(!e.getValue().isAir())continue;
+            BlockState below=states.get(n-256),above=states.get(n+256);
+            if(below==null||below.isAir()||above==null||!above.isAir())continue;
+            BlockPos pos=unpack(n);
+            if(Math.abs(pos.getX()-center.getX())<=16&&Math.abs(pos.getZ()-center.getZ())<=16)out.add(pos);
+        }
+    }
     @Override public void generate(StructureWorldAccess world,StructureAccessor accessor,ChunkGenerator generator,Random random,BlockBox box,ChunkPos chunk,BlockPos pivot){
         // The native structure engine may call this piece while visiting nearby chunks.
         if(chunk.getStartX()!=cx||chunk.getStartZ()!=cz)return;
