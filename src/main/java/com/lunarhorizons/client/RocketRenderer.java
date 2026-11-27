@@ -16,7 +16,7 @@ import net.minecraft.util.math.RotationAxis;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Separate eight- and twelve-block rocket models with transparent cockpits.
+/** Separate eight- and twelve-block rocket models with enclosed armored cockpits.
  * Model coordinates are quarter-block units, with negative Y pointing up. */
 public final class RocketRenderer extends EntityRenderer<RocketEntity> {
     private static final Identifier ALLOY=Identifier.of("lunar_horizons","textures/entity/rocket_alloy.png");
@@ -24,8 +24,8 @@ public final class RocketRenderer extends EntityRenderer<RocketEntity> {
     private static final int IVORY=0xffdeded5, TITANIUM=0xffa4adb1, GRAPHITE=0xff424a51, RED=0xff92544a, GOLD=0xffb19a6f;
     private static final int SIDES=12;
     private record Piece(ModelPart model,int color,boolean glass,boolean lit){}
-    private record VehicleModel(List<Piece> hull,List<Piece> windows,List<Piece> flames) {
-        VehicleModel(){this(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());}
+    private record VehicleModel(List<Piece> hull,List<Piece> flames) {
+        VehicleModel(){this(new ArrayList<>(),new ArrayList<>());}
     }
     private final VehicleModel mk1=new VehicleModel(),mk2=new VehicleModel();
     private static final int BLUE=0xff375c79, WHITE=0xffe6ebed, COPPER=0xffb67c50, CYAN=0xffa5edf0;
@@ -107,10 +107,18 @@ public final class RocketRenderer extends EntityRenderer<RocketEntity> {
         for(int i=0;i<SIDES;i++){
             float a=(float)(i*2*Math.PI/SIDES);
             box(h,TITANIUM,a,0,0,0,-half-.1f,top+.7f,radius-.2f,.22f,height,.36f);
-            if(i%solidEvery==1)box(h,panel,a,0,0,0,-half+.12f,top+.7f,radius-.2f,half*2-.24f,height,.24f);
-            else{
-                m.windows.add(part(0x554c91af,true,false,a,0,0,0,new float[][]{{-half+.12f,top+.7f,radius-.16f,half*2-.24f,height,.08f}}));
-                box(h,TITANIUM,a,0,0,0,-half+.12f,top+height*.48f,radius-.13f,half*2-.24f,.17f,.13f);
+            // Continuous opaque pressure shell, with flush panel seams.
+            box(h,panel,a,0,0,0,-half,top+.7f,radius-.23f,half*2,height,.24f);
+            if(i%solidEvery==1){
+                box(h,trim,a,0,0,0,-half*.73f,top+1.15f,radius,half*1.46f,height-.9f,.16f);
+                box(h,TITANIUM,a,0,0,0,-half*.5f,top+1.45f,radius+.15f,half,height-1.5f,.12f);
+                box(h,GRAPHITE,a,0,0,0,half*.25f,floor-1.8f,radius+.27f,.25f,.6f,.13f);
+            }else{
+                box(h,trim,a,0,0,0,-half+.12f,top+height*.48f,radius,half*2-.24f,.24f,.17f);
+                if(i%3==0){
+                    box(h,GRAPHITE,a,0,0,0,-.35f,top+1.2f,radius,.7f,.5f,.22f);
+                    h.add(part(CYAN,false,true,a,0,0,0,new float[][]{{-.15f,top+1.32f,radius+.22f,.3f,.23f,.06f}}));
+                }
             }
         }
         box(h,GRAPHITE,0,0,0,0,-1.1f,floor-.55f,-.4f,2.2f,.55f,1.85f);
@@ -166,12 +174,14 @@ public final class RocketRenderer extends EntityRenderer<RocketEntity> {
     }
     @Override public Identifier getTexture(RocketEntity entity){return ALLOY;}
     @Override public void render(RocketEntity entity,float yaw,float tickDelta,MatrixStack matrices,VertexConsumerProvider vertices,int light){
+        // Keep the pilot's first-person camera usable inside the opaque pressure shell.
+        var mc=net.minecraft.client.MinecraftClient.getInstance();
+        if(mc.player!=null&&mc.player.getVehicle()==entity&&mc.options.getPerspective().isFirstPerson())return;
         matrices.push();
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-yaw));
         matrices.scale(-4,-4,4);
         VehicleModel model=entity.advanced()?mk2:mk1;
         for(Piece p:model.hull)draw(p,matrices,vertices,light);
-        for(Piece p:model.windows)draw(p,matrices,vertices,light);
         if(entity.enginesOn()||entity.warmingUp()){
             matrices.push();
             float pulse=.88f+.12f*(float)Math.sin((entity.age+tickDelta)*1.6);
