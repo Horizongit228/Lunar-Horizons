@@ -638,9 +638,9 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
                         p.put(x,1,z,LunarHorizons.POWER_FEEDTHROUGH);
                         p.machine(x,2,z,LunarHorizons.POWER_TERMINAL,side<0?Direction.EAST:Direction.WEST);
                         p.put(x,3,z,LunarHorizons.INDUSTRIAL_GRATE);
-                        p.put(x+1,1,z,LunarHorizons.POWER_WIRE);
+                        p.put(x+(side<0?-1:1),1,z,LunarHorizons.POWER_WIRE);
                     }
-                    p.put(x+1,1,z,LunarHorizons.POWER_WIRE);
+                    p.put(x+(side<0?-1:1),1,z,LunarHorizons.POWER_WIRE);
                 }
                 p.put(x,4,11,LunarHorizons.OXYGEN_VENT);
             }
@@ -651,7 +651,7 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
             p.machine(gx-1,1,-5,LunarHorizons.INDUSTRIAL_BATTERY,Direction.SOUTH);
             p.machine(gx-2,1,-5,LunarHorizons.HELIUM_GENERATOR,Direction.SOUTH);
             p.fill(min+1,1,-6,max-1,1,-6,LunarHorizons.POWER_WIRE);
-            for(int x:new int[]{side*4,side*8,side*12})p.put(x+1,1,-5,LunarHorizons.POWER_WIRE);
+            for(int x:new int[]{side*4,side*8,side*12}){int wx=x+(side<0?-1:1);if(p.state(p.at(wx,1,-5)).isAir())p.put(wx,1,-5,LunarHorizons.POWER_WIRE);}
             p.room(min,-12,max,-8,0,4,LunarHorizons.HABITAT_HULL,LunarHorizons.HABITAT_FLOOR);
             p.door(gx,1,-8,Direction.NORTH);
             p.machine(gx,1,-10,LunarHorizons.ADVANCED_ASSEMBLER,Direction.SOUTH);
@@ -660,7 +660,7 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
             light(p,gx,3,-11);
             for(int z=-3;z<=9;z+=4)light(p,side*6,4,z);
         }
-        p.chest(9,1,7,16,Direction.WEST);
+        p.chest(10,1,7,16,Direction.WEST);
         for(int z=-11;z<=12;z+=4)light(p,0,4,z);
     }
     private void ruins(Plan p,Random r){
