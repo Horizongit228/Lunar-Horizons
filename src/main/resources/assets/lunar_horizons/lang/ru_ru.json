@@ -435,5 +435,11 @@
   "screen.lunar_horizons.route_from": "Отправление: %s",
   "screen.lunar_horizons.route_countdown": "Смена цели отменит отсчёт",
   "screen.lunar_horizons.route_ascent": "Смена цели доступна до Y=500",
-  "screen.lunar_horizons.route_hint": "Выбери пункт назначения"
+  "screen.lunar_horizons.route_hint": "Выбери пункт назначения",
+  "message.lunar_horizons.structure_usage": "Используйте /teleport структура <название>. Нажмите Tab для списка.",
+  "message.lunar_horizons.structure_dismount": "Перед телепортацией выйдите из транспорта.",
+  "message.lunar_horizons.structure_missing": "Структура %s не найдена в пределах поиска.",
+  "message.lunar_horizons.structure_unsafe": "Не найдено безопасное место в структуре %s.",
+  "message.lunar_horizons.structure_arrived": "Структура %s: %s, %s, %s.",
+  "message.lunar_horizons.conduits_repaired": "Обновлено соединений: %s. Восстановлено участков: %s."
 }
