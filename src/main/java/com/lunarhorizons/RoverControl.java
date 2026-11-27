@@ -13,7 +13,7 @@ public record RoverControl(int flags) implements CustomPayload {
         PayloadTypeRegistry.playC2S().register(ID,CODEC);
         ServerPlayNetworking.registerGlobalReceiver(ID,(payload,context)->{
             var p=context.player();
-            if(p.isAlive()&&p.getVehicle() instanceof RoverEntity rover&&rover.getFirstPassenger()==p)rover.control(p,payload.flags()&31);
+            if(p.isAlive()&&p.getVehicle() instanceof RoverEntity rover&&rover.getFirstPassenger()==p)rover.control(p,payload.flags()&63);
         });
     }
 }
