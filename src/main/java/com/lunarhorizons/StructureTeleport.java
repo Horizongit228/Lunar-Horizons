@@ -16,7 +16,7 @@ import net.minecraft.world.TeleportTarget;
 import static net.minecraft.server.command.CommandManager.literal;
 
 final class StructureTeleport {
-    private static final String[] SITES={"abandoned_outpost","crashed_satellite","buried_lab","lunar_geode","old_lander","relay_tower","radio_observatory","solar_farm","rover_garage","helium_station","abandoned_mine","ice_complex","emergency_bunker","data_center","alien_ruins","abandoned_colony","lunar_spaceport","reactor_complex","crashed_alien_ship","orbital_station"};
+    private static final String[] SITES={"abandoned_outpost","crashed_satellite","buried_lab","lunar_geode","old_lander","relay_tower","radio_observatory","solar_farm","rover_garage","helium_station","abandoned_mine","ice_complex","emergency_bunker","data_center","alien_ruins","abandoned_colony","lunar_spaceport","reactor_complex","crashed_alien_ship","ultra_data_center","orbital_station"};
     static LiteralArgumentBuilder<ServerCommandSource> command(String name){
         var root=literal(name).executes(c->{
             c.getSource().sendFeedback(()->Text.translatable("message.lunar_horizons.structure_usage"),false);
