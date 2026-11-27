@@ -55,7 +55,11 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
         void chest(int x,int y,int z,int type,Direction facing){
             put(x,y,z,Blocks.CHEST.getDefaultState().with(Properties.HORIZONTAL_FACING,rotated(rot,facing)));chests.put(at(x,y,z),type);
         }
-        void door(int x,int y,int z){put(x,y,z,LunarHorizons.AIRLOCK);put(x,y+1,z,LunarHorizons.AIRLOCK);}
+        void door(int x,int y,int z){door(x,y,z,Direction.NORTH);}
+        void door(int x,int y,int z,Direction dir){
+            var s=LunarHorizons.AIRLOCK.getDefaultState().with(Properties.HORIZONTAL_FACING,rotated(rot,dir));
+            put(x,y,z,s.with(Properties.DOUBLE_BLOCK_HALF,net.minecraft.block.enums.DoubleBlockHalf.LOWER));put(x,y+1,z,s.with(Properties.DOUBLE_BLOCK_HALF,net.minecraft.block.enums.DoubleBlockHalf.UPPER));
+        }
         void bed(int x,int y,int z,Direction dir){
             var s=Blocks.GRAY_BED.getDefaultState().with(BedBlock.FACING,rotated(rot,dir));
             put(x,y,z,s.with(BedBlock.PART,BedPart.FOOT));
@@ -215,7 +219,7 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
             p.room(-11,-7,11,7,0,5,wall,deck);p.room(-11,-7,11,7,5,10,wall,deck);
             for(int floor:new int[]{0,5}){
                 p.fill(0,floor+1,-5,0,floor+4,7,wall);
-                p.door(0,floor+1,0);
+                p.door(0,floor+1,0,Direction.WEST);
                 p.put(-9,floor+3,-5,LunarHorizons.LUNAR_LANTERN);p.put(9,floor+3,5,LunarHorizons.LUNAR_LANTERN);
             }
             // Upper floor: sample archive and instrument room.
@@ -305,15 +309,9 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
         }
         return false;
     }
-    private static ItemStack journal(int type){
-        ItemStack book=new ItemStack(Items.BOOK);
-        book.set(DataComponentTypes.CUSTOM_NAME,Text.translatable("journal.lunar_horizons."+type+".title"));
-        book.set(DataComponentTypes.LORE,new LoreComponent(List.of(Text.translatable("journal.lunar_horizons."+type+".line1"),Text.translatable("journal.lunar_horizons."+type+".line2"))));
-        return book;
-    }
     private static void loot(StructureWorldAccess w,BlockPos pos,Random r,int type){
         if(!(w.getBlockEntity(pos) instanceof ChestBlockEntity chest))return;
-        chest.setStack(0,journal(type));
+        chest.setStack(0,ExpeditionJournal.create(type,r,pos));
         chest.setStack(4,new ItemStack(LunarHorizons.TITANIUM_INGOT,1+r.nextInt(4)));
         switch(type){
             case 0->{chest.setStack(8,new ItemStack(LunarHorizons.OXYGEN));chest.setStack(12,new ItemStack(LunarHorizons.LUNAR_ICE,2+r.nextInt(4)));chest.setStack(18,new ItemStack(Items.BREAD,2+r.nextInt(4)));}

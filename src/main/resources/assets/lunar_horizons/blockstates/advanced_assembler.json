@@ -1,34 +1,90 @@
 {
-  "variants": {
-    "facing=north,lit=false": {
-      "model": "lunar_horizons:block/advanced_assembler"
+  "multipart": [
+    {
+      "when": {
+        "facing": "north",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/advanced_assembler"
+      }
     },
-    "facing=east,lit=false": {
-      "model": "lunar_horizons:block/advanced_assembler",
-      "y": 90
+    {
+      "when": {
+        "facing": "east",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/advanced_assembler",
+        "y": 90
+      }
     },
-    "facing=south,lit=false": {
-      "model": "lunar_horizons:block/advanced_assembler",
-      "y": 180
+    {
+      "when": {
+        "facing": "south",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/advanced_assembler",
+        "y": 180
+      }
     },
-    "facing=west,lit=false": {
-      "model": "lunar_horizons:block/advanced_assembler",
-      "y": 270
+    {
+      "when": {
+        "facing": "west",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/advanced_assembler",
+        "y": 270
+      }
     },
-    "facing=north,lit=true": {
-      "model": "lunar_horizons:block/advanced_assembler_on"
+    {
+      "when": {
+        "facing": "north",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/advanced_assembler_on"
+      }
     },
-    "facing=east,lit=true": {
-      "model": "lunar_horizons:block/advanced_assembler_on",
-      "y": 90
+    {
+      "when": {
+        "facing": "east",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/advanced_assembler_on",
+        "y": 90
+      }
     },
-    "facing=south,lit=true": {
-      "model": "lunar_horizons:block/advanced_assembler_on",
-      "y": 180
+    {
+      "when": {
+        "facing": "south",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/advanced_assembler_on",
+        "y": 180
+      }
     },
-    "facing=west,lit=true": {
-      "model": "lunar_horizons:block/advanced_assembler_on",
-      "y": 270
+    {
+      "when": {
+        "facing": "west",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/advanced_assembler_on",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "up": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/machine_top_socket"
+      }
     }
-  }
+  ]
 }

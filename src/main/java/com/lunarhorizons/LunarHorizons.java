@@ -249,14 +249,13 @@ public final class LunarHorizons implements ModInitializer {
         net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.SERVER_STOPPED.register(server -> MeteorEvents.clear());
         Registry.register(Registries.ITEM_GROUP, id("main"), GROUP);
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> !(entity instanceof ServerPlayerEntity player && player.getWorld().getRegistryKey().equals(MOON) && source.isIn(DamageTypeTags.IS_FALL)));
+        net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents.ALLOW_SLEEP_TIME.register((player,pos,vanilla)->player.getWorld().getRegistryKey().equals(MOON)?ActionResult.SUCCESS:ActionResult.PASS);
         UseBlockCallback.EVENT.register((player, world, hand, hit) -> {
             if(!player.isSpectator()&&hand==Hand.MAIN_HAND){
                 var pos=hit.getBlockPos();
-                if(world.getBlockState(pos).isOf(AIRLOCK)){
-                    if(world instanceof ServerWorld sw&&player instanceof ServerPlayerEntity sp)ColonyAirlockBlock.toggle(sw,pos,sp);
-                    return ActionResult.SUCCESS;
-                }
+                if(world.getBlockState(pos).isOf(AIRLOCK))return ActionResult.PASS;
                 if(world.getBlockState(pos).isOf(POWER_SWITCH)){
+                    if(player.getStackInHand(hand).getItem() instanceof BlockItem bi&&bi.getBlock() instanceof ColonyConduitBlock)return ActionResult.PASS;
                     if(player.isSneaking()&&!player.getStackInHand(hand).isEmpty())return ActionResult.PASS;
                     if(world instanceof ServerWorld sw&&sw.canPlayerModifyAt(player,pos)){
                         var state=sw.getBlockState(pos);
@@ -265,6 +264,7 @@ public final class LunarHorizons implements ModInitializer {
                     return ActionResult.SUCCESS;
                 }
                 if(world.getBlockState(pos).getBlock() instanceof ColonyMachineBlock){
+                    if(player.getStackInHand(hand).getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof ColonyConduitBlock)return ActionResult.PASS;
                     if(player.isSneaking()&&player.getStackInHand(hand).getItem() instanceof BlockItem
                         &&!player.getStackInHand(hand).isOf(LUNAR_ICE.asItem())&&!player.getStackInHand(hand).isOf(net.minecraft.item.Items.ICE))return ActionResult.PASS;
                     if(world instanceof ServerWorld sw&&player instanceof ServerPlayerEntity sp&&sw.canPlayerModifyAt(sp,pos)&&sw.getBlockEntity(pos) instanceof ColonyBlockEntity be){

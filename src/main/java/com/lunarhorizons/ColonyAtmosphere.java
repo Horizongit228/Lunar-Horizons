@@ -32,7 +32,7 @@ final class ColonyAtmosphere {
     private static boolean passable(ServerWorld w,BlockPos p){
         BlockState s=w.getBlockState(p);
         if(s.isOf(LunarHorizons.AIRLOCK))return s.get(Properties.OPEN);
-        return w.getFluidState(p).isEmpty()&&(s.isAir()||s.getBlock() instanceof ColonyConduitBlock||s.getCollisionShape(w,p).isEmpty());
+        return w.getFluidState(p).isEmpty()&&(s.isAir()||s.getBlock() instanceof ColonyConduitBlock||!s.isFullCube(w,p));
     }
     private static boolean powered(ServerWorld w,BlockPos p){
         return w.getBlockEntity(p) instanceof ColonyBlockEntity be&&be.kind()==ColonyBlockEntity.Kind.OXYGEN&&be.active&&be.lastPowered>=w.getTime()-40;
