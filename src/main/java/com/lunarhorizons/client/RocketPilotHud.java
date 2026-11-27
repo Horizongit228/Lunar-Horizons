@@ -16,12 +16,14 @@ import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 final class RocketPilotHud {
-    private static KeyBinding launch,destination;
+    private static KeyBinding launch,destination,cycle;
     static void register(){
         launch=KeyBindingHelper.registerKeyBinding(new KeyBinding("key.lunar_horizons.launch",InputUtil.Type.KEYSYM,GLFW.GLFW_KEY_R,"category.lunar_horizons"));
         destination=KeyBindingHelper.registerKeyBinding(new KeyBinding("key.lunar_horizons.destination",InputUtil.Type.KEYSYM,GLFW.GLFW_KEY_G,"category.lunar_horizons"));
+        cycle=KeyBindingHelper.registerKeyBinding(new KeyBinding("key.lunar_horizons.destination_cycle",InputUtil.Type.KEYSYM,GLFW.GLFW_KEY_H,"category.lunar_horizons"));
         ClientTickEvents.END_CLIENT_TICK.register(mc->{
-            while(destination.wasPressed())if(mc.player!=null&&mc.currentScreen==null&&mc.player.getVehicle() instanceof RocketEntity&&ClientPlayNetworking.canSend(com.lunarhorizons.RocketDestination.ID))ClientPlayNetworking.send(com.lunarhorizons.RocketDestination.INSTANCE);
+            while(destination.wasPressed())if(mc.player!=null&&mc.currentScreen==null&&mc.player.getVehicle() instanceof RocketEntity r&&r.canChooseRoute())mc.setScreen(new RocketRouteScreen(r));
+            while(cycle.wasPressed())if(mc.player!=null&&mc.currentScreen==null&&mc.player.getVehicle() instanceof RocketEntity r&&r.canChooseRoute()&&ClientPlayNetworking.canSend(com.lunarhorizons.RocketDestination.ID))ClientPlayNetworking.send(com.lunarhorizons.RocketDestination.INSTANCE);
             while(launch.wasPressed())if(mc.player!=null&&mc.currentScreen==null&&mc.player.getVehicle() instanceof RocketEntity&&ClientPlayNetworking.canSend(RocketControl.ID))
                 ClientPlayNetworking.send(RocketControl.INSTANCE);
         });
@@ -45,7 +47,7 @@ final class RocketPilotHud {
         for(int i=0;i<r.fuelCapacity();i++){int cell=172/r.fuelCapacity(),left=x+6+i*cell;ctx.fill(left,y+66,left+cell-2,y+72,i<r.fuelReserve()?0xff72b8bd:0xff354653);}
         ctx.drawTextWithShadow(mc.textRenderer,Text.translatable("hud.lunar_horizons.rocket_fuel",fuel),x+6,y+78,0xffc7d7e7);
         ctx.drawTextWithShadow(mc.textRenderer,Text.translatable("hud.lunar_horizons.destination_"+r.destination()),x+6,y+90,0xff80d2ed);
-        if(r.phase()==RocketEntity.READY)ctx.drawTextWithShadow(mc.textRenderer,Text.translatable("hud.lunar_horizons.destination_hint",destination.getBoundKeyLocalizedText()),x+6,y+102,0xffc7d7e7);
+        if(r.canChooseRoute())ctx.drawTextWithShadow(mc.textRenderer,Text.translatable("hud.lunar_horizons.destination_hint",destination.getBoundKeyLocalizedText()),x+6,y+102,0xffc7d7e7);
         if(r.phase()==RocketEntity.ASCENT)
             ctx.drawCenteredTextWithShadow(mc.textRenderer,Text.translatable("hud.lunar_horizons.abort_hint",launch.getBoundKeyLocalizedText()),ctx.getScaledWindowWidth()/2,ctx.getScaledWindowHeight()-74,0xffffbf72);
         if(r.phase()==RocketEntity.READY||r.phase()==RocketEntity.COUNTDOWN)
