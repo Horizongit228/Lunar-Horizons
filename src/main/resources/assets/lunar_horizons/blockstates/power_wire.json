@@ -1,0 +1,100 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_wire_cap_down"
+      }
+    },
+    {
+      "when": {
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_wire_down"
+      }
+    },
+    {
+      "when": {
+        "up": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_wire_cap_up"
+      }
+    },
+    {
+      "when": {
+        "up": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_wire_up"
+      }
+    },
+    {
+      "when": {
+        "north": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_wire_cap_north"
+      }
+    },
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_wire_north"
+      }
+    },
+    {
+      "when": {
+        "south": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_wire_cap_south"
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_wire_south"
+      }
+    },
+    {
+      "when": {
+        "west": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_wire_cap_west"
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_wire_west"
+      }
+    },
+    {
+      "when": {
+        "east": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_wire_cap_east"
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_wire_east"
+      }
+    }
+  ]
+}

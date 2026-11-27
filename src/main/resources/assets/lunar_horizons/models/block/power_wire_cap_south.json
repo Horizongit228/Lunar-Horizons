@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "lunar_horizons:block/power_wire",
+    "body": "lunar_horizons:block/power_wire"
+  },
+  "elements": [
+    {
+      "from": [
+        7.25,
+        7.25,
+        8.75
+      ],
+      "to": [
+        8.75,
+        8.75,
+        8.75
+      ],
+      "faces": {
+        "south": {
+          "texture": "#body",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}

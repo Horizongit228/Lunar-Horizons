@@ -65,6 +65,9 @@ final class EngineeringScreen extends Screen{
         c.fill(x,y,x+w,y+7,0xff35434e);if(max>0&&value>0)c.fill(x,y,x+(int)((long)w*Math.min(max,value)/max),y+7,color);
     }
     private void line(DrawContext c,Text t,int x,int y,int color){c.drawTextWithShadow(textRenderer,t,left+x,top+y,color);}
+    // Screen.render normally applies the vanilla background blur before its widgets.
+    // Our custom panel is drawn first; do not blur it when rendering the widgets.
+    @Override public void renderBackground(DrawContext c,int mouseX,int mouseY,float delta){}
     @Override public void render(DrawContext c,int mx,int my,float delta){
         c.fill(0,0,width,height,0x99070d14);c.fill(left,top,left+W,top+H,0xff17232d);
         c.fill(left,top,left+W,top+2,0xff81bfc3);

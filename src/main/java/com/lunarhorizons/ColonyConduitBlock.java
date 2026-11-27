@@ -20,23 +20,18 @@ public final class ColonyConduitBlock extends Block {
     private static final BooleanProperty[] SIDES={Properties.DOWN,Properties.UP,Properties.NORTH,Properties.SOUTH,Properties.WEST,Properties.EAST};
     private final boolean oxygen;
     private final VoxelShape[] shapes=new VoxelShape[64];
-    public ColonyConduitBlock(Settings settings,boolean oxygen){
+    public ColonyConduitBlock(Settings settings,boolean oxygen){this(settings,oxygen,oxygen?5.5:6.5);}
+    public ColonyConduitBlock(Settings settings,boolean oxygen,double lo){
         super(settings);this.oxygen=oxygen;
         BlockState s=getStateManager().getDefaultState();for(BooleanProperty p:SIDES)s=s.with(p,false);setDefaultState(s);
-        double lo=oxygen?5:6,hi=16-lo;
+        double hi=16-lo;
         for(int mask=0;mask<64;mask++){
             VoxelShape shape=createCuboidShape(lo,lo,lo,hi,hi,hi);
             for(Direction d:Direction.values())if((mask&(1<<d.getId()))!=0){
-                double inner=oxygen?5.8:6.7,outer=16-inner;
-                // Non-overlapping segments: center housing, thin shaft, end coupling.
-                double[] a={inner,inner,inner},b={outer,outer,outer};
-                int axis=d.getAxis()==Direction.Axis.X?0:d.getAxis()==Direction.Axis.Y?1:2;
-                boolean negative=d.getDirection()==Direction.AxisDirection.NEGATIVE;
-                a[axis]=negative?1.5:hi;b[axis]=negative?lo:14.5;
-                shape=VoxelShapes.union(shape,createCuboidShape(a[0],a[1],a[2],b[0],b[1],b[2]));
-                double[] c={lo,lo,lo},e={hi,hi,hi};
-                c[axis]=negative?0:14.5;e[axis]=negative?1.5:16;
-                shape=VoxelShapes.union(shape,createCuboidShape(c[0],c[1],c[2],e[0],e[1],e[2]));
+                double x1=d==Direction.WEST?0:lo,x2=d==Direction.EAST?16:hi;
+                double y1=d==Direction.DOWN?0:lo,y2=d==Direction.UP?16:hi;
+                double z1=d==Direction.NORTH?0:lo,z2=d==Direction.SOUTH?16:hi;
+                shape=VoxelShapes.union(shape,createCuboidShape(x1,y1,z1,x2,y2,z2));
             }
             shapes[mask]=shape;
         }
@@ -44,7 +39,7 @@ public final class ColonyConduitBlock extends Block {
     @Override protected void appendProperties(StateManager.Builder<Block,BlockState> b){b.add(SIDES);}
     boolean connects(BlockState s){
         if(oxygen)return s.isOf(LunarHorizons.OXYGEN_PIPE)||s.isOf(LunarHorizons.OXYGEN_VENT)||s.isOf(LunarHorizons.OXYGEN_GENERATOR);
-        return s.isOf(LunarHorizons.POWER_CABLE)||s.getBlock() instanceof ColonyMachineBlock||s.isOf(LunarHorizons.SOLAR_PANEL)||s.isOf(LunarHorizons.DAMAGED_SOLAR_PANEL)||s.isOf(LunarHorizons.ADVANCED_SOLAR_PANEL)||s.isOf(LunarHorizons.POWER_SWITCH)||s.isOf(LunarHorizons.POWER_FEEDTHROUGH);
+        return s.isOf(LunarHorizons.POWER_WIRE)||s.isOf(LunarHorizons.POWER_CABLE)||s.getBlock() instanceof ColonyMachineBlock||s.isOf(LunarHorizons.SOLAR_PANEL)||s.isOf(LunarHorizons.DAMAGED_SOLAR_PANEL)||s.isOf(LunarHorizons.ADVANCED_SOLAR_PANEL)||s.isOf(LunarHorizons.POWER_SWITCH)||s.isOf(LunarHorizons.POWER_FEEDTHROUGH);
     }
     private BlockState connections(BlockState s,WorldView w,BlockPos p){
         for(Direction d:Direction.values())s=s.with(SIDES[d.getId()],connects(w.getBlockState(p.offset(d))));return s;

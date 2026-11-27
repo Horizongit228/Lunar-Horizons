@@ -12,7 +12,7 @@ final class ColonyGrid {
     private static final Map<ServerWorld,Frame> FRAMES=new WeakHashMap<>();
     private static final class Frame {long tick=Long.MIN_VALUE;final Set<BlockPos> visited=new HashSet<>();}
     static boolean loaded(ServerWorld w,BlockPos p){return p.getY()>=w.getBottomY()&&p.getY()<w.getTopY()&&w.isChunkLoaded(p.getX()>>4,p.getZ()>>4);}
-    private static boolean conductor(BlockState s){return s.getBlock() instanceof ColonyMachineBlock||s.isOf(LunarHorizons.POWER_CABLE)||s.isOf(LunarHorizons.SOLAR_PANEL)||s.isOf(LunarHorizons.DAMAGED_SOLAR_PANEL)||s.isOf(LunarHorizons.ADVANCED_SOLAR_PANEL)||s.isOf(LunarHorizons.POWER_FEEDTHROUGH)||(s.isOf(LunarHorizons.POWER_SWITCH)&&s.get(net.minecraft.state.property.Properties.POWERED));}
+    private static boolean conductor(BlockState s){return s.getBlock() instanceof ColonyMachineBlock||s.isOf(LunarHorizons.POWER_CABLE)||s.isOf(LunarHorizons.POWER_WIRE)||s.isOf(LunarHorizons.SOLAR_PANEL)||s.isOf(LunarHorizons.DAMAGED_SOLAR_PANEL)||s.isOf(LunarHorizons.ADVANCED_SOLAR_PANEL)||s.isOf(LunarHorizons.POWER_FEEDTHROUGH)||(s.isOf(LunarHorizons.POWER_SWITCH)&&s.get(net.minecraft.state.property.Properties.POWERED));}
     static void tick(World world,ColonyBlockEntity root){
         if(!(world instanceof ServerWorld w)||w.getTime()%20!=0)return;
         Frame f=FRAMES.computeIfAbsent(w,k->new Frame());

@@ -40,6 +40,9 @@ final class BuilderScreen extends Screen{
     }
     @Override public void tick(){build.active=enough();}
     @Override public boolean shouldPause(){return false;}
+        // Screen.render normally applies the vanilla background blur before its widgets.
+    // Our custom panel is drawn first; do not blur it when rendering the widgets.
+    @Override public void renderBackground(DrawContext c,int mouseX,int mouseY,float delta){}
     @Override public void render(DrawContext c,int mx,int my,float delta){
         c.fill(0,0,width,height,0x99070d14);c.fill(left,top,left+W,top+H,0xff17232d);
         c.drawTextWithShadow(textRenderer,title,left+8,top+9,0xff83c2c7);

@@ -43,6 +43,7 @@
     "lunar_horizons:industrial_battery",
     "lunar_horizons:advanced_solar_panel",
     "lunar_horizons:power_switch",
-    "lunar_horizons:power_feedthrough"
+    "lunar_horizons:power_feedthrough",
+    "lunar_horizons:power_wire"
   ]
 }
