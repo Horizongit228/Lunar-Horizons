@@ -53,8 +53,8 @@ public final class SpaceFlight {
     }
     public static Vec3d velocity(PlayerEntity p,int flags){
         Vec3d v=p.getVelocity();
-        if((flags&64)!=0)return v.multiply(.55);
         if(!canThrust(p))return v;
+        if((flags&64)!=0)return v.multiply(.55);
         double yaw=Math.toRadians(p.getYaw());
         double forward=((flags&1)!=0?1:0)-((flags&2)!=0?1:0);
         double side=((flags&4)!=0?1:0)-((flags&8)!=0?1:0);
@@ -69,6 +69,7 @@ public final class SpaceFlight {
         for(ServerPlayerEntity p:server.getPlayerManager().getPlayerList()){
             if(!eligible(p)||stationGravity(p)){COMMANDS.remove(p.getUuid());continue;}
             if(p.getY()<-48||p.getY()>304){
+                COMMANDS.remove(p.getUuid());
                 // Game-world vertical boundary rescue, not a way to travel between dimensions.
                 ServerWorld w=p.getServerWorld();BlockPos dock=OrbitalStationFeature.dock(0);
                 w.getChunk(dock.getX()>>4,dock.getZ()>>4);
@@ -76,7 +77,8 @@ public final class SpaceFlight {
                 p.fallDistance=0;RocketEntity.message(p,"eva_boundary");continue;
             }
             Command cmd=COMMANDS.get(p.getUuid());
-            int flags=cmd!=null&&server.getTicks()-cmd.tick()<=10?cmd.flags():0;
+            if(cmd!=null&&server.getTicks()-cmd.tick()>10){COMMANDS.remove(p.getUuid());cmd=null;}
+            int flags=cmd!=null?cmd.flags():0;
             if(flags!=0&&server.getTicks()%3==0){
                 p.setVelocity(velocity(p,flags));p.velocityModified=true;
             }
