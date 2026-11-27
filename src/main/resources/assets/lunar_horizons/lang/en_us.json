@@ -441,5 +441,17 @@
   "message.lunar_horizons.structure_missing": "Structure %s not found within the search range.",
   "message.lunar_horizons.structure_unsafe": "No safe destination found at structure %s.",
   "message.lunar_horizons.structure_arrived": "Structure %s: %s, %s, %s.",
-  "message.lunar_horizons.conduits_repaired": "Refreshed connections: %s. Bridged gaps: %s."
+  "message.lunar_horizons.conduits_repaired": "Refreshed connections: %s. Bridged gaps: %s.",
+  "block.lunar_horizons.server_block": "Server",
+  "item.lunar_horizons.data_core": "Data core",
+  "structure.lunar_horizons.ultra_data_center": "Ultra Data Center",
+  "screen.lunar_horizons.machine_io_9": "Control circuit → data core",
+  "guide.lunar_horizons.page.18.title": "Servers and data cores",
+  "guide.lunar_horizons.page.18.body": "A server processes a control circuit in 60 powered seconds at 30 E/s. Right-click empty-handed for the console. Load a circuit, supply power and collect a data core. Auto: input above, product below.\nCores are reserved for the future Rift project; they do not trigger events yet.\nUltra Data Centers are exceptionally rare throughout all lunar biomes: eight independent compute halls, mission control and a classified archive.",
+  "journal.lunar_horizons.22.title": "Compute facility log",
+  "journal.lunar_horizons.22.line1": "Compute halls use independent circuits.",
+  "journal.lunar_horizons.22.line2": "Preserve the data cores. The final Rift project protocol is not yet approved.",
+  "journal.lunar_horizons.23.title": "Classified archive: Project Rift",
+  "journal.lunar_horizons.23.line1": "Planetary simulation is partially complete.",
+  "journal.lunar_horizons.23.line2": "Target unresolved: Moon or Earth. Activation prohibited pending research."
 }
