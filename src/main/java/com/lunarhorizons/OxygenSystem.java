@@ -29,7 +29,7 @@ public final class OxygenSystem {
     public static void refill(ServerPlayerEntity p,ItemStack tank){
         if(tank.getDamage()==0){p.sendMessage(Text.translatable("message.lunar_horizons.tank_full"),true);return;}
         if(!p.isCreative()&&!p.getWorld().getRegistryKey().equals(World.OVERWORLD)){
-            int ice=-1;for(int i=0;i<36;i++)if((p.getInventory().getStack(i).isOf(Items.ICE)||p.getInventory().getStack(i).isOf(LunarHorizons.LUNAR_ICE.asItem()))){ice=i;break;}
+            int ice=-1;for(int i=0;i<p.getInventory().size();i++)if((p.getInventory().getStack(i).isOf(Items.ICE)||p.getInventory().getStack(i).isOf(LunarHorizons.LUNAR_ICE.asItem()))){ice=i;break;}
             if(ice<0){p.sendMessage(Text.translatable("message.lunar_horizons.refill_ice"),true);return;}
             p.getInventory().getStack(ice).decrement(1);
         }
