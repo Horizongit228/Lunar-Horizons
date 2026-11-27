@@ -162,5 +162,14 @@
   "message.lunar_horizons.online": "Online",
   "message.lunar_horizons.offline": "Offline",
   "message.lunar_horizons.grid_status": "Grid: generation %s E/s | demand %s E/s | stored %s E",
-  "hud.lunar_horizons.habitat": "Pressurized habitat"
+  "hud.lunar_horizons.habitat": "Pressurized habitat",
+  "item.lunar_horizons.rover": "Lunar Rover",
+  "entity.lunar_horizons.rover": "Lunar Rover",
+  "message.lunar_horizons.rover_blocked": "The rover needs a clear deployment area.",
+  "message.lunar_horizons.rover_deployed": "Rover deployed. Charge the battery.",
+  "message.lunar_horizons.rover_charge": "Rover charge: %s/%s E.",
+  "message.lunar_horizons.rover_controls": "W/S drive, A/D steer, Space brake.",
+  "hud.lunar_horizons.rover": "LUNAR ROVER",
+  "hud.lunar_horizons.rover_speed": "Speed: %s m/s",
+  "hud.lunar_horizons.rover_energy": "Charge: %s/%s E"
 }

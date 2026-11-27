@@ -70,7 +70,7 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
         set(w,p.add(-2,2,2),LunarHorizons.LUNAR_LANTERN.getDefaultState());
         set(w,p.add(2,0,2),LunarHorizons.REFILL_STATION.getDefaultState());
         set(w,p.up(4),LunarHorizons.SURVEY_BEACON.getDefaultState());
-        loot(w,p.add(-2,0,-1),r);
+        loot(w,p.add(-2,0,-2),r);
         return true;
     }
     /** Entire 15x15 footprint stays inside its generating chunk. */

@@ -162,5 +162,14 @@
   "message.lunar_horizons.online": "Работает",
   "message.lunar_horizons.offline": "Остановлено",
   "message.lunar_horizons.grid_status": "Сеть: генерация %s Е/с | спрос %s Е/с | запас %s Е",
-  "hud.lunar_horizons.habitat": "Герметичная база"
+  "hud.lunar_horizons.habitat": "Герметичная база",
+  "item.lunar_horizons.rover": "Луноход",
+  "entity.lunar_horizons.rover": "Луноход",
+  "message.lunar_horizons.rover_blocked": "Для установки лунохода нужна свободная площадка.",
+  "message.lunar_horizons.rover_deployed": "Луноход установлен. Зарядите аккумулятор.",
+  "message.lunar_horizons.rover_charge": "Заряд лунохода: %s/%s Е.",
+  "message.lunar_horizons.rover_controls": "W/S — движение, A/D — поворот, пробел — тормоз.",
+  "hud.lunar_horizons.rover": "ЛУНОХОД",
+  "hud.lunar_horizons.rover_speed": "Скорость: %s м/с",
+  "hud.lunar_horizons.rover_energy": "Заряд: %s/%s Е"
 }

@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "TCT",
+    "PFP",
+    "IRI"
+  ],
+  "key": {
+    "T": {
+      "item": "lunar_horizons:titanium_ingot"
+    },
+    "C": {
+      "item": "lunar_horizons:control_circuit"
+    },
+    "P": {
+      "item": "lunar_horizons:power_cell"
+    },
+    "F": {
+      "item": "lunar_horizons:machine_frame"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:rover",
+    "count": 1
+  }
+}
