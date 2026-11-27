@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GGG",
+    "CRC",
+    "TTT"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "C": {
+      "item": "minecraft:coal"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "T": {
+      "item": "lunar_horizons:titanium_ingot"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:solar_panel",
+    "count": 2
+  }
+}

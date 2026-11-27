@@ -132,5 +132,7 @@
   "hud.lunar_horizons.rocket_reserve": "Tank: %s/%s",
   "hud.lunar_horizons.abort_hint": "%s — abort ascent",
   "entity.lunar_horizons.meteor": "Meteorite",
-  "entity.lunar_horizons.huge_meteor": "Giant Meteorite"
+  "entity.lunar_horizons.huge_meteor": "Giant Meteorite",
+  "block.lunar_horizons.solar_panel": "Solar Panel",
+  "block.lunar_horizons.damaged_solar_panel": "Damaged Solar Panel"
 }

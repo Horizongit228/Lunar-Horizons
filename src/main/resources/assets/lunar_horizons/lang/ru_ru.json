@@ -132,5 +132,7 @@
   "hud.lunar_horizons.rocket_reserve": "Бак: %s/%s",
   "hud.lunar_horizons.abort_hint": "%s — прервать взлёт",
   "entity.lunar_horizons.meteor": "Метеорит",
-  "entity.lunar_horizons.huge_meteor": "Гигантский метеорит"
+  "entity.lunar_horizons.huge_meteor": "Гигантский метеорит",
+  "block.lunar_horizons.solar_panel": "Солнечная панель",
+  "block.lunar_horizons.damaged_solar_panel": "Повреждённая солнечная панель"
 }

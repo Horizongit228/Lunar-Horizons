@@ -13,134 +13,142 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
+import java.util.ArrayList;
+import java.util.List;
 
-/** Separate full-size vehicle model; one model unit is 1/4 of a block. */
+/** Eight-block tall twelve-sided expedition lander with a transparent cockpit.
+ * Model coordinates are quarter-block units, with negative Y pointing up. */
 public final class RocketRenderer extends EntityRenderer<RocketEntity> {
-    private static final Identifier TEXTURE = Identifier.of("lunar_horizons","textures/entity/rocket_alloy.png");
-    private static final Identifier CLEAR_TEXTURE = Identifier.ofVanilla("textures/block/white_concrete.png");
-    private record Piece(ModelPart model,int color,boolean glass) {}
-    private final Piece[] pieces;
-    private final Piece flameOuter, flameCore;
+    private static final Identifier ALLOY=Identifier.of("lunar_horizons","textures/entity/rocket_alloy.png");
+    private static final Identifier CLEAR=Identifier.ofVanilla("textures/block/white_concrete.png");
+    private static final int IVORY=0xffdeded5, TITANIUM=0xffa4adb1, GRAPHITE=0xff424a51, RED=0xff92544a, GOLD=0xffb19a6f;
+    private static final int SIDES=12;
+    private record Piece(ModelPart model,int color,boolean glass,boolean lit){}
+    private final List<Piece> hull=new ArrayList<>(),windows=new ArrayList<>(),flames=new ArrayList<>();
 
-    public RocketRenderer(EntityRendererFactory.Context context) {
+    public RocketRenderer(EntityRendererFactory.Context context){
         super(context);
         shadowRadius=1.45f;
-        flameOuter=part(0xeaff8833,true,plumes(1.0f,5.0f));
-        flameCore=part(0xfaa1ebff,true,plumes(.43f,3.8f));
-        pieces = new Piece[]{
-            // Fuselage (the 8-block height is modeled as 32 units).
-            part(0xffe3e1d7,false,new float[][]{
-                {-4,-17,-3,8,13,6},{-3,-17,-4,6,13,8},
-                {-4,-18,-3,8,1,6},{-3,-18,-4,6,1,8},
-                {-4,-26,-3,8,1,6},{-3,-26,-4,6,1,8},
-                {-3,-27,-3,6,1,6},
-                // White skin and corner posts around the open cabin.
-                {-4,-25,-4,1,7,1},{3,-25,-4,1,7,1},
-                {-4,-25,3,1,7,1},{3,-25,3,1,7,1},
-                // Fuel pipe covers and landing legs.
-                {-5,-9,-1,1,4,2},{4,-9,-1,1,4,2},
-                {-1,-9,-5,2,4,1},{-1,-9,4,2,4,1}
-            }),
-            part(0xff925449,false,new float[][]{
-                {-4.1f,-14,-3.1f,8.2f,2,6.2f},{-3.1f,-14,-4.1f,6.2f,2,8.2f},
-                {-4.1f,-18.5f,-3.1f,8.2f,.5f,6.2f},
-                {-3.1f,-18.5f,-4.1f,6.2f,.5f,8.2f},
-                // Tapered nose cone.
-                {-3,-29,-3,6,2,6},{-2.5f,-30,-2.5f,5,1,5},
-                {-1.5f,-31,-1.5f,3,1,3},{-.75f,-32,-.75f,1.5f,1,1.5f},
-                // Four radial fins, individually stepped.
-                {-6,-5,-.5f,2,3,1},{-5,-8,-.5f,1,3,1},
-                {4,-5,-.5f,2,3,1},{4,-8,-.5f,1,3,1},
-                {-.5f,-5,-6,1,3,2},{-.5f,-8,-5,1,3,1},
-                {-.5f,-5,4,1,3,2},{-.5f,-8,4,1,3,1}
-            }),
-            part(0xff4b5358,false,new float[][]{
-                {-3.6f,-4,-3.6f,7.2f,1,7.2f},
-                {-3.2f,-16,-4.1f,6.4f,.35f,.2f},{-3.2f,-10,-4.1f,6.4f,.35f,.2f},
-                {-4.1f,-16,-3.2f,.2f,.35f,6.4f},{4,-16,-3.2f,.2f,.35f,6.4f},
-                {-3.2f,-16,4,6.4f,.35f,.2f},
-                // Cockpit seat and a low instrument console.
-                {-1.5f,-18.5f,-.5f,3,.5f,2.4f},{-1.5f,-21,1.2f,3,2.5f,.5f},
-                {-2,-19.8f,-3,4,1.8f,.9f},
-                // Four engine bells.
-                {-3,-3,-3,2.4f,2.4f,2.4f},{.6f,-3,-3,2.4f,2.4f,2.4f},
-                {-3,-3,.6f,2.4f,2.4f,2.4f},{.6f,-3,.6f,2.4f,2.4f,2.4f}
-            }),
-            part(0xff8e9ba1,false,new float[][]{
-                {-3.25f,-1,-3.25f,2.9f,1,2.9f},{.35f,-1,-3.25f,2.9f,1,2.9f},
-                {-3.25f,-1,.35f,2.9f,1,2.9f},{.35f,-1,.35f,2.9f,1,2.9f},
-                {-4.05f,-25,-4.05f,8.1f,.4f,.3f},{-4.05f,-25,3.75f,8.1f,.4f,.3f},
-                {-4.05f,-25,-3.75f,.3f,.4f,7.5f},{3.75f,-25,-3.75f,.3f,.4f,7.5f},
-                {-4.05f,-19,-4.05f,8.1f,.4f,.3f},{-4.05f,-19,3.75f,8.1f,.4f,.3f},
-                {-4.05f,-19,-3.75f,.3f,.4f,7.5f},{3.75f,-19,-3.75f,.3f,.4f,7.5f},
-                {-6,-2,-1,2,1,2},{4,-2,-1,2,1,2},{-1,-2,-6,2,1,2},{-1,-2,4,2,1,2}
-            }),
-            part(0xff84b6ba,false,new float[][]{
-                {-1.5f,-20,-2.95f,1.25f,.2f,.55f},{.15f,-20,-2.95f,1.25f,.2f,.55f},
-                {-1,-12,-4.15f,2,1.25f,.15f},{-4.15f,-12,-1,.15f,1.25f,2},
-                {4,-12,-1,.15f,1.25f,2},{-1,-12,4,2,1.25f,.15f}
-            }),
-            // External service panels, reinforcement ribs and landing struts.
-            part(0xff9fa9aa,false,new float[][]{
-                {-3,-15.5f,-4.18f,6,.45f,.25f},{-3,-7.2f,-4.18f,6,.45f,.25f},
-                {-3,-15.5f,3.93f,6,.45f,.25f},{-3,-7.2f,3.93f,6,.45f,.25f},
-                {-4.18f,-15.5f,-3,.25f,.45f,6},{3.93f,-15.5f,-3,.25f,.45f,6},
-                {-4.18f,-7.2f,-3,.25f,.45f,6},{3.93f,-7.2f,-3,.25f,.45f,6},
-                {-5.6f,-6,-.7f,.8f,4.1f,1.4f},{4.8f,-6,-.7f,.8f,4.1f,1.4f},
-                {-.7f,-6,-5.6f,1.4f,4.1f,.8f},{-.7f,-6,4.8f,1.4f,4.1f,.8f},
-                {-3.4f,-26.5f,-3.4f,6.8f,.3f,6.8f}
-            }),
-            part(0xff40494e,false,new float[][]{
-                {-2.7f,-16.8f,-4.23f,1.25f,4.5f,.2f},{1.45f,-16.8f,-4.23f,1.25f,4.5f,.2f},
-                {-2.7f,-16.8f,4.03f,1.25f,4.5f,.2f},{1.45f,-16.8f,4.03f,1.25f,4.5f,.2f},
-                {-4.23f,-16.8f,-2.7f,.2f,4.5f,1.25f},{4.03f,-16.8f,1.45f,.2f,4.5f,1.25f}
-            }),
-            part(0xffb99c68,false,new float[][]{
-                {-2.7f,-12.1f,-4.3f,1.25f,.3f,.14f},{1.45f,-12.1f,-4.3f,1.25f,.3f,.14f},
-                {-3.9f,-3.7f,-3.9f,7.8f,.35f,7.8f}
-            }),
-            // Windows allow an actual first-person view from inside the cockpit.
-            part(0x385d8da5,true,new float[][]{
-                {-3,-24.6f,-3.92f,6,5.6f,.14f},{-3,-24.6f,3.78f,6,5.6f,.14f},
-                {-3.92f,-24.6f,-3,.14f,5.6f,6},{3.78f,-24.6f,-3,.14f,5.6f,6}
-            })
-        };
+        // Hollow segmented cylindrical shell; separate rings visibly divide the stages.
+        ring(hull,4.0f,-17.8f,-7.2f,.25f,IVORY,false);
+        ring(hull,3.8f,-7.2f,-4.0f,.35f,GRAPHITE,false);
+        ring(hull,4.13f,-17.8f,-17.1f,.30f,TITANIUM,false);
+        ring(hull,4.13f,-10.0f,-9.6f,.30f,TITANIUM,false);
+        ring(hull,4.1f,-8.6f,-7.8f,.3f,RED,false);
+        ring(hull,4.12f,-4.8f,-4.0f,.30f,TITANIUM,false);
+        deck(hull,3.8f,-4.1f,.45f,GRAPHITE);
+        deck(hull,3.95f,-18.0f,.55f,TITANIUM);
+        deck(hull,3.65f,-25.6f,.65f,IVORY);
+        // Panoramic cabin: twelve facets, narrow pillars, a real interior at the seat height.
+        ring(hull,3.95f,-19.0f,-18.0f,.3f,RED,false);
+        ring(hull,3.75f,-25.5f,-24.7f,.28f,TITANIUM,false);
+        for(int i=0;i<SIDES;i++){
+            double angle=2*Math.PI*i/SIDES;
+            float radius=3.78f,half=(float)(radius*Math.tan(Math.PI/SIDES));
+            float a=(float)angle;
+            hull.add(part(TITANIUM,false,false,a,0,0,0,new float[][]{{-half-.12f,-24.7f,radius-.16f,.24f,5.7f,.34f}}));
+            if(i%3==1){
+                hull.add(part(IVORY,false,false,a,0,0,0,new float[][]{{-half,-24.7f,radius-.2f,half*2,5.7f,.25f}}));
+            }else{
+                windows.add(part(0x465d879e,true,false,a,0,0,0,new float[][]{{-half+.12f,-24.7f,radius-.16f,half*2-.24f,5.7f,.08f}}));
+            }
+        }
+        hull.add(part(GRAPHITE,false,false,0,0,0,0,new float[][]{
+            {-1.35f,-18.6f,-.2f,2.7f,.55f,2.0f},{-1.35f,-21.0f,1.35f,2.7f,2.4f,.42f},
+            {-2.3f,-19.45f,-3.3f,4.6f,1.4f,.65f}
+        }));
+        hull.add(part(0xff83c2c7,false,true,0,0,0,0,new float[][]{
+            {-1.8f,-19.52f,-3.17f,1.3f,.14f,.48f},{.48f,-19.52f,-3.17f,1.3f,.14f,.48f}
+        }));
+        // Multi-stage conical nose, stepped at quarter-block scale.
+        float[] radii={3.65f,3.4f,3.1f,2.75f,2.35f,1.9f,1.4f,.85f,.36f};
+        for(int i=0;i<radii.length;i++){
+            float bottom=-25.55f-i*.70f;
+            ring(hull,radii[i],bottom-.72f,bottom,.38f,i==0||i>=7?RED:IVORY,false);
+            deck(hull,radii[i]-.10f,bottom-.72f,.24f,i>=7?RED:IVORY);
+        }
+        hull.add(part(TITANIUM,false,false,0,0,0,0,new float[][]{{-.15f,-32f,-.15f,.3f,.5f,.3f}}));
+        // Four radial equipment bays, access panels, handholds, and landing gear.
+        for(int i=0;i<4;i++){
+            float angle=i*(float)Math.PI/2;
+            hull.add(part(GRAPHITE,false,false,angle,0,0,0,new float[][]{
+                {-1.10f,-16.4f,3.98f,2.2f,4.4f,.24f},
+                {-.85f,-15.95f,4.22f,1.7f,.42f,.18f},
+                {-.85f,-12.9f,4.22f,1.7f,.42f,.18f},
+                {-.64f,-7.1f,3.62f,1.28f,4.7f,.73f}
+            }));
+            hull.add(part(TITANIUM,false,false,angle,0,0,0,new float[][]{
+                {-.86f,-15.45f,4.22f,1.72f,2.2f,.14f},
+                {-.17f,-13.1f,4.41f,.34f,.45f,.13f},
+                {-.57f,-7.3f,4.3f,1.14f,3.1f,.50f},
+                {-.44f,-4.3f,4.7f,.88f,3.5f,.56f},
+                {-1.07f,-.55f,4.0f,2.14f,.55f,1.95f}
+            }));
+            hull.add(part(RED,false,false,angle,0,0,0,new float[][]{
+                {-.70f,-6.8f,4.85f,1.40f,1.8f,.48f}
+            }));
+            hull.add(part(GOLD,false,false,angle,0,0,0,new float[][]{
+                {-.33f,-4.0f,5.28f,.66f,1.5f,.25f}
+            }));
+            hull.add(part(i%2==0?0xff8fc6bd:0xffc19b72,false,true,angle,0,0,0,new float[][]{
+                {-.32f,-11.65f,4.16f,.64f,.34f,.12f}
+            }));
+        }
+        // Four recessed flared bells, with hollow dark openings and silver nozzle lips.
+        for(float x:new float[]{-1.8f,1.8f})for(float z:new float[]{-1.8f,1.8f}){
+            hull.add(part(GRAPHITE,false,false,0,x,0,z,new float[][]{{-.69f,-3.75f,-.69f,1.38f,1.05f,1.38f}}));
+            nozzle(x,z,.78f,-2.75f,-1.7f,TITANIUM);
+            nozzle(x,z,1.03f,-1.7f,-.75f,GRAPHITE);
+            nozzle(x,z,1.24f,-.75f,-.28f,TITANIUM);
+            hull.add(part(0xff242b2e,false,false,0,x,0,z,new float[][]{{-.76f,-2.6f,-.76f,1.52f,.18f,1.52f}}));
+            flames.add(part(0xbcf78b3a,true,true,0,x,0,z,new float[][]{
+                {-.79f,-.35f,-.79f,1.58f,1.8f,1.58f},{-.54f,1.45f,-.54f,1.08f,1.35f,1.08f},{-.22f,2.8f,-.22f,.44f,1.2f,.44f}
+            }));
+            flames.add(part(0xe6b8ebff,true,true,0,x,0,z,new float[][]{
+                {-.40f,-.35f,-.40f,.8f,1.45f,.8f},{-.18f,1.10f,-.18f,.36f,1.55f,.36f}
+            }));
+        }
     }
 
-    private static float[][] plumes(float radius,float length){
-        float[][] boxes=new float[12][];int i=0;
-        for(float x:new float[]{-1.8f,1.8f})for(float z:new float[]{-1.8f,1.8f}){
-            boxes[i++]=new float[]{x-radius,0,z-radius,2*radius,length*.42f,2*radius};
-            boxes[i++]=new float[]{x-radius*.66f,length*.42f,z-radius*.66f,1.32f*radius,length*.33f,1.32f*radius};
-            boxes[i++]=new float[]{x-radius*.3f,length*.75f,z-radius*.3f,.6f*radius,length*.25f,.6f*radius};
+    private void nozzle(float x,float z,float radius,float top,float bottom,int color){
+        for(int i=0;i<8;i++){
+            float angle=(float)(i*Math.PI/4),half=radius*.4143f;
+            // Rotated panels have their pivot at the individual nozzle center.
+            hull.add(part(color,false,false,angle,x,0,z,new float[][]{{-half-.04f,top,radius-.18f,half*2+.08f,bottom-top,.2f}}));
         }
-        return boxes;
     }
-    private static Piece part(int color,boolean glass,float[][] boxes) {
+    private static void ring(List<Piece> out,float radius,float top,float bottom,float thickness,int color,boolean glass){
+        float half=(float)(radius*Math.tan(Math.PI/SIDES));
+        for(int i=0;i<SIDES;i++)out.add(part(color,glass,false,(float)(i*2*Math.PI/SIDES),0,0,0,
+            new float[][]{{-half-.035f,top,radius-thickness,half*2+.07f,bottom-top,thickness}}));
+    }
+    private static void deck(List<Piece> out,float radius,float top,float height,int color){
+        // Three overlapping, rotated rectangles approximate a twelve-sided solid disk.
+        for(int i=0;i<3;i++)out.add(part(color,false,false,(float)(i*Math.PI/3),0,0,0,new float[][]{{-radius*.57735f,top,-radius,1.1547f*radius,height,2*radius}}));
+    }
+    private static Piece part(int color,boolean glass,boolean lit,float angle,float x,float y,float z,float[][] boxes){
         ModelData data=new ModelData();
         ModelPartBuilder builder=ModelPartBuilder.create();
-        int index=0;
-        for(float[] b:boxes){ int u=(index%3)*32, v=((index/3)%3)*32; builder.uv(u,v).cuboid(b[0],b[1],b[2],b[3],b[4],b[5]); index++; }
-        ModelPart model=data.getRoot().addChild("piece",builder,ModelTransform.NONE).createPart(128,128);
-        return new Piece(model,color,glass);
+        for(float[] b:boxes)builder.uv(0,0).cuboid(b[0],b[1],b[2],b[3],b[4],b[5]);
+        ModelPart model=data.getRoot().addChild("piece",builder,ModelTransform.of(x,y,z,0,angle,0)).createPart(128,128);
+        return new Piece(model,color,glass,lit);
     }
-
-    @Override public Identifier getTexture(RocketEntity entity){return TEXTURE;}
+    private static void draw(Piece p,MatrixStack matrices,VertexConsumerProvider vertices,int light){
+        RenderLayer layer=p.glass?RenderLayer.getEntityTranslucent(CLEAR):RenderLayer.getEntityCutoutNoCull(ALLOY);
+        p.model.render(matrices,vertices.getBuffer(layer),p.lit?0x00F000F0:light,OverlayTexture.DEFAULT_UV,p.color);
+    }
+    @Override public Identifier getTexture(RocketEntity entity){return ALLOY;}
     @Override public void render(RocketEntity entity,float yaw,float tickDelta,MatrixStack matrices,VertexConsumerProvider vertices,int light){
         matrices.push();
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-yaw));
-        // ModelPart uses positive Y down, while world coordinates use positive Y up.
         matrices.scale(-4,-4,4);
-        for(Piece piece:pieces){
-            RenderLayer layer=piece.glass?RenderLayer.getEntityTranslucent(CLEAR_TEXTURE):RenderLayer.getEntityCutoutNoCull(TEXTURE);
-            piece.model.render(matrices,vertices.getBuffer(layer),light,OverlayTexture.DEFAULT_UV,piece.color);
-        }
+        for(Piece p:hull)draw(p,matrices,vertices,light);
+        for(Piece p:windows)draw(p,matrices,vertices,light);
         if(entity.enginesOn()||entity.warmingUp()){
             matrices.push();
-            float pulse=.80f+.20f*(float)Math.sin((entity.age+tickDelta)*1.3);
-            matrices.scale(1,pulse*(entity.warmingUp()?.22f:entity.phase()==RocketEntity.DESCENT?.66f:1f),1);
-            for(Piece flame:new Piece[]{flameOuter,flameCore})
-                flame.model.render(matrices,vertices.getBuffer(RenderLayer.getEntityTranslucent(CLEAR_TEXTURE)),0x00F000F0,OverlayTexture.DEFAULT_UV,flame.color);
+            float pulse=.88f+.12f*(float)Math.sin((entity.age+tickDelta)*1.6);
+            matrices.scale(1,pulse*(entity.warmingUp()?.23f:entity.phase()==RocketEntity.DESCENT?.65f:1f),1);
+            for(Piece p:flames)draw(p,matrices,vertices,light);
             matrices.pop();
         }
         matrices.pop();

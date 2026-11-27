@@ -88,8 +88,8 @@ final class MeteorEvents {
         if(!moon.spawnEntity(body))return null;
         ACTIVE.add(new Meteor(moon,p,tick,dx,dz,huge,height,body));
         for(ServerPlayerEntity nearby:moon.getPlayers()){
-            double dx=nearby.getX()-x,dz=nearby.getZ()-z;
-            if(dx*dx+dz*dz<128*128)nearby.sendMessage(Text.translatable(huge?"message.lunar_horizons.huge_meteor_warning":"message.lunar_horizons.meteor_warning"),false);
+            double offsetX=nearby.getX()-x,offsetZ=nearby.getZ()-z;
+            if(offsetX*offsetX+offsetZ*offsetZ<128*128)nearby.sendMessage(Text.translatable(huge?"message.lunar_horizons.huge_meteor_warning":"message.lunar_horizons.meteor_warning"),false);
         }
         return p;
     }
