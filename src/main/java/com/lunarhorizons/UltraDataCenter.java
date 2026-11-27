@@ -27,6 +27,13 @@ final class UltraDataCenter {
             p.put(-3,4,z,LIGHT);p.put(3,4,z,LIGHT);
             p.put(-3,0,z,LunarHorizons.INDUSTRIAL_GRATE);p.put(3,0,z,LunarHorizons.INDUSTRIAL_GRATE);
         }
+        for(int z:new int[]{-44,-18,6,30}){
+            p.machine(-3,1,z,LunarHorizons.OXYGEN_GENERATOR,Direction.EAST);
+            p.machine(-2,1,z,LunarHorizons.BATTERY,Direction.EAST);
+            for(int y=2;y<5;y++)p.put(-2,y,z,CABLE);
+            p.put(-2,5,z,PORT);
+            p.fill(-3,6,z-1,-1,6,z+1,LunarHorizons.ADVANCED_SOLAR_PANEL);
+        }
         for(int z:new int[]{-36,-12,12,36})for(int side:new int[]{-1,1})hall(p,side,z);
 
         // Entry security and mission control; all doors lead to a usable passage.
@@ -70,6 +77,7 @@ final class UltraDataCenter {
         p.put(0,1,57,LunarHorizons.ADVANCED_ASSEMBLER);
         p.put(-1,1,57,LunarHorizons.SERVER_BLOCK);p.put(1,1,57,LunarHorizons.INDUSTRIAL_BATTERY);
         p.put(1,1,56,LunarHorizons.HELIUM_GENERATOR);
+        p.put(2,1,57,LunarHorizons.OXYGEN_GENERATOR);
         p.put(1,2,57,CABLE);p.put(1,3,57,CABLE);p.put(1,4,57,CABLE);p.put(1,5,57,PORT);
         for(int x=-9;x<=9;x++)p.put(x,6,56,WIRE);
         p.put(1,6,56,WIRE);
