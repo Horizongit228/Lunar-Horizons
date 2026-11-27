@@ -1,6 +1,12 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube",
   "textures": {
-    "all": "lunar_horizons:block/powered_lamp"
+    "particle": "lunar_horizons:block/powered_lamp",
+    "north": "lunar_horizons:block/powered_lamp",
+    "south": "lunar_horizons:block/machine_side",
+    "east": "lunar_horizons:block/machine_side",
+    "west": "lunar_horizons:block/machine_side",
+    "up": "lunar_horizons:block/machine_top",
+    "down": "lunar_horizons:block/machine_top"
   }
 }

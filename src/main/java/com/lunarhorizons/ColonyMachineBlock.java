@@ -12,9 +12,14 @@ import net.minecraft.world.World;
 public final class ColonyMachineBlock extends Block implements BlockEntityProvider {
     final ColonyBlockEntity.Kind kind;
     public ColonyMachineBlock(Settings settings,ColonyBlockEntity.Kind kind){
-        super(settings);this.kind=kind;setDefaultState(getStateManager().getDefaultState().with(Properties.LIT,false));
+        super(settings);this.kind=kind;setDefaultState(getStateManager().getDefaultState().with(Properties.LIT,false).with(Properties.HORIZONTAL_FACING,net.minecraft.util.math.Direction.NORTH));
     }
-    @Override protected void appendProperties(StateManager.Builder<Block,BlockState> builder){builder.add(Properties.LIT);}
+    @Override protected void appendProperties(StateManager.Builder<Block,BlockState> builder){builder.add(Properties.LIT,Properties.HORIZONTAL_FACING);}
+    @Override public BlockState getPlacementState(net.minecraft.item.ItemPlacementContext ctx){
+        return getDefaultState().with(Properties.HORIZONTAL_FACING,ctx.getHorizontalPlayerFacing().getOpposite());
+    }
+    @Override protected BlockState rotate(BlockState s,net.minecraft.util.BlockRotation r){return s.with(Properties.HORIZONTAL_FACING,r.rotate(s.get(Properties.HORIZONTAL_FACING)));}
+    @Override protected BlockState mirror(BlockState s,net.minecraft.util.BlockMirror m){return s.rotate(m.getRotation(s.get(Properties.HORIZONTAL_FACING)));}
     @Override public BlockEntity createBlockEntity(BlockPos pos,BlockState state){return new ColonyBlockEntity(pos,state);}
     @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world,BlockState state,BlockEntityType<T> type){
         if(world.isClient||!type.equals(LunarHorizons.COLONY_ENTITY))return null;

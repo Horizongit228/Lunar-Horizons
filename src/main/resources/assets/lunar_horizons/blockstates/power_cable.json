@@ -1,7 +1,57 @@
 {
-  "variants": {
-    "": {
-      "model": "lunar_horizons:block/power_cable"
+  "multipart": [
+    {
+      "apply": {
+        "model": "lunar_horizons:block/power_cable"
+      }
+    },
+    {
+      "when": {
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_cable_down"
+      }
+    },
+    {
+      "when": {
+        "up": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_cable_up"
+      }
+    },
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_cable_north"
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_cable_south"
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_cable_west"
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_cable_east"
+      }
     }
-  }
+  ]
 }

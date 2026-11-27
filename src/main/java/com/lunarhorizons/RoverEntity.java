@@ -101,7 +101,7 @@ public final class RoverEntity extends Entity {
             outer:for(int dx=-2;dx<=2;dx++)for(int dy=-1;dy<=1;dy++)for(int dz=-2;dz<=2;dz++){
                 BlockPos q=center.add(dx,dy,dz);
                 if(!ColonyGrid.loaded(w,q))continue;
-                if(w.getBlockEntity(q) instanceof ColonyBlockEntity be&&be.kind()==ColonyBlockEntity.Kind.BATTERY&&be.energy>0){
+                if(w.getBlockEntity(q) instanceof ColonyBlockEntity be&&be.kind()==ColonyBlockEntity.Kind.BATTERY&&be.enabled&&be.energy>0){
                     int charge=Math.min(Math.min(60,be.energy),CAPACITY-energy());be.energy-=charge;be.markDirty();energy(energy()+charge);break outer;
                 }
             }

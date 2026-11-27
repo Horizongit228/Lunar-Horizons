@@ -8,11 +8,11 @@ import net.minecraft.world.World;
 
 /** Server-only, bounded face-connected electrical networks. One transaction per network per second. */
 final class ColonyGrid {
-    private static final int LIMIT=512;
+    private static final int LIMIT=1024;
     private static final Map<ServerWorld,Frame> FRAMES=new WeakHashMap<>();
     private static final class Frame {long tick=Long.MIN_VALUE;final Set<BlockPos> visited=new HashSet<>();}
     static boolean loaded(ServerWorld w,BlockPos p){return p.getY()>=w.getBottomY()&&p.getY()<w.getTopY()&&w.isChunkLoaded(p.getX()>>4,p.getZ()>>4);}
-    private static boolean conductor(BlockState s){return s.getBlock() instanceof ColonyMachineBlock||s.isOf(LunarHorizons.POWER_CABLE)||s.isOf(LunarHorizons.SOLAR_PANEL)||s.isOf(LunarHorizons.DAMAGED_SOLAR_PANEL);}
+    private static boolean conductor(BlockState s){return s.getBlock() instanceof ColonyMachineBlock||s.isOf(LunarHorizons.POWER_CABLE)||s.isOf(LunarHorizons.SOLAR_PANEL)||s.isOf(LunarHorizons.DAMAGED_SOLAR_PANEL)||s.isOf(LunarHorizons.ADVANCED_SOLAR_PANEL)||s.isOf(LunarHorizons.POWER_FEEDTHROUGH)||(s.isOf(LunarHorizons.POWER_SWITCH)&&s.get(net.minecraft.state.property.Properties.POWERED));}
     static void tick(World world,ColonyBlockEntity root){
         if(!(world instanceof ServerWorld w)||w.getTime()%20!=0)return;
         Frame f=FRAMES.computeIfAbsent(w,k->new Frame());
@@ -21,9 +21,9 @@ final class ColonyGrid {
         ArrayDeque<BlockPos> queue=new ArrayDeque<>();Set<BlockPos> nodes=new HashSet<>();List<ColonyBlockEntity> machines=new ArrayList<>();
         queue.add(root.getPos());nodes.add(root.getPos());int solar=0;boolean overflow=false;
         while(!queue.isEmpty()){
-            BlockPos p=queue.remove();BlockState state=w.getBlockState(p);
+            BlockPos p=queue.remove();BlockState state=w.getBlockState(p);ColonyConduitBlock.refresh(w,p,state);
             if(w.getBlockEntity(p) instanceof ColonyBlockEntity be)machines.add(be);
-            if((state.isOf(LunarHorizons.SOLAR_PANEL)||state.isOf(LunarHorizons.DAMAGED_SOLAR_PANEL))&&w.isSkyVisible(p.up())&&(w.getRegistryKey().equals(LunarHorizons.MOON)||w.isDay()))solar+=state.isOf(LunarHorizons.SOLAR_PANEL)?30:8;
+            if((state.isOf(LunarHorizons.SOLAR_PANEL)||state.isOf(LunarHorizons.DAMAGED_SOLAR_PANEL)||state.isOf(LunarHorizons.ADVANCED_SOLAR_PANEL))&&w.isSkyVisible(p.up())&&(w.getRegistryKey().equals(LunarHorizons.MOON)||w.isDay()))solar+=state.isOf(LunarHorizons.ADVANCED_SOLAR_PANEL)?90:state.isOf(LunarHorizons.SOLAR_PANEL)?30:8;
             for(Direction dir:Direction.values()){
                 BlockPos q=p.offset(dir);
                 if(!loaded(w,q)||nodes.contains(q)||!conductor(w.getBlockState(q)))continue;
@@ -33,17 +33,21 @@ final class ColonyGrid {
         }
         boolean overlaps=nodes.stream().anyMatch(f.visited::contains);
         f.visited.addAll(nodes);
-        if(overflow||overlaps){for(var be:machines)be.setActive(false);return;}
+        if(overflow||overlaps){for(var be:machines){be.networkFault=true;be.production=be.demand=be.served=be.stored=be.networkCapacity=0;be.networkNodes=nodes.size();be.setActive(false);}return;}
         machines.sort(Comparator.comparingLong(be->be.getPos().asLong()));
         int supply=solar;
+        int target=0;
+        for(var be:machines){be.networkFault=false;if(be.wants())target+=be.cost();if(be.kind()==ColonyBlockEntity.Kind.BATTERY&&be.enabled)target+=Math.min(120,be.capacity()-be.energy);}
         for(var be:machines)if(be.kind()==ColonyBlockEntity.Kind.GENERATOR){
-            if(be.reserve==0&&be.input>0){be.input--;be.reserve=60;}
-            boolean on=be.reserve>0;if(on){supply+=120;be.reserve--;be.markDirty();}be.setActive(on);
+            boolean needed=be.enabled&&supply<target;
+            if(needed&&be.reserve==0&&be.input>0){be.input--;be.reserve=60;}
+            boolean on=needed&&be.reserve>0;if(on){supply+=120;be.reserve--;be.markDirty();}be.setActive(on);
         }
         int generated=supply,available=supply,demand=0;
         List<ColonyBlockEntity> batteries=new ArrayList<>();
-        for(var be:machines)if(be.kind()==ColonyBlockEntity.Kind.BATTERY){batteries.add(be);available+=be.energy;}
+        for(var be:machines)if(be.kind()==ColonyBlockEntity.Kind.BATTERY){if(be.enabled){batteries.add(be);available+=be.energy;}else be.setActive(false);}
         // Oxygen and illumination take priority over processing.
+        if(!machines.isEmpty())Collections.rotate(machines,(int)Math.floorMod(w.getTime()/20,machines.size()));
         machines.sort(Comparator.comparingInt(be->be.kind()==ColonyBlockEntity.Kind.OXYGEN?0:be.kind()==ColonyBlockEntity.Kind.LAMP?1:2));
         int spent=0;
         for(var be:machines){
@@ -60,6 +64,7 @@ final class ColonyGrid {
             b.setActive(b.energy>0);b.markDirty();
         }
         int stored=batteries.stream().mapToInt(b->b.energy).sum();
-        for(var be:machines){be.production=generated;be.demand=demand;be.stored=stored;if(be.kind()==ColonyBlockEntity.Kind.TERMINAL)be.setActive(generated>0||stored>0);}
+        int capacity=batteries.stream().mapToInt(ColonyBlockEntity::capacity).sum();
+        for(var be:machines){be.production=generated;be.demand=demand;be.served=spent;be.stored=stored;be.networkCapacity=capacity;be.networkNodes=nodes.size();if(be.kind()==ColonyBlockEntity.Kind.TERMINAL)be.setActive(be.enabled&&(generated>0||stored>0));}
     }
 }

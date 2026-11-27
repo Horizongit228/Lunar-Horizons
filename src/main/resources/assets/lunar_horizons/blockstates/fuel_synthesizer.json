@@ -1,10 +1,34 @@
 {
   "variants": {
-    "lit=false": {
+    "facing=north,lit=false": {
       "model": "lunar_horizons:block/fuel_synthesizer"
     },
-    "lit=true": {
+    "facing=east,lit=false": {
+      "model": "lunar_horizons:block/fuel_synthesizer",
+      "y": 90
+    },
+    "facing=south,lit=false": {
+      "model": "lunar_horizons:block/fuel_synthesizer",
+      "y": 180
+    },
+    "facing=west,lit=false": {
+      "model": "lunar_horizons:block/fuel_synthesizer",
+      "y": 270
+    },
+    "facing=north,lit=true": {
       "model": "lunar_horizons:block/fuel_synthesizer_on"
+    },
+    "facing=east,lit=true": {
+      "model": "lunar_horizons:block/fuel_synthesizer_on",
+      "y": 90
+    },
+    "facing=south,lit=true": {
+      "model": "lunar_horizons:block/fuel_synthesizer_on",
+      "y": 180
+    },
+    "facing=west,lit=true": {
+      "model": "lunar_horizons:block/fuel_synthesizer_on",
+      "y": 270
     }
   }
 }

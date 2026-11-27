@@ -135,8 +135,8 @@ public final class LunarHorizons implements ModInitializer {
     public static final Block POWERED_LAMP = colonyMachine("powered_lamp",ColonyBlockEntity.Kind.LAMP);
     public static final Block POWER_TERMINAL = colonyMachine("power_terminal",ColonyBlockEntity.Kind.TERMINAL);
     public static final Block ADVANCED_ASSEMBLER = colonyMachine("advanced_assembler",ColonyBlockEntity.Kind.ASSEMBLER);
-    public static final Block POWER_CABLE = block("power_cable",AbstractBlock.Settings.copy(Blocks.IRON_BLOCK));
-    public static final Block OXYGEN_PIPE = block("oxygen_pipe",AbstractBlock.Settings.copy(Blocks.IRON_BLOCK));
+    public static final Block POWER_CABLE = conduit("power_cable",false);
+    public static final Block OXYGEN_PIPE = conduit("oxygen_pipe",true);
     public static final Block OXYGEN_VENT = block("oxygen_vent",AbstractBlock.Settings.copy(Blocks.IRON_BLOCK));
     public static final Block HABITAT_HULL = block("habitat_hull",AbstractBlock.Settings.copy(Blocks.IRON_BLOCK));
     public static final Block REINFORCED_HULL = block("reinforced_hull",AbstractBlock.Settings.copy(Blocks.IRON_BLOCK));
@@ -145,12 +145,16 @@ public final class LunarHorizons implements ModInitializer {
     public static final Block INSULATION_BLOCK = block("insulation_block",AbstractBlock.Settings.copy(Blocks.WHITE_WOOL));
     public static final Block PRESSURE_GLASS = block("pressure_glass",AbstractBlock.Settings.copy(Blocks.GLASS).nonOpaque());
     public static final Block AIRLOCK=registerAirlock();
+    public static final Block INDUSTRIAL_BATTERY=colonyMachine("industrial_battery",ColonyBlockEntity.Kind.BATTERY);
+    public static final Block ADVANCED_SOLAR_PANEL=solarPanel("advanced_solar_panel",false);
+    public static final Block POWER_SWITCH=registerSwitch();
+    public static final Block POWER_FEEDTHROUGH=block("power_feedthrough",AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).strength(3f));
     public static final Item CIRCUIT=item("control_circuit",new Item(new Item.Settings()));
     public static final Item POWER_CELL=item("power_cell",new Item(new Item.Settings()));
     public static final Item OXYGEN_FILTER=item("oxygen_filter",new Item(new Item.Settings()));
     public static final Item MACHINE_FRAME=item("machine_frame",new Item(new Item.Settings()));
     public static final net.minecraft.block.entity.BlockEntityType<ColonyBlockEntity> COLONY_ENTITY=Registry.register(Registries.BLOCK_ENTITY_TYPE,id("colony_machine"),
-        net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder.create(ColonyBlockEntity::new,BATTERY,HELIUM_GENERATOR,OXYGEN_GENERATOR,ELECTRIC_REFINERY,FUEL_SYNTHESIZER,ELECTRIC_REFILL,POWERED_LAMP,POWER_TERMINAL,ADVANCED_ASSEMBLER).build());
+        net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder.create(ColonyBlockEntity::new,BATTERY,HELIUM_GENERATOR,OXYGEN_GENERATOR,ELECTRIC_REFINERY,FUEL_SYNTHESIZER,ELECTRIC_REFILL,POWERED_LAMP,POWER_TERMINAL,ADVANCED_ASSEMBLER,INDUSTRIAL_BATTERY).build());
     public static final Block EXPEDITION_FLAG = flag("expedition_flag");
     public static final Block RED_FLAG = flag("red_flag");
     public static final Block BLUE_FLAG = flag("blue_flag");
@@ -158,7 +162,7 @@ public final class LunarHorizons implements ModInitializer {
     public static final ItemGroup GROUP = FabricItemGroup.builder()
             .icon(() -> new ItemStack(ROCKET)).displayName(Text.translatable("itemGroup.lunar_horizons"))
             .entries((context, entries) -> {
-                for (Block b : new Block[]{ROCKET, LAUNCH_PAD, REGOLITH, MOON_ROCK, CRYSTAL_ORE, MOON_BRICKS, REFILL_STATION, CRYSTAL_CLUSTER, CRYSTAL_STONE, DARK_CRYSTAL_ORE, LUNAR_STEMS, HIGHLAND_ROCK, DARK_REGOLITH, FROSTED_REGOLITH, LUNAR_ICE, TITANIUM_ORE, HELIUM_ORE, METEORITE_ROCK, LUNAR_LANTERN, SURVEY_BEACON, TITANIUM_BLOCK, BASALT_DUST, ANORTHOSITE, EJECTA_ROCK, SOLAR_PANEL, DAMAGED_SOLAR_PANEL, BATTERY, HELIUM_GENERATOR, OXYGEN_GENERATOR, ELECTRIC_REFINERY, FUEL_SYNTHESIZER, ELECTRIC_REFILL, POWERED_LAMP, POWER_TERMINAL, ADVANCED_ASSEMBLER, POWER_CABLE, OXYGEN_PIPE, OXYGEN_VENT, HABITAT_HULL, REINFORCED_HULL, HABITAT_FLOOR, INDUSTRIAL_GRATE, INSULATION_BLOCK, PRESSURE_GLASS, AIRLOCK, EXPEDITION_FLAG, RED_FLAG, BLUE_FLAG, ORANGE_FLAG}) entries.add(b);
+                for (Block b : new Block[]{ROCKET, LAUNCH_PAD, REGOLITH, MOON_ROCK, CRYSTAL_ORE, MOON_BRICKS, REFILL_STATION, CRYSTAL_CLUSTER, CRYSTAL_STONE, DARK_CRYSTAL_ORE, LUNAR_STEMS, HIGHLAND_ROCK, DARK_REGOLITH, FROSTED_REGOLITH, LUNAR_ICE, TITANIUM_ORE, HELIUM_ORE, METEORITE_ROCK, LUNAR_LANTERN, SURVEY_BEACON, TITANIUM_BLOCK, BASALT_DUST, ANORTHOSITE, EJECTA_ROCK, SOLAR_PANEL, DAMAGED_SOLAR_PANEL, BATTERY, HELIUM_GENERATOR, OXYGEN_GENERATOR, ELECTRIC_REFINERY, FUEL_SYNTHESIZER, ELECTRIC_REFILL, POWERED_LAMP, POWER_TERMINAL, ADVANCED_ASSEMBLER, POWER_CABLE, OXYGEN_PIPE, OXYGEN_VENT, HABITAT_HULL, REINFORCED_HULL, HABITAT_FLOOR, INDUSTRIAL_GRATE, INSULATION_BLOCK, PRESSURE_GLASS, AIRLOCK, INDUSTRIAL_BATTERY, ADVANCED_SOLAR_PANEL, POWER_SWITCH, POWER_FEEDTHROUGH, EXPEDITION_FLAG, RED_FLAG, BLUE_FLAG, ORANGE_FLAG}) entries.add(b);
                 for (Item i : new Item[]{FUEL, OXYGEN, LARGE_OXYGEN, BACKPACK, HELMET, CHEST, LEGS, BOOTS, LUNAR_STICK, CRYSTAL, CRYSTAL_SWORD, CRYSTAL_PICKAXE, CRYSTAL_AXE, CRYSTAL_SHOVEL, CRYSTAL_HOE, DARK_CRYSTAL, DARK_CRYSTAL_SWORD, DARK_CRYSTAL_PICKAXE, DARK_CRYSTAL_AXE, DARK_CRYSTAL_SHOVEL, DARK_CRYSTAL_HOE, RAW_TITANIUM, TITANIUM_INGOT, HELIUM, METEORITE_FRAGMENT, EXTREME_OXYGEN, MINERAL_DETECTOR, LUNAR_RADAR, TITANIUM_DRILL, CIRCUIT, POWER_CELL, OXYGEN_FILTER, MACHINE_FRAME, ROVER_ITEM}) entries.add(i);
             }).build();
 
@@ -175,6 +179,14 @@ public final class LunarHorizons implements ModInitializer {
         Block block = Registry.register(Registries.BLOCK, id(path), new Block(settings));
         item(path, new BlockItem(block, new Item.Settings()));
         return block;
+    }
+    private static Block conduit(String path,boolean oxygen){
+        Block b=Registry.register(Registries.BLOCK,id(path),new ColonyConduitBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).nonOpaque().strength(1.6f),oxygen));
+        item(path,new BlockItem(b,new Item.Settings()));return b;
+    }
+    private static Block registerSwitch(){
+        Block b=Registry.register(Registries.BLOCK,id("power_switch"),new PowerSwitchBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).strength(2f)));
+        item("power_switch",new BlockItem(b,new Item.Settings()));return b;
     }
     private static Block colonyMachine(String path,ColonyBlockEntity.Kind kind){
         Block b=Registry.register(Registries.BLOCK,id(path),new ColonyMachineBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).luminance(s->kind==ColonyBlockEntity.Kind.LAMP&&s.get(net.minecraft.state.property.Properties.LIT)?15:0),kind));
@@ -217,6 +229,7 @@ public final class LunarHorizons implements ModInitializer {
         RocketControl.register();
         RoverControl.register();
         ColonyStatus.register();
+        EngineeringPackets.register();
         LunarCommands.register();
         net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.SERVER_STOPPED.register(server -> MeteorEvents.clear());
         Registry.register(Registries.ITEM_GROUP, id("main"), GROUP);
@@ -228,8 +241,21 @@ public final class LunarHorizons implements ModInitializer {
                     if(world instanceof ServerWorld sw&&player instanceof ServerPlayerEntity sp)ColonyAirlockBlock.toggle(sw,pos,sp);
                     return ActionResult.SUCCESS;
                 }
+                if(world.getBlockState(pos).isOf(POWER_SWITCH)){
+                    if(player.isSneaking()&&!player.getStackInHand(hand).isEmpty())return ActionResult.PASS;
+                    if(world instanceof ServerWorld sw&&sw.canPlayerModifyAt(player,pos)){
+                        var state=sw.getBlockState(pos);
+                        sw.setBlockState(pos,state.cycle(net.minecraft.state.property.Properties.POWERED),3);
+                    }
+                    return ActionResult.SUCCESS;
+                }
                 if(world.getBlockState(pos).getBlock() instanceof ColonyMachineBlock){
-                    if(world instanceof ServerWorld sw&&player instanceof ServerPlayerEntity sp&&sw.getBlockEntity(pos) instanceof ColonyBlockEntity be)be.interact(sp,sp.getStackInHand(hand));
+                    if(player.isSneaking()&&player.getStackInHand(hand).getItem() instanceof BlockItem
+                        &&!player.getStackInHand(hand).isOf(LUNAR_ICE.asItem())&&!player.getStackInHand(hand).isOf(net.minecraft.item.Items.ICE))return ActionResult.PASS;
+                    if(world instanceof ServerWorld sw&&player instanceof ServerPlayerEntity sp&&sw.canPlayerModifyAt(sp,pos)&&sw.getBlockEntity(pos) instanceof ColonyBlockEntity be){
+                        if(sp.getMainHandStack().isEmpty()&&!sp.isSneaking())EngineeringPackets.send(sp,be,true);
+                        else be.interact(sp,sp.getMainHandStack());
+                    }
                     return ActionResult.SUCCESS;
                 }
             }

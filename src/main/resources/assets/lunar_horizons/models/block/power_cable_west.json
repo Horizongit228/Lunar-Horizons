@@ -1,0 +1,107 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "lunar_horizons:block/power_cable",
+    "body": "lunar_horizons:block/power_cable",
+    "collar": "lunar_horizons:block/power_cable_collar"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        6.65,
+        6
+      ],
+      "to": [
+        6,
+        9.35,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#body"
+        },
+        "east": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "down": {
+          "texture": "#body"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        6,
+        6.65
+      ],
+      "to": [
+        6,
+        10,
+        9.35
+      ],
+      "faces": {
+        "north": {
+          "texture": "#body"
+        },
+        "east": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "down": {
+          "texture": "#body"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        6,
+        6
+      ],
+      "to": [
+        1.5,
+        10,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#collar"
+        },
+        "east": {
+          "texture": "#collar"
+        },
+        "south": {
+          "texture": "#collar"
+        },
+        "west": {
+          "texture": "#collar"
+        },
+        "up": {
+          "texture": "#collar"
+        },
+        "down": {
+          "texture": "#collar"
+        }
+      }
+    }
+  ]
+}

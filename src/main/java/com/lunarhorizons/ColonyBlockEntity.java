@@ -15,10 +15,12 @@ public final class ColonyBlockEntity extends BlockEntity {
     enum Kind {BATTERY,GENERATOR,OXYGEN,REFINERY,FUEL,REFILL,LAMP,TERMINAL,ASSEMBLER}
     int energy,input,output,progress,reserve,production,demand,stored;
     boolean active;
+    boolean enabled=true,networkFault=false;
+    int served,networkCapacity,networkNodes;
     long lastPowered=Long.MIN_VALUE;
     public ColonyBlockEntity(BlockPos pos,BlockState state){super(LunarHorizons.COLONY_ENTITY,pos,state);}
     Kind kind(){return ((ColonyMachineBlock)getCachedState().getBlock()).kind;}
-    int capacity(){return kind()==Kind.BATTERY?3600:0;}
+    int capacity(){return kind()==Kind.BATTERY?(getCachedState().isOf(LunarHorizons.INDUSTRIAL_BATTERY)?14400:3600):0;}
     int cost(){return switch(kind()){case OXYGEN->20;case REFINERY->45;case FUEL->60;case REFILL->25;case LAMP->8;case ASSEMBLER->50;default->0;};}
     int duration(){return switch(kind()){case REFINERY->6;case FUEL->10;case REFILL->5;case ASSEMBLER->8;default->1;};}
     Item outputItem(){return switch(kind()){case REFINERY->LunarHorizons.TITANIUM_INGOT;case FUEL->LunarHorizons.FUEL;case ASSEMBLER->LunarHorizons.CIRCUIT;default->Items.AIR;};}
@@ -29,7 +31,7 @@ public final class ColonyBlockEntity extends BlockEntity {
         case ASSEMBLER->stack.isOf(LunarHorizons.TITANIUM_INGOT);
         default->false;
     };}
-    boolean wants(){return switch(kind()){
+    boolean wants(){if(!enabled)return false;return switch(kind()){
         case OXYGEN->reserve>0||input>0;
         case LAMP->true;
         case REFINERY,FUEL,REFILL,ASSEMBLER->input>0&&output<32;
@@ -44,6 +46,27 @@ public final class ColonyBlockEntity extends BlockEntity {
         if(on&&world!=null)lastPowered=world.getTime();
         if(active!=on){active=on;markDirty();}
         if(world!=null&&getCachedState().get(Properties.LIT)!=on)world.setBlockState(pos,getCachedState().with(Properties.LIT,on),2);
+    }
+    void loadInventory(ServerPlayerEntity p){
+        for(int i=0;i<p.getInventory().size()&&input<64;i++){
+            ItemStack stack=p.getInventory().getStack(i);
+            if(!accepts(stack))continue;
+            int add=Math.min(64-input,stack.getCount());input+=add;
+            if(!p.isCreative())stack.decrement(add);
+        }
+        p.getInventory().markDirty();markDirty();
+    }
+    void collect(ServerPlayerEntity p){
+        if(output<=0||outputItem()==Items.AIR)return;
+        ItemStack stack=new ItemStack(outputItem(),output);
+        p.getInventory().insertStack(stack);output=stack.getCount();p.getInventory().markDirty();markDirty();
+    }
+    void refillInventory(ServerPlayerEntity p){
+        if(kind()!=Kind.REFILL||output<=0)return;
+        for(int i=0;i<p.getInventory().size();i++){
+            ItemStack stack=p.getInventory().getStack(i);
+            if(OxygenSystem.isTank(stack)&&stack.getDamage()>0){stack.setDamage(0);output--;markDirty();p.getInventory().markDirty();return;}
+        }
     }
     void interact(ServerPlayerEntity p,ItemStack held){
         if(accepts(held)&&input<64){
@@ -60,9 +83,9 @@ public final class ColonyBlockEntity extends BlockEntity {
         if(kind()==Kind.TERMINAL)p.sendMessage(Text.translatable("message.lunar_horizons.grid_status",production,demand,stored),false);
     }
     @Override protected void writeNbt(NbtCompound nbt,RegistryWrapper.WrapperLookup lookup){
-        super.writeNbt(nbt,lookup);nbt.putInt("Energy",energy);nbt.putInt("Input",input);nbt.putInt("Output",output);nbt.putInt("Progress",progress);nbt.putInt("Reserve",reserve);
+        super.writeNbt(nbt,lookup);nbt.putInt("Energy",energy);nbt.putInt("Input",input);nbt.putInt("Output",output);nbt.putInt("Progress",progress);nbt.putInt("Reserve",reserve);nbt.putBoolean("Enabled",enabled);
     }
     @Override protected void readNbt(NbtCompound nbt,RegistryWrapper.WrapperLookup lookup){
-        super.readNbt(nbt,lookup);energy=Math.max(0,Math.min(capacity(),nbt.getInt("Energy")));input=Math.max(0,Math.min(64,nbt.getInt("Input")));output=Math.max(0,Math.min(32,nbt.getInt("Output")));progress=Math.max(0,Math.min(duration()-1,nbt.getInt("Progress")));reserve=Math.max(0,Math.min(120,nbt.getInt("Reserve")));active=false;
+        super.readNbt(nbt,lookup);energy=Math.max(0,Math.min(capacity(),nbt.getInt("Energy")));input=Math.max(0,Math.min(64,nbt.getInt("Input")));output=Math.max(0,Math.min(32,nbt.getInt("Output")));progress=Math.max(0,Math.min(duration()-1,nbt.getInt("Progress")));reserve=Math.max(0,Math.min(120,nbt.getInt("Reserve")));active=false;enabled=!nbt.contains("Enabled")||nbt.getBoolean("Enabled");
     }
 }

@@ -39,6 +39,10 @@
     "lunar_horizons:reinforced_hull",
     "lunar_horizons:habitat_floor",
     "lunar_horizons:industrial_grate",
-    "lunar_horizons:airlock"
+    "lunar_horizons:airlock",
+    "lunar_horizons:industrial_battery",
+    "lunar_horizons:advanced_solar_panel",
+    "lunar_horizons:power_switch",
+    "lunar_horizons:power_feedthrough"
   ]
 }

@@ -1,0 +1,107 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "lunar_horizons:block/oxygen_pipe",
+    "body": "lunar_horizons:block/oxygen_pipe",
+    "collar": "lunar_horizons:block/oxygen_pipe_collar"
+  },
+  "elements": [
+    {
+      "from": [
+        11,
+        6,
+        5
+      ],
+      "to": [
+        16,
+        10,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#body"
+        },
+        "east": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "down": {
+          "texture": "#body"
+        }
+      }
+    },
+    {
+      "from": [
+        11,
+        5,
+        6
+      ],
+      "to": [
+        16,
+        11,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#body"
+        },
+        "east": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "down": {
+          "texture": "#body"
+        }
+      }
+    },
+    {
+      "from": [
+        14.5,
+        5,
+        5
+      ],
+      "to": [
+        16,
+        11,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#collar"
+        },
+        "east": {
+          "texture": "#collar"
+        },
+        "south": {
+          "texture": "#collar"
+        },
+        "west": {
+          "texture": "#collar"
+        },
+        "up": {
+          "texture": "#collar"
+        },
+        "down": {
+          "texture": "#collar"
+        }
+      }
+    }
+  ]
+}

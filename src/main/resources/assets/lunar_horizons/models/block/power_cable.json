@@ -1,6 +1,43 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
   "textures": {
-    "all": "lunar_horizons:block/power_cable"
-  }
+    "particle": "lunar_horizons:block/power_cable",
+    "body": "lunar_horizons:block/power_cable",
+    "collar": "lunar_horizons:block/power_cable_collar"
+  },
+  "elements": [
+    {
+      "from": [
+        6,
+        6,
+        6
+      ],
+      "to": [
+        10,
+        10,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#collar"
+        },
+        "east": {
+          "texture": "#collar"
+        },
+        "south": {
+          "texture": "#collar"
+        },
+        "west": {
+          "texture": "#collar"
+        },
+        "up": {
+          "texture": "#collar"
+        },
+        "down": {
+          "texture": "#collar"
+        }
+      }
+    }
+  ]
 }

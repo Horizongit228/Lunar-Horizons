@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "HHH",
+    "CCC",
+    "HHH"
+  ],
+  "key": {
+    "H": {
+      "item": "lunar_horizons:habitat_hull"
+    },
+    "C": {
+      "item": "lunar_horizons:power_cable"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:power_feedthrough",
+    "count": 3
+  }
+}

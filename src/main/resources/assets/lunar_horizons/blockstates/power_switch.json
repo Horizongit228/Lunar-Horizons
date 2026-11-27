@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "powered=false": {
+      "model": "lunar_horizons:block/power_switch"
+    },
+    "powered=true": {
+      "model": "lunar_horizons:block/power_switch_on"
+    }
+  }
+}

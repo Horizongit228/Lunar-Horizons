@@ -1,7 +1,57 @@
 {
-  "variants": {
-    "": {
-      "model": "lunar_horizons:block/oxygen_pipe"
+  "multipart": [
+    {
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe"
+      }
+    },
+    {
+      "when": {
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_down"
+      }
+    },
+    {
+      "when": {
+        "up": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_up"
+      }
+    },
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_north"
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_south"
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_west"
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_east"
+      }
     }
-  }
+  ]
 }

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GGG",
+    "SCS",
+    "TTT"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "S": {
+      "item": "lunar_horizons:solar_panel"
+    },
+    "C": {
+      "item": "lunar_horizons:control_circuit"
+    },
+    "T": {
+      "item": "lunar_horizons:titanium_ingot"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:advanced_solar_panel",
+    "count": 1
+  }
+}

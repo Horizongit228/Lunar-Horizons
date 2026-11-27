@@ -21,7 +21,7 @@ final class ColonyAtmosphere {
                 if(s.isOf(LunarHorizons.AIRLOCK)?!s.get(Properties.OPEN):s.isOf(LunarHorizons.PRESSURE_GLASS)||s.isSideSolidFullSquare(w,q,d.getOpposite()))continue;
                 if(!passable(w,q))return false;
                 if(seen.contains(q))continue;
-                if(seen.size()>=768||Math.abs(q.getX()-origin.getX())>16||Math.abs(q.getY()-origin.getY())>16||Math.abs(q.getZ()-origin.getZ())>16)return false;
+                if(seen.size()>=2048||Math.abs(q.getX()-origin.getX())>24||Math.abs(q.getY()-origin.getY())>24||Math.abs(q.getZ()-origin.getZ())>24)return false;
                 seen.add(q);queue.add(q);
             }
         }
@@ -32,7 +32,7 @@ final class ColonyAtmosphere {
     private static boolean passable(ServerWorld w,BlockPos p){
         BlockState s=w.getBlockState(p);
         if(s.isOf(LunarHorizons.AIRLOCK))return s.get(Properties.OPEN);
-        return w.getFluidState(p).isEmpty()&&(s.isAir()||s.getCollisionShape(w,p).isEmpty());
+        return w.getFluidState(p).isEmpty()&&(s.isAir()||s.getBlock() instanceof ColonyConduitBlock||s.getCollisionShape(w,p).isEmpty());
     }
     private static boolean powered(ServerWorld w,BlockPos p){
         return w.getBlockEntity(p) instanceof ColonyBlockEntity be&&be.kind()==ColonyBlockEntity.Kind.OXYGEN&&be.active&&be.lastPowered>=w.getTime()-40;
@@ -47,7 +47,8 @@ final class ColonyAtmosphere {
                 BlockState s=w.getBlockState(q);
                 if(s.isOf(LunarHorizons.OXYGEN_GENERATOR)&&powered(w,q))return true;
                 if(s.isOf(LunarHorizons.OXYGEN_PIPE)||s.isOf(LunarHorizons.OXYGEN_VENT)){
-                    if(seen.size()>=256)return false;
+                    ColonyConduitBlock.refresh(w,q,s);
+                    if(seen.size()>=512)return false;
                     seen.add(q);queue.add(q);
                 }
             }

@@ -1,6 +1,43 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
   "textures": {
-    "all": "lunar_horizons:block/oxygen_pipe"
-  }
+    "particle": "lunar_horizons:block/oxygen_pipe",
+    "body": "lunar_horizons:block/oxygen_pipe",
+    "collar": "lunar_horizons:block/oxygen_pipe_collar"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        5,
+        5
+      ],
+      "to": [
+        11,
+        11,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#collar"
+        },
+        "east": {
+          "texture": "#collar"
+        },
+        "south": {
+          "texture": "#collar"
+        },
+        "west": {
+          "texture": "#collar"
+        },
+        "up": {
+          "texture": "#collar"
+        },
+        "down": {
+          "texture": "#collar"
+        }
+      }
+    }
+  ]
 }
