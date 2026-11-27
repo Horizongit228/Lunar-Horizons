@@ -16,7 +16,7 @@ import net.minecraft.util.math.RotationAxis;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Eight-block tall twelve-sided expedition lander with a transparent cockpit.
+/** Separate eight- and twelve-block rocket models with transparent cockpits.
  * Model coordinates are quarter-block units, with negative Y pointing up. */
 public final class RocketRenderer extends EntityRenderer<RocketEntity> {
     private static final Identifier ALLOY=Identifier.of("lunar_horizons","textures/entity/rocket_alloy.png");
@@ -24,111 +24,124 @@ public final class RocketRenderer extends EntityRenderer<RocketEntity> {
     private static final int IVORY=0xffdeded5, TITANIUM=0xffa4adb1, GRAPHITE=0xff424a51, RED=0xff92544a, GOLD=0xffb19a6f;
     private static final int SIDES=12;
     private record Piece(ModelPart model,int color,boolean glass,boolean lit){}
-    private final List<Piece> hull=new ArrayList<>(),windows=new ArrayList<>(),flames=new ArrayList<>(),upgrade=new ArrayList<>();
+    private record VehicleModel(List<Piece> hull,List<Piece> windows,List<Piece> flames) {
+        VehicleModel(){this(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());}
+    }
+    private final VehicleModel mk1=new VehicleModel(),mk2=new VehicleModel();
+    private static final int BLUE=0xff375c79, WHITE=0xffe6ebed, COPPER=0xffb67c50, CYAN=0xffa5edf0;
 
     public RocketRenderer(EntityRendererFactory.Context context){
         super(context);
         shadowRadius=1.45f;
-        // Hollow segmented cylindrical shell; separate rings visibly divide the stages.
-        ring(hull,4.0f,-17.8f,-7.2f,.25f,IVORY,false);
-        ring(hull,3.8f,-7.2f,-4.0f,.35f,GRAPHITE,false);
-        ring(hull,4.13f,-17.8f,-17.1f,.30f,TITANIUM,false);
-        ring(hull,4.13f,-10.0f,-9.6f,.30f,TITANIUM,false);
-        ring(hull,4.1f,-8.6f,-7.8f,.3f,RED,false);
-        ring(hull,4.12f,-4.8f,-4.0f,.30f,TITANIUM,false);
-        deck(hull,3.8f,-4.1f,.45f,GRAPHITE);
-        deck(hull,3.95f,-18.0f,.55f,TITANIUM);
-        deck(hull,3.65f,-25.6f,.65f,IVORY);
-        // Panoramic cabin: twelve facets, narrow pillars, a real interior at the seat height.
-        ring(hull,3.95f,-19.0f,-18.0f,.3f,RED,false);
-        ring(hull,3.75f,-25.5f,-24.7f,.28f,TITANIUM,false);
+        buildExpedition(mk1);
+        buildOrbital(mk2);
+    }
+    // Mk I: squat, ivory/red expedition lander, four bells and four wide landing legs.
+    private static void buildExpedition(VehicleModel m){
+        var h=m.hull;
+        ring(h,3.8f,-8,-3,.4f,GRAPHITE,false);
+        ring(h,4.35f,-17.8f,-8,.35f,IVORY,false);
+        for(float y:new float[]{-17.8f,-12.5f,-8.6f})ring(h,4.49f,y,y+.55f,.4f,RED,false);
+        deck(h,4.3f,-17.9f,.55f,TITANIUM);
+        deck(h,4,-4.2f,.45f,GRAPHITE);
+        cabin(m,3.65f,-25.5f,-18f,RED,IVORY,3);
+        nose(h,3.65f,-25.5f,-31.6f,IVORY,RED,9);
+        box(h,TITANIUM,0,0,0,0,-.17f,-32,-.17f,.34f,.65f,.34f);
+        for(int i=0;i<4;i++){
+            float a=(float)(i*Math.PI/2);
+            box(h,GRAPHITE,a,0,0,0,-1.15f,-15.8f,4.2f,2.3f,4.8f,.42f);
+            box(h,TITANIUM,a,0,0,0,-.9f,-15.35f,4.58f,1.8f,3.5f,.17f);
+            for(int j=0;j<4;j++)box(h,RED,a,0,0,0,-.7f,-15+j*.78f,4.73f,1.4f,.22f,.13f);
+            box(h,TITANIUM,a,0,0,0,-.72f,-7,3.8f,1.44f,3.2f,.95f);
+            box(h,GRAPHITE,a,0,0,0,-.46f,-4.6f,4.55f,.92f,4.1f,.75f);
+            box(h,IVORY,a,0,0,0,-1.12f,-.5f,4.05f,2.24f,.5f,1.8f);
+            box(h,GOLD,a,0,0,0,-.31f,-3.9f,5.25f,.62f,1.7f,.28f);
+            h.add(part(i%2==0?CYAN:0xffffab6f,false,true,a,0,0,0,new float[][]{{-.25f,-10.65f,4.45f,.5f,.3f,.14f}}));
+        }
+        for(float x:new float[]{-1.8f,1.8f})for(float z:new float[]{-1.8f,1.8f})engine(m,x,z,1.0f,false);
+    }
+    // Mk II: tall 3-section orbital ship, slender upper stage, four tanks and five engines.
+    private static void buildOrbital(VehicleModel m){
+        var h=m.hull;
+        ring(h,4.9f,-7,-3.2f,.42f,GRAPHITE,false);
+        ring(h,4.65f,-19,-7,.36f,TITANIUM,false);
+        ring(h,4.79f,-19,-17.9f,.43f,BLUE,false);
+        deck(h,4.6f,-4.1f,.4f,GRAPHITE);
+        deck(h,4.55f,-19,.45f,BLUE);
+        ring(h,4.0f,-30,-19,.32f,WHITE,false);
+        for(float y:new float[]{-29.9f,-24.4f,-19.8f})ring(h,4.16f,y,y+.6f,.38f,BLUE,false);
+        cabin(m,3.35f,-38.5f,-30,BLUE,GRAPHITE,4);
+        nose(h,3.35f,-38.5f,-46.8f,BLUE,TITANIUM,12);
+        box(h,TITANIUM,0,0,0,0,-.18f,-48,-.18f,.36f,1.4f,.36f);
+        for(int i=0;i<4;i++){
+            float a=(float)(i*Math.PI/2);
+            // External propellant pods, ribbed cooling banks and retractable skid frames.
+            box(h,BLUE,a,0,0,0,-1.15f,-17.5f,4.5f,2.3f,9.5f,1.12f);
+            box(h,WHITE,a,0,0,0,-.88f,-16.9f,5.55f,1.76f,8.2f,.21f);
+            for(int j=0;j<8;j++)box(h,GRAPHITE,a,0,0,0,-.9f,-16.5f+j*.97f,5.7f,1.8f,.28f,.12f);
+            box(h,GRAPHITE,a,0,0,0,-1.25f,-27.9f,3.9f,2.5f,6.2f,.25f);
+            for(int j=0;j<7;j++)box(h,TITANIUM,a,0,0,0,-1.03f,-27.5f+j*.82f,4.12f,2.06f,.24f,.2f);
+            box(h,COPPER,a,0,0,0,-.22f,-23.9f,4.35f,.44f,5.9f,.22f);
+            box(h,BLUE,a,0,0,0,-.9f,-7,4.35f,1.8f,4.2f,.85f);
+            box(h,TITANIUM,a,0,0,0,-.35f,-4.5f,5.1f,.7f,4.2f,.56f);
+            box(h,GRAPHITE,a,0,0,0,-1.02f,-.4f,4.3f,2.04f,.4f,1.48f);
+            h.add(part(CYAN,false,true,a,0,0,0,new float[][]{{-.65f,-20.3f,4.72f,1.3f,.26f,.12f},{-.26f,-8.3f,5.62f,.52f,.28f,.13f}}));
+            // Small attitude-control thruster clusters high on the upper stage.
+            box(h,GRAPHITE,a,0,0,0,-.72f,-29.3f,4.02f,1.44f,.9f,.72f);
+            box(h,TITANIUM,a,0,0,0,-.5f,-29.05f,4.72f,.42f,.42f,.16f);
+            box(h,TITANIUM,a,0,0,0,.08f,-29.05f,4.72f,.42f,.42f,.16f);
+        }
+        engine(m,0,0,1.32f,true);
+        for(float[] p:new float[][]{{3.2f,0},{-3.2f,0},{0,3.2f},{0,-3.2f}})engine(m,p[0],p[1],.82f,true);
+    }
+    private static void box(List<Piece> out,int color,float angle,float x,float y,float z,float bx,float by,float bz,float w,float h,float d){
+        out.add(part(color,false,false,angle,x,y,z,new float[][]{{bx,by,bz,w,h,d}}));
+    }
+    private static void cabin(VehicleModel m,float radius,float top,float floor,int trim,int panel,int solidEvery){
+        var h=m.hull;
+        deck(h,radius,floor-.2f,.4f,GRAPHITE);
+        ring(h,radius,top,top+.7f,.35f,trim,false);
+        ring(h,radius,floor-.85f,floor,.35f,trim,false);
+        deck(h,radius,top-.25f,.4f,panel);
+        float half=(float)(radius*Math.tan(Math.PI/SIDES)),height=floor-top-1.55f;
         for(int i=0;i<SIDES;i++){
-            double angle=2*Math.PI*i/SIDES;
-            float radius=3.78f,half=(float)(radius*Math.tan(Math.PI/SIDES));
-            float a=(float)angle;
-            hull.add(part(TITANIUM,false,false,a,0,0,0,new float[][]{{-half-.12f,-24.7f,radius-.16f,.24f,5.7f,.34f}}));
-            if(i%3==1){
-                hull.add(part(IVORY,false,false,a,0,0,0,new float[][]{{-half,-24.7f,radius-.2f,half*2,5.7f,.25f}}));
-            }else{
-                windows.add(part(0x465d879e,true,false,a,0,0,0,new float[][]{{-half+.12f,-24.7f,radius-.16f,half*2-.24f,5.7f,.08f}}));
+            float a=(float)(i*2*Math.PI/SIDES);
+            box(h,TITANIUM,a,0,0,0,-half-.1f,top+.7f,radius-.2f,.22f,height,.36f);
+            if(i%solidEvery==1)box(h,panel,a,0,0,0,-half+.12f,top+.7f,radius-.2f,half*2-.24f,height,.24f);
+            else{
+                m.windows.add(part(0x554c91af,true,false,a,0,0,0,new float[][]{{-half+.12f,top+.7f,radius-.16f,half*2-.24f,height,.08f}}));
+                box(h,TITANIUM,a,0,0,0,-half+.12f,top+height*.48f,radius-.13f,half*2-.24f,.17f,.13f);
             }
         }
-        hull.add(part(GRAPHITE,false,false,0,0,0,0,new float[][]{
-            {-1.35f,-18.6f,-.2f,2.7f,.55f,2.0f},{-1.35f,-21.0f,1.35f,2.7f,2.4f,.42f},
-            {-2.3f,-19.45f,-3.3f,4.6f,1.4f,.65f}
-        }));
-        hull.add(part(0xff83c2c7,false,true,0,0,0,0,new float[][]{
-            {-1.8f,-19.52f,-3.17f,1.3f,.14f,.48f},{.48f,-19.52f,-3.17f,1.3f,.14f,.48f}
-        }));
-        // Multi-stage conical nose, stepped at quarter-block scale.
-        float[] radii={3.65f,3.4f,3.1f,2.75f,2.35f,1.9f,1.4f,.85f,.36f};
-        for(int i=0;i<radii.length;i++){
-            float bottom=-25.55f-i*.70f;
-            ring(hull,radii[i],bottom-.72f,bottom,.38f,i==0||i>=7?RED:IVORY,false);
-            deck(hull,radii[i]-.10f,bottom-.72f,.24f,i>=7?RED:IVORY);
-        }
-        hull.add(part(TITANIUM,false,false,0,0,0,0,new float[][]{{-.15f,-32f,-.15f,.3f,.5f,.3f}}));
-        // Four radial equipment bays, access panels, handholds, and landing gear.
-        for(int i=0;i<4;i++){
-            float angle=i*(float)Math.PI/2;
-            hull.add(part(GRAPHITE,false,false,angle,0,0,0,new float[][]{
-                {-1.10f,-16.4f,3.98f,2.2f,4.4f,.24f},
-                {-.85f,-15.95f,4.22f,1.7f,.42f,.18f},
-                {-.85f,-12.9f,4.22f,1.7f,.42f,.18f},
-                {-.64f,-7.1f,3.62f,1.28f,4.7f,.73f}
-            }));
-            hull.add(part(TITANIUM,false,false,angle,0,0,0,new float[][]{
-                {-.86f,-15.45f,4.22f,1.72f,2.2f,.14f},
-                {-.17f,-13.1f,4.41f,.34f,.45f,.13f},
-                {-.57f,-7.3f,4.3f,1.14f,3.1f,.50f},
-                {-.44f,-4.3f,4.7f,.88f,3.5f,.56f},
-                {-1.07f,-.55f,4.0f,2.14f,.55f,1.95f}
-            }));
-            hull.add(part(RED,false,false,angle,0,0,0,new float[][]{
-                {-.70f,-6.8f,4.85f,1.40f,1.8f,.48f}
-            }));
-            hull.add(part(GOLD,false,false,angle,0,0,0,new float[][]{
-                {-.33f,-4.0f,5.28f,.66f,1.5f,.25f}
-            }));
-            hull.add(part(i%2==0?0xff8fc6bd:0xffc19b72,false,true,angle,0,0,0,new float[][]{
-                {-.32f,-11.65f,4.16f,.64f,.34f,.12f}
-            }));
-        }
-        // Mk II: armored blue-gray service modules and thermal radiator strips.
-        for(int i=0;i<4;i++){
-            float angle=i*(float)Math.PI/2;
-            upgrade.add(part(0xff496a80,false,false,angle,0,0,0,new float[][]{
-                {-1.35f,-16.8f,4.43f,2.7f,4.9f,.38f},
-                {-1.22f,-10.7f,4.18f,2.44f,1.8f,.3f}
-            }));
-            for(int j=0;j<5;j++)upgrade.add(part(0xffa4b7c1,false,false,angle,0,0,0,new float[][]{
-                {-1.13f,-16.4f+j*.82f,4.82f,2.26f,.26f,.14f}
-            }));
-            upgrade.add(part(0xff9edce4,false,true,angle,0,0,0,new float[][]{
-                {-.8f,-9.6f,4.50f,1.6f,.2f,.15f}
-            }));
-        }
-        // Four recessed flared bells, with hollow dark openings and silver nozzle lips.
-        for(float x:new float[]{-1.8f,1.8f})for(float z:new float[]{-1.8f,1.8f}){
-            hull.add(part(GRAPHITE,false,false,0,x,0,z,new float[][]{{-.69f,-3.75f,-.69f,1.38f,1.05f,1.38f}}));
-            nozzle(x,z,.78f,-2.75f,-1.7f,TITANIUM);
-            nozzle(x,z,1.03f,-1.7f,-.75f,GRAPHITE);
-            nozzle(x,z,1.24f,-.75f,-.28f,TITANIUM);
-            hull.add(part(0xff242b2e,false,false,0,x,0,z,new float[][]{{-.76f,-2.6f,-.76f,1.52f,.18f,1.52f}}));
-            flames.add(part(0xbcf78b3a,true,true,0,x,0,z,new float[][]{
-                {-.79f,-.35f,-.79f,1.58f,1.8f,1.58f},{-.54f,1.45f,-.54f,1.08f,1.35f,1.08f},{-.22f,2.8f,-.22f,.44f,1.2f,.44f}
-            }));
-            flames.add(part(0xe6b8ebff,true,true,0,x,0,z,new float[][]{
-                {-.40f,-.35f,-.40f,.8f,1.45f,.8f},{-.18f,1.10f,-.18f,.36f,1.55f,.36f}
-            }));
+        box(h,GRAPHITE,0,0,0,0,-1.1f,floor-.55f,-.4f,2.2f,.55f,1.85f);
+        box(h,GRAPHITE,0,0,0,0,-1.1f,floor-2.6f,1.05f,2.2f,2.6f,.35f);
+        box(h,panel,0,0,0,0,-2.05f,floor-1.45f,-radius+.18f,4.1f,1.45f,.7f);
+        h.add(part(CYAN,false,true,0,0,0,0,new float[][]{{-1.65f,floor-1.5f,-radius+.35f,1.2f,.14f,.38f},{.4f,floor-1.5f,-radius+.35f,1.2f,.14f,.38f}}));
+    }
+    private static void nose(List<Piece> h,float radius,float base,float tip,int main,int accent,int segments){
+        float step=(base-tip)/segments;
+        for(int i=0;i<segments;i++){
+            float t=(float)i/segments,rad=Math.max(.22f,radius*(1-t*t));
+            float bottom=base-i*step;
+            int color=i==0||i>=segments-2?accent:main;
+            ring(h,rad,bottom-step-.02f,bottom,.33f,color,false);
+            deck(h,Math.max(.15f,rad-.08f),bottom-step,.17f,color);
         }
     }
-
-    private void nozzle(float x,float z,float radius,float top,float bottom,int color){
+    private static void engine(VehicleModel m,float x,float z,float size,boolean orbital){
+        var h=m.hull;
+        box(h,GRAPHITE,0,x,0,z,-.55f*size,-3.7f,-.55f*size,1.1f*size,1.3f,1.1f*size);
+        nozzle(h,x,z,.64f*size,-2.8f,-1.75f,COPPER);
+        nozzle(h,x,z,.91f*size,-1.75f,-.72f,GRAPHITE);
+        nozzle(h,x,z,1.18f*size,-.72f,-.15f,TITANIUM);
+        box(h,GRAPHITE,0,x,0,z,-.5f*size,-2.6f,-.5f*size,size,.18f,size);
+        m.flames.add(part(orbital?0x9b54adff:0xbdf78b3a,true,true,0,x,0,z,new float[][]{{-.74f*size,-.2f,-.74f*size,1.48f*size,1.9f,1.48f*size},{-.42f*size,1.7f,-.42f*size,.84f*size,1.4f,.84f*size},{-.17f*size,3.1f,-.17f*size,.34f*size,1.0f,.34f*size}}));
+        m.flames.add(part(0xe6d7faff,true,true,0,x,0,z,new float[][]{{-.33f*size,-.2f,-.33f*size,.66f*size,1.6f,.66f*size},{-.14f*size,1.4f,-.14f*size,.28f*size,1.2f,.28f*size}}));
+    }
+    private static void nozzle(List<Piece> out,float x,float z,float radius,float top,float bottom,int color){
         for(int i=0;i<8;i++){
             float angle=(float)(i*Math.PI/4),half=radius*.4143f;
-            // Rotated panels have their pivot at the individual nozzle center.
-            hull.add(part(color,false,false,angle,x,0,z,new float[][]{{-half-.04f,top,radius-.18f,half*2+.08f,bottom-top,.2f}}));
+            out.add(part(color,false,false,angle,x,0,z,new float[][]{{-half-.04f,top,radius-.18f,half*2+.08f,bottom-top,.2f}}));
         }
     }
     private static void ring(List<Piece> out,float radius,float top,float bottom,float thickness,int color,boolean glass){
@@ -156,14 +169,14 @@ public final class RocketRenderer extends EntityRenderer<RocketEntity> {
         matrices.push();
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-yaw));
         matrices.scale(-4,-4,4);
-        for(Piece p:hull)draw(p,matrices,vertices,light);
-        if(entity.advanced())for(Piece p:upgrade)draw(p,matrices,vertices,light);
-        for(Piece p:windows)draw(p,matrices,vertices,light);
+        VehicleModel model=entity.advanced()?mk2:mk1;
+        for(Piece p:model.hull)draw(p,matrices,vertices,light);
+        for(Piece p:model.windows)draw(p,matrices,vertices,light);
         if(entity.enginesOn()||entity.warmingUp()){
             matrices.push();
             float pulse=.88f+.12f*(float)Math.sin((entity.age+tickDelta)*1.6);
             matrices.scale(1,pulse*(entity.warmingUp()?.23f:entity.phase()==RocketEntity.DESCENT?.65f:1f),1);
-            for(Piece p:flames)draw(p,matrices,vertices,light);
+            for(Piece p:model.flames)draw(p,matrices,vertices,light);
             matrices.pop();
         }
         matrices.pop();
