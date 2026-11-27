@@ -1,5 +1,6 @@
 {
   "parent": "minecraft:block/block",
+  "ambientocclusion": true,
   "textures": {
     "particle": "lunar_horizons:block/power_cable",
     "body": "lunar_horizons:block/power_cable",
@@ -14,59 +15,112 @@
       ],
       "to": [
         10,
-        16,
+        2,
         10
       ],
       "faces": {
-        "north": {
-          "texture": "#body"
+        "down": {
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
         },
-        "east": {
-          "texture": "#body"
+        "north": {
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 90
         },
         "south": {
-          "texture": "#body"
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 90
         },
         "west": {
-          "texture": "#body"
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 90
         },
-        "up": {
-          "texture": "#body"
-        },
-        "down": {
-          "texture": "#body"
+        "east": {
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 90
         }
       }
     },
     {
       "from": [
-        6,
-        0,
-        6
+        6.7,
+        2,
+        6.7
       ],
       "to": [
-        10,
-        2,
-        10
+        9.3,
+        14,
+        9.3
       ],
       "faces": {
         "north": {
-          "texture": "#collar"
-        },
-        "east": {
-          "texture": "#collar"
+          "texture": "#body",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 90
         },
         "south": {
-          "texture": "#collar"
+          "texture": "#body",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 90
         },
         "west": {
-          "texture": "#collar"
+          "texture": "#body",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 90
         },
-        "up": {
-          "texture": "#collar"
-        },
-        "down": {
-          "texture": "#collar"
+        "east": {
+          "texture": "#body",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 90
         }
       }
     },
@@ -82,23 +136,238 @@
         10
       ],
       "faces": {
-        "north": {
-          "texture": "#collar"
+        "up": {
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
         },
-        "east": {
-          "texture": "#collar"
+        "north": {
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 90
         },
         "south": {
-          "texture": "#collar"
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 90
         },
         "west": {
-          "texture": "#collar"
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 90
         },
+        "east": {
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 90
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        2,
+        6
+      ],
+      "to": [
+        6.7,
+        2,
+        10
+      ],
+      "faces": {
         "up": {
-          "texture": "#collar"
-        },
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        9.3,
+        2,
+        6
+      ],
+      "to": [
+        10,
+        2,
+        10
+      ],
+      "faces": {
+        "up": {
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        6.7,
+        2,
+        6
+      ],
+      "to": [
+        9.3,
+        2,
+        6.7
+      ],
+      "faces": {
+        "up": {
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        6.7,
+        2,
+        9.3
+      ],
+      "to": [
+        9.3,
+        2,
+        10
+      ],
+      "faces": {
+        "up": {
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        14,
+        6
+      ],
+      "to": [
+        6.7,
+        14,
+        10
+      ],
+      "faces": {
         "down": {
-          "texture": "#collar"
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        9.3,
+        14,
+        6
+      ],
+      "to": [
+        10,
+        14,
+        10
+      ],
+      "faces": {
+        "down": {
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        6.7,
+        14,
+        6
+      ],
+      "to": [
+        9.3,
+        14,
+        6.7
+      ],
+      "faces": {
+        "down": {
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        6.7,
+        14,
+        9.3
+      ],
+      "to": [
+        9.3,
+        14,
+        10
+      ],
+      "faces": {
+        "down": {
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
         }
       }
     }

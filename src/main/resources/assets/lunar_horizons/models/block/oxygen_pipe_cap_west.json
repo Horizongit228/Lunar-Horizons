@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
+  "textures": {
+    "particle": "lunar_horizons:block/oxygen_pipe",
+    "body": "lunar_horizons:block/oxygen_pipe",
+    "collar": "lunar_horizons:block/oxygen_pipe_collar"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        5,
+        5
+      ],
+      "to": [
+        5,
+        11,
+        11
+      ],
+      "faces": {
+        "west": {
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,8 +1,11 @@
 {
   "multipart": [
     {
+      "when": {
+        "down": "false"
+      },
       "apply": {
-        "model": "lunar_horizons:block/power_cable"
+        "model": "lunar_horizons:block/power_cable_cap_down"
       }
     },
     {
@@ -15,10 +18,26 @@
     },
     {
       "when": {
+        "up": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_cable_cap_up"
+      }
+    },
+    {
+      "when": {
         "up": "true"
       },
       "apply": {
         "model": "lunar_horizons:block/power_cable_up"
+      }
+    },
+    {
+      "when": {
+        "north": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_cable_cap_north"
       }
     },
     {
@@ -31,6 +50,14 @@
     },
     {
       "when": {
+        "south": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_cable_cap_south"
+      }
+    },
+    {
+      "when": {
         "south": "true"
       },
       "apply": {
@@ -39,10 +66,26 @@
     },
     {
       "when": {
+        "west": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_cable_cap_west"
+      }
+    },
+    {
+      "when": {
         "west": "true"
       },
       "apply": {
         "model": "lunar_horizons:block/power_cable_west"
+      }
+    },
+    {
+      "when": {
+        "east": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/power_cable_cap_east"
       }
     },
     {

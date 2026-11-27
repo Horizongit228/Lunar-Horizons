@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/block",
-  "ambientocclusion": false,
+  "ambientocclusion": true,
   "textures": {
     "particle": "lunar_horizons:block/oxygen_pipe",
     "body": "lunar_horizons:block/oxygen_pipe",
@@ -19,23 +19,63 @@
         11
       ],
       "faces": {
-        "north": {
-          "texture": "#collar"
-        },
-        "east": {
-          "texture": "#collar"
-        },
-        "south": {
-          "texture": "#collar"
-        },
-        "west": {
-          "texture": "#collar"
+        "down": {
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
         },
         "up": {
-          "texture": "#collar"
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
         },
-        "down": {
-          "texture": "#collar"
+        "north": {
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 90
+        },
+        "south": {
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 90
+        },
+        "west": {
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 90
+        },
+        "east": {
+          "texture": "#collar",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 90
         }
       }
     }
