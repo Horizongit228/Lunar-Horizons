@@ -153,20 +153,32 @@ public final class RocketEntity extends Entity {
         }
         return true;
     }
-    // Entities may fly above the block placement limit. Only scan the portion of the
-    // flight corridor in which blocks can exist; still enforce the horizontal border.
-    private static boolean flightClear(ServerWorld world, BlockPos center, int height) {
-        if(height<=0 || center.getY()<world.getBottomY())return false;
+    // Flight checks use actual block collision, not merely a non-air block ID.
+    // Scan only inside the build range; empty sky above it is valid.
+    private static BlockPos flightObstruction(ServerWorld world,BlockPos center,int height){
+        if(height<=0||center.getY()<world.getBottomY())return center;
         int top=Math.min(world.getTopY(),center.getY()+height);
         for(int x=-1;x<=1;x++)for(int z=-1;z<=1;z++){
-            if(!world.getWorldBorder().contains(center.add(x,0,z)))return false;
-            for(int y=center.getY();y<top;y++)
-                if(!world.getBlockState(new BlockPos(center.getX()+x,y,center.getZ()+z)).isAir())return false;
+            if(!world.getWorldBorder().contains(center.add(x,0,z)))return center.add(x,0,z);
+            for(int y=center.getY();y<top;y++){
+                BlockPos q=new BlockPos(center.getX()+x,y,center.getZ()+z);
+                var state=world.getBlockState(q);
+                if(!state.getFluidState().isEmpty()||!state.getCollisionShape(world,q).isEmpty())return q;
+            }
         }
-        return true;
+        return null;
     }
-    private static boolean occupied(ServerWorld world, BlockPos pos, int height) {
-        return !world.getEntitiesByClass(RocketEntity.class,boxAt(pos,height), Entity::isAlive).isEmpty();
+    private static boolean flightClear(ServerWorld world,BlockPos center,int height){
+        return flightObstruction(world,center,height)==null;
+    }
+    private static void reportObstruction(ServerPlayerEntity pilot,ServerWorld world,BlockPos p){
+        message(pilot,"flight_obstruction",p.getX(),p.getY(),p.getZ(),world.getBlockState(p).getBlock().getName());
+    }
+    private static boolean occupied(ServerWorld world,BlockPos pos,int height){
+        return occupied(world,pos,height,null);
+    }
+    private static boolean occupied(ServerWorld world,BlockPos pos,int height,RocketEntity ignore){
+        return !world.getEntitiesByClass(RocketEntity.class,boxAt(pos,height),e->e!=ignore&&e.isAlive()).isEmpty();
     }
     static RocketEntity deploy(ServerWorld world, BlockPos base, float yaw) {
         return deploy(world,base,yaw,false);
@@ -222,12 +234,19 @@ public final class RocketEntity extends Entity {
         if(!travelWorld(world)){message(p,"wrong_world");return false;}
         if(destination()==location(world)){message(p,"wrong_destination");return false;}
         if(!hasPad(world,landing)){message(p,"big_pad");return false;}
-        if(!clear(world,landing,hullHeight()) || landing.getY()>=TRANSFER_Y){message(p,"big_blocked");return false;}
-        int height = TRANSFER_Y-landing.getY()+hullHeight();
-        if(!flightClear(world,landing,height)){message(p,"launch_corridor");return false;}
+        if(landing.getY()>=TRANSFER_Y){message(p,"launch_too_high");return false;}
+        int height=TRANSFER_Y-landing.getY()+hullHeight();
+        BlockPos obstruction=flightObstruction(world,landing,height);
+        if(obstruction!=null){reportObstruction(p,world,obstruction);return false;}
         if(!p.isCreative() && fuelReserve()==0 && fuelSlot(p)<0){message(p,"need_fuel");return false;}
         if(!p.isCreative() && destination()!=EARTH_DEST &&
                 !OxygenSystem.ready(p)){message(p,"need_suit");return false;}
+        // Do not burn fuel or begin a flight if every station berth is unavailable.
+        if(destination()==SPACE_DEST){
+            ServerWorld orbit=world.getServer().getWorld(LunarHorizons.SPACE);
+            if(orbit==null){message(p,"missing_world");return false;}
+            if(findDock(orbit)==null){message(p,"orbit_no_dock");return false;}
+        }
         return true;
     }
     private void board(ServerPlayerEntity p,ServerWorld world) {
@@ -311,7 +330,8 @@ public final class RocketEntity extends Entity {
                 double next=Math.min(TRANSFER_Y,getY()+rise);
                 // Check the swept hull, including newly placed blocks, without scanning empty sky.
                 int fromY=(int)Math.floor(getY());
-                if(!flightClear(world,new BlockPos(landing.getX(),fromY,landing.getZ()),(int)Math.ceil(next)-fromY+hullHeight())){message(pilot,"launch_corridor");phase(DESCENT);return;}
+                BlockPos obstruction=flightObstruction(world,new BlockPos(landing.getX(),fromY,landing.getZ()),(int)Math.ceil(next)-fromY+hullHeight());
+                if(obstruction!=null){reportObstruction(pilot,world,obstruction);phase(DESCENT);return;}
                 setPosition(getX(),next,getZ());
                 exhaust(world,true);
                 getDataTracker().set(ALTITUDE,(int)Math.floor(getY()));
@@ -369,7 +389,7 @@ public final class RocketEntity extends Entity {
             boolean existing=hasPad(world,pos);
             if(!existing)pos=pos.up();
             int h=descentHeight(world,pos);
-            if(h<12 || !clear(world,pos,h+hullHeight())||occupied(world,pos,h+hullHeight()))continue;
+            if(h<12 || !flightClear(world,pos,h+hullHeight())||occupied(world,pos,h+hullHeight(),this))continue;
             if(!existing){
                 if(!clear(world,pos.down(),1))continue;
                 // Require a solid footing within three blocks under every pad column.
@@ -401,10 +421,22 @@ public final class RocketEntity extends Entity {
     }
 
     private BlockPos findDock(ServerWorld world){
+        // Load every chunk intersecting the three 9x9 station platforms first.
         for(int i=0;i<OrbitalStationFeature.DOCK_X.length;i++){
             BlockPos p=OrbitalStationFeature.dock(i);
-            for(int x=-1;x<=1;x++)for(int z=-1;z<=1;z++)world.getChunk((p.getX()+x)>>4,(p.getZ()+z)>>4);
-            if(descentHeight(world,p)>=12&&hasPad(world,p)&&clear(world,p,descentHeight(world,p)+hullHeight())&&!occupied(world,p,descentHeight(world,p)+hullHeight()))return p;
+            for(int x=(p.getX()-4)>>4;x<=(p.getX()+4)>>4;x++)
+                for(int z=(p.getZ()-4)>>4;z<=(p.getZ()+4)>>4;z++)world.getChunk(x,z);
+        }
+        // Prefer the normal center of each dock; if occupied, use another valid 3x3 area.
+        for(int ring=0;ring<=3;ring++)for(int i=0;i<OrbitalStationFeature.DOCK_X.length;i++){
+            BlockPos center=OrbitalStationFeature.dock(i);
+            for(int dx=-ring;dx<=ring;dx++)for(int dz=-ring;dz<=ring;dz++){
+                if(Math.max(Math.abs(dx),Math.abs(dz))!=ring)continue;
+                BlockPos p=center.add(dx,0,dz);
+                int h=descentHeight(world,p);
+                if(h>=12&&hasPad(world,p)&&flightClear(world,p,h+hullHeight())
+                    &&!occupied(world,p,h+hullHeight(),this))return p;
+            }
         }
         return null;
     }
@@ -416,7 +448,7 @@ public final class RocketEntity extends Entity {
         BlockPos preferred=goal==EARTH_DEST?home:moonHome;
         if(preferred==null)preferred=source.getRegistryKey().equals(LunarHorizons.SPACE)?(home!=null?home:moonHome!=null?moonHome:BlockPos.ORIGIN):landing;
         BlockPos dest=goal==SPACE_DEST?findDock(target):findLanding(target,preferred);
-        if(dest==null){message(pilot,"no_landing");phase(DESCENT);return;}
+        if(dest==null){message(pilot,goal==SPACE_DEST?"orbit_no_dock":"no_landing");phase(DESCENT);return;}
         RocketEntity arrival=new RocketEntity(advanced()?LunarHorizons.ADVANCED_ROCKET_ENTITY:LunarHorizons.ROCKET_ENTITY,target);
         arrival.landing=dest;arrival.home=home;arrival.moonHome=moonHome;arrival.destination(goal==SPACE_DEST?location(source):SPACE_DEST);arrival.fuelReserve(fuelReserve());arrival.phase(DESCENT);
         double x=dest.getX()+.5,y=dest.getY()+descentHeight(target,dest),z=dest.getZ()+.5;
