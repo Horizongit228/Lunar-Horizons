@@ -112,6 +112,14 @@ public final class OrbitalStationFeature extends Feature<DefaultFeatureConfig> {
                         put(u,2,z-5,LunarHorizons.CRYSTAL_STONE);
                     }
                 }
+                // A sealed local power trunk supplies each module's equipment.
+                for(int u=x-6;u<=x+8;u++)put(u,1,z+4,LunarHorizons.POWER_WIRE);
+                for(int u=x-7;u<=x+8;u+=5){
+                    put(u,5,z-5,LunarHorizons.LUNAR_LANTERN);
+                    if(type!=0&&type!=3)put(u,1,z-7,Blocks.BARREL);
+                }
+                if(type==2)for(int u=x-4;u<=x+8;u+=3){put(u,1,z-4,LunarHorizons.POWER_WIRE);}
+                if(type==2){for(int u=x-4;u<=x+8;u++)put(u,1,z-4,LunarHorizons.POWER_WIRE);for(int zz=z-3;zz<=z+4;zz++)put(x+8,1,zz,LunarHorizons.POWER_WIRE);}
                 chest(x+8,1,z-7,type);
             }
             // Docking platforms and unpressurized catwalks. The rocket's ascent corridor is unobstructed.
@@ -137,7 +145,7 @@ public final class OrbitalStationFeature extends Feature<DefaultFeatureConfig> {
                 }
                 // Independent technical lounge at each end of the spine.
                 // Supply the nearest spine power network through a sealed wall port.
-                for(int u=Math.min(side*62,side<0?-48:48);u<=Math.max(side*62,side<0?-48:48);u++)put(u,1,2,u==side*62?LunarHorizons.POWER_FEEDTHROUGH:LunarHorizons.POWER_CABLE);
+                for(int u=Math.min(side*62,side<0?-52:48);u<=Math.max(side*62,side<0?-52:48);u++)put(u,1,2,u==side*62?LunarHorizons.POWER_FEEDTHROUGH:LunarHorizons.POWER_CABLE);
                 for(int u=Math.min(side*63,x);u<=Math.max(side*63,x);u++)put(u,1,2,LunarHorizons.POWER_CABLE);
                 put(x,0,2,LunarHorizons.POWER_CABLE);
                 for(int z=-40;z<=40;z++)if(z>-26&&z<-22||z>-8&&z<8||z>22&&z<26)put(x,0,z,LunarHorizons.POWER_CABLE);
@@ -145,7 +153,7 @@ public final class OrbitalStationFeature extends Feature<DefaultFeatureConfig> {
                 for(int z:new int[]{-4,4})for(int u=center-3;u<=center+3;u++)put(u,2,z,LunarHorizons.PRESSURE_GLASS);
             }
             // Central communications mast and lower structural keel.
-            fill(-2,6,-2,2,9,2,metal);
+            fill(-2,6,-2,2,9,0,metal);
             fill(0,10,0,0,24,0,Blocks.IRON_BARS);
             for(int x=-7;x<=7;x++)put(x,19,0,metal);
             put(0,25,0,LunarHorizons.SURVEY_BEACON);
