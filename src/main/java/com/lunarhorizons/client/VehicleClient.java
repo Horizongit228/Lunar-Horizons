@@ -37,11 +37,11 @@ final class VehicleClient {
             if(mc.player==null||mc.options.hudHidden||!(mc.player.getVehicle() instanceof RoverEntity r))return;
             int x=ctx.getScaledWindowWidth()-160,y=10;
             ctx.fill(x,y,x+150,y+50,0xe0182332);
-            ctx.drawTextWithShadow(mc.textRenderer,Text.translatable("hud.lunar_horizons.rover"),x+6,y+5,0xff83c2c7);
+            ctx.drawTextWithShadow(mc.textRenderer,Text.translatable(r.advanced()?"hud.lunar_horizons.advanced_rover":"hud.lunar_horizons.rover"),x+6,y+5,0xff83c2c7);
             ctx.drawTextWithShadow(mc.textRenderer,Text.translatable("hud.lunar_horizons.rover_speed",String.format(java.util.Locale.ROOT,"%.1f",r.speed()/10.0)),x+6,y+17,0xffe6edf2);
-            ctx.drawTextWithShadow(mc.textRenderer,Text.translatable("hud.lunar_horizons.rover_energy",r.energy(),RoverEntity.CAPACITY),x+6,y+29,0xffe6edf2);
+            ctx.drawTextWithShadow(mc.textRenderer,Text.translatable("hud.lunar_horizons.rover_energy",r.energy(),r.capacity()),x+6,y+29,0xffe6edf2);
             ctx.fill(x+6,y+41,x+144,y+45,0xff354653);
-            ctx.fill(x+6,y+41,x+6+138*r.energy()/RoverEntity.CAPACITY,y+45,0xff83c2c7);
+            ctx.fill(x+6,y+41,x+6+138*r.energy()/r.capacity(),y+45,0xff83c2c7);
         });
     }
 }

@@ -15,7 +15,7 @@ public final class RoverItem extends Item {
         if(!(ctx.getWorld() instanceof ServerWorld w)||!(ctx.getPlayer() instanceof ServerPlayerEntity p))return ActionResult.FAIL;
         BlockPos at=ctx.getBlockPos().up();
         if(!w.canPlayerModifyAt(p,at)||!w.getWorldBorder().contains(at)||!w.getBlockState(at.down()).isSideSolidFullSquare(w,at.down(),Direction.UP))return ActionResult.FAIL;
-        RoverEntity rover=new RoverEntity(LunarHorizons.ROVER_ENTITY,w);
+        RoverEntity rover=new RoverEntity(ctx.getStack().isOf(LunarHorizons.ADVANCED_ROVER_ITEM)?LunarHorizons.ADVANCED_ROVER_ENTITY:LunarHorizons.ROVER_ENTITY,w);
         rover.refreshPositionAndAngles(at.getX()+.5,at.getY(),at.getZ()+.5,p.getYaw(),0);
         if(!w.isSpaceEmpty(rover,rover.getBoundingBox())||!w.getOtherEntities(rover,rover.getBoundingBox()).isEmpty()){
             RocketEntity.message(p,"rover_blocked");return ActionResult.FAIL;

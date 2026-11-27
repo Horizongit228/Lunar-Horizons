@@ -41,6 +41,10 @@ final class LunarGuideScreen extends Screen{
         new Recipe("lunar_horizons:oxygen_filter",2,new String[]{"minecraft:air","minecraft:white_wool","minecraft:air","minecraft:iron_ingot","minecraft:charcoal","minecraft:iron_ingot","minecraft:air","minecraft:white_wool","minecraft:air"}),
         new Recipe("lunar_horizons:machine_frame",2,new String[]{"lunar_horizons:titanium_ingot","minecraft:iron_ingot","lunar_horizons:titanium_ingot","minecraft:iron_ingot","minecraft:air","minecraft:iron_ingot","lunar_horizons:titanium_ingot","minecraft:iron_ingot","lunar_horizons:titanium_ingot"}),
         new Recipe("lunar_horizons:rover",1,new String[]{"lunar_horizons:titanium_ingot","lunar_horizons:control_circuit","lunar_horizons:titanium_ingot","lunar_horizons:power_cell","lunar_horizons:machine_frame","lunar_horizons:power_cell","minecraft:iron_ingot","minecraft:redstone","minecraft:iron_ingot"})
+,
+        new Recipe("lunar_horizons:builder_tablet",1,new String[]{"lunar_horizons:titanium_ingot","minecraft:glass","lunar_horizons:titanium_ingot","lunar_horizons:control_circuit","lunar_horizons:power_cell","lunar_horizons:control_circuit","lunar_horizons:titanium_ingot","lunar_horizons:machine_frame","lunar_horizons:titanium_ingot"}),
+        new Recipe("lunar_horizons:advanced_rover",1,new String[]{"lunar_horizons:advanced_solar_panel","lunar_horizons:control_circuit","lunar_horizons:advanced_solar_panel","lunar_horizons:power_cell","lunar_horizons:rover","lunar_horizons:power_cell","lunar_horizons:titanium_ingot","lunar_horizons:machine_frame","lunar_horizons:titanium_ingot"}),
+        new Recipe("lunar_horizons:advanced_rocket",1,new String[]{"lunar_horizons:titanium_ingot","lunar_horizons:control_circuit","lunar_horizons:titanium_ingot","lunar_horizons:machine_frame","lunar_horizons:rocket","lunar_horizons:machine_frame","lunar_horizons:power_cell","lunar_horizons:titanium_ingot","lunar_horizons:power_cell"})
     };
     private static final int TOTAL=TEXT_PAGES+RECIPES.length;
     private final Screen parent;

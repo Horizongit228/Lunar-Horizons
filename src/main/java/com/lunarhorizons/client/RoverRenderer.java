@@ -13,7 +13,7 @@ import java.util.List;
 public final class RoverRenderer extends EntityRenderer<RoverEntity>{
     private static final Identifier METAL=Identifier.of("lunar_horizons","textures/entity/rocket_alloy.png");
     private record Piece(ModelPart model,int color,boolean light){}
-    private final List<Piece> body=new ArrayList<>(),wheels=new ArrayList<>();
+    private final List<Piece> body=new ArrayList<>(),wheels=new ArrayList<>(),upgrade=new ArrayList<>();
     public RoverRenderer(EntityRendererFactory.Context context){
         super(context);shadowRadius=.9f;
         body.add(part(0xff3d464b,false,0,0,0,new float[][]{
@@ -46,15 +46,25 @@ public final class RoverRenderer extends EntityRenderer<RoverEntity>{
         body.add(part(0xff9f5145,true,0,0,0,new float[][]{
             {-8,-11,12,3,1,.35f},{5,-11,12,3,1,.35f}
         }));
+        upgrade.add(part(0xffa8b8bf,false,0,0,0,new float[][]{
+            {-11,-21,-7,22,1,17},{-10,-13,10,20,3,3}
+        }));
+        upgrade.add(part(0xff294e70,false,0,0,0,new float[][]{
+            {-9,-22,-5,18,1,13}
+        }));
+        for(int i=0;i<5;i++)upgrade.add(part(0xff849caa,false,0,0,0,new float[][]{
+            {-9+i*4.5f,-22.1f,-5,.25f,.2f,13}
+        }));
+        upgrade.add(part(0xff80c8d1,true,0,0,0,new float[][]{
+            {-10,-14,-13,3,2,.5f},{7,-14,-13,3,2,.5f}
+        }));
         for(int side:new int[]{-1,1})for(int z:new int[]{-10,0,10}){
             float x=side*12.2f;
             body.add(part(0xff78878e,false,0,0,0,new float[][]{{side<0?-13:8,-6.5f,z-1,5,2,2}}));
             List<float[]> tire=new ArrayList<>();
-            for(int i=0;i<8;i++){
-                double angle=i*Math.PI/4;
-                float yy=(float)Math.cos(angle)*2.1f,zz=(float)Math.sin(angle)*2.1f;
-                tire.add(new float[]{-2.0f,yy-2.7f,zz-2.7f,4,5.4f,5.4f});
-            }
+            tire.add(new float[]{-2,-4.8f,-2.8f,4,1.6f,5.6f});
+            tire.add(new float[]{-2,-3.2f,-4.2f,4,6.4f,8.4f});
+            tire.add(new float[]{-2,3.2f,-2.8f,4,1.6f,5.6f});
             wheels.add(part(0xff343b40,false,x,-4.8f,z,tire.toArray(float[][]::new)));
             wheels.add(part(0xffa6afb1,false,x,-4.8f,z,new float[][]{{side<0?-2.25f:1.75f,-2.4f,-2.4f,.5f,4.8f,4.8f}}));
             wheels.add(part(0xff59676f,false,x,-4.8f,z,new float[][]{{side<0?-2.55f:2.05f,-.8f,-.8f,.5f,1.6f,1.6f}}));
@@ -74,7 +84,8 @@ public final class RoverRenderer extends EntityRenderer<RoverEntity>{
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-yaw+180));
         matrices.scale(-1,-1,1);
         for(Piece p:body)draw(p,matrices,vertices,light);
-        for(Piece p:wheels)draw(p,matrices,vertices,light);
+        if(entity.advanced())for(Piece p:upgrade)draw(p,matrices,vertices,light);
+        for(Piece p:wheels){p.model.pitch=entity.wheelAngle(tickDelta);draw(p,matrices,vertices,light);}
         matrices.pop();
         super.render(entity,yaw,tickDelta,matrices,vertices,light);
     }

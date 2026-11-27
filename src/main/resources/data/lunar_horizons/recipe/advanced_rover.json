@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "SCS",
+    "PRP",
+    "TFT"
+  ],
+  "key": {
+    "S": {
+      "item": "lunar_horizons:advanced_solar_panel"
+    },
+    "C": {
+      "item": "lunar_horizons:control_circuit"
+    },
+    "P": {
+      "item": "lunar_horizons:power_cell"
+    },
+    "R": {
+      "item": "lunar_horizons:rover"
+    },
+    "T": {
+      "item": "lunar_horizons:titanium_ingot"
+    },
+    "F": {
+      "item": "lunar_horizons:machine_frame"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:advanced_rover",
+    "count": 1
+  }
+}

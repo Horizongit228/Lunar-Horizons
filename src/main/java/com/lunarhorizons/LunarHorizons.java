@@ -64,6 +64,11 @@ public final class LunarHorizons implements ModInitializer {
         EntityType.Builder.<RoverEntity>create(RoverEntity::new,SpawnGroup.MISC)
             .dimensions(1.9F,1.35F).maxTrackingRange(12).trackingTickInterval(1).build(ID+":rover"));
     public static final Item ROVER_ITEM = item("rover",new RoverItem(new Item.Settings().maxCount(1)));
+    public static final EntityType<RocketEntity> ADVANCED_ROCKET_ENTITY=Registry.register(Registries.ENTITY_TYPE,id("advanced_rocket"),
+        EntityType.Builder.<RocketEntity>create(RocketEntity::new,SpawnGroup.MISC).dimensions(3f,8f).maxTrackingRange(16).trackingTickInterval(1).makeFireImmune().build(ID+":advanced_rocket"));
+    public static final EntityType<RoverEntity> ADVANCED_ROVER_ENTITY=Registry.register(Registries.ENTITY_TYPE,id("advanced_rover"),
+        EntityType.Builder.<RoverEntity>create(RoverEntity::new,SpawnGroup.MISC).dimensions(1.9f,1.35f).maxTrackingRange(12).trackingTickInterval(1).build(ID+":advanced_rover"));
+    public static final Item ADVANCED_ROVER_ITEM=item("advanced_rover",new RoverItem(new Item.Settings().maxCount(1)));
     public static final Block ROCKET = Registry.register(Registries.BLOCK, id("rocket"),
             new Block(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).nonOpaque()));
     public static final Item ROCKET_ITEM = item("rocket", new RocketItem(ROCKET, new Item.Settings().maxCount(1)));
@@ -159,12 +164,14 @@ public final class LunarHorizons implements ModInitializer {
     public static final Block RED_FLAG = flag("red_flag");
     public static final Block BLUE_FLAG = flag("blue_flag");
     public static final Block ORANGE_FLAG = flag("orange_flag");
+    public static final Item ADVANCED_ROCKET_ITEM=item("advanced_rocket",new AdvancedRocketItem(new Item.Settings().maxCount(1)));
+    public static final Item BUILDER_TABLET=item("builder_tablet",new BuilderTablet(new Item.Settings().maxCount(1)));
     public static final Item GUIDE_BOOK=item("guide_book",new LunarGuideItem(new Item.Settings().maxCount(1)));
     public static final ItemGroup GROUP = FabricItemGroup.builder()
             .icon(() -> new ItemStack(ROCKET)).displayName(Text.translatable("itemGroup.lunar_horizons"))
             .entries((context, entries) -> {
                 for (Block b : new Block[]{ROCKET, LAUNCH_PAD, REGOLITH, MOON_ROCK, CRYSTAL_ORE, MOON_BRICKS, REFILL_STATION, CRYSTAL_CLUSTER, CRYSTAL_STONE, DARK_CRYSTAL_ORE, LUNAR_STEMS, HIGHLAND_ROCK, DARK_REGOLITH, FROSTED_REGOLITH, LUNAR_ICE, TITANIUM_ORE, HELIUM_ORE, METEORITE_ROCK, LUNAR_LANTERN, SURVEY_BEACON, TITANIUM_BLOCK, BASALT_DUST, ANORTHOSITE, EJECTA_ROCK, SOLAR_PANEL, DAMAGED_SOLAR_PANEL, BATTERY, HELIUM_GENERATOR, OXYGEN_GENERATOR, ELECTRIC_REFINERY, FUEL_SYNTHESIZER, ELECTRIC_REFILL, POWERED_LAMP, POWER_TERMINAL, ADVANCED_ASSEMBLER, POWER_CABLE, OXYGEN_PIPE, OXYGEN_VENT, HABITAT_HULL, REINFORCED_HULL, HABITAT_FLOOR, INDUSTRIAL_GRATE, INSULATION_BLOCK, PRESSURE_GLASS, AIRLOCK, INDUSTRIAL_BATTERY, ADVANCED_SOLAR_PANEL, POWER_SWITCH, POWER_FEEDTHROUGH, EXPEDITION_FLAG, RED_FLAG, BLUE_FLAG, ORANGE_FLAG}) entries.add(b);
-                for (Item i : new Item[]{FUEL, OXYGEN, LARGE_OXYGEN, BACKPACK, HELMET, CHEST, LEGS, BOOTS, LUNAR_STICK, CRYSTAL, CRYSTAL_SWORD, CRYSTAL_PICKAXE, CRYSTAL_AXE, CRYSTAL_SHOVEL, CRYSTAL_HOE, DARK_CRYSTAL, DARK_CRYSTAL_SWORD, DARK_CRYSTAL_PICKAXE, DARK_CRYSTAL_AXE, DARK_CRYSTAL_SHOVEL, DARK_CRYSTAL_HOE, RAW_TITANIUM, TITANIUM_INGOT, HELIUM, METEORITE_FRAGMENT, EXTREME_OXYGEN, MINERAL_DETECTOR, LUNAR_RADAR, TITANIUM_DRILL, CIRCUIT, POWER_CELL, OXYGEN_FILTER, MACHINE_FRAME, ROVER_ITEM, GUIDE_BOOK}) entries.add(i);
+                for (Item i : new Item[]{FUEL, OXYGEN, LARGE_OXYGEN, BACKPACK, HELMET, CHEST, LEGS, BOOTS, LUNAR_STICK, CRYSTAL, CRYSTAL_SWORD, CRYSTAL_PICKAXE, CRYSTAL_AXE, CRYSTAL_SHOVEL, CRYSTAL_HOE, DARK_CRYSTAL, DARK_CRYSTAL_SWORD, DARK_CRYSTAL_PICKAXE, DARK_CRYSTAL_AXE, DARK_CRYSTAL_SHOVEL, DARK_CRYSTAL_HOE, RAW_TITANIUM, TITANIUM_INGOT, HELIUM, METEORITE_FRAGMENT, EXTREME_OXYGEN, MINERAL_DETECTOR, LUNAR_RADAR, TITANIUM_DRILL, CIRCUIT, POWER_CELL, OXYGEN_FILTER, MACHINE_FRAME, ROVER_ITEM, GUIDE_BOOK, ADVANCED_ROVER_ITEM, ADVANCED_ROCKET_ITEM, BUILDER_TABLET}) entries.add(i);
             }).build();
 
     public static Identifier id(String path) { return Identifier.of(ID, path); }
@@ -232,6 +239,7 @@ public final class LunarHorizons implements ModInitializer {
         ColonyStatus.register();
         EngineeringPackets.register();
         LunarGuideItem.register();
+        BuilderTablet.register();
         LunarCommands.register();
         net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.SERVER_STOPPED.register(server -> MeteorEvents.clear());
         Registry.register(Registries.ITEM_GROUP, id("main"), GROUP);

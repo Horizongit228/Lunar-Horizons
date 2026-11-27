@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "TGT",
+    "CPC",
+    "TFT"
+  ],
+  "key": {
+    "T": {
+      "item": "lunar_horizons:titanium_ingot"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "C": {
+      "item": "lunar_horizons:control_circuit"
+    },
+    "P": {
+      "item": "lunar_horizons:power_cell"
+    },
+    "F": {
+      "item": "lunar_horizons:machine_frame"
+    }
+  },
+  "result": {
+    "id": "lunar_horizons:builder_tablet",
+    "count": 1
+  }
+}

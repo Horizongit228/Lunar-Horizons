@@ -34,13 +34,13 @@ final class RocketPilotHud {
         int color=r.enginesOn()?0xfff4bc4d:0xff59cfe8;
         ctx.fill(x,y,x+width,y+92,0xe0182332);
         ctx.fill(x+1,y+1,x+width-1,y+2,color);
-        ctx.drawTextWithShadow(mc.textRenderer,Text.translatable("hud.lunar_horizons.rocket"),x+6,y+6,color);
+        ctx.drawTextWithShadow(mc.textRenderer,Text.translatable(r.advanced()?"hud.lunar_horizons.advanced_rocket":"hud.lunar_horizons.rocket"),x+6,y+6,color);
         Text status=Text.translatable("hud.lunar_horizons.rocket_"+phase,r.countdownSeconds());
         ctx.drawTextWithShadow(mc.textRenderer,status,x+6,y+18,0xffe6edf2);
         ctx.drawTextWithShadow(mc.textRenderer,Text.translatable("hud.lunar_horizons.rocket_altitude",r.flightAltitude()),x+6,y+30,0xffc7d7e7);
         ctx.drawTextWithShadow(mc.textRenderer,Text.translatable("hud.lunar_horizons.rocket_speed",String.format(java.util.Locale.ROOT,"%+.1f",r.flightSpeedTenths()/10.0)),x+6,y+42,0xffc7d7e7);
-        ctx.drawTextWithShadow(mc.textRenderer,Text.translatable("hud.lunar_horizons.rocket_reserve",r.fuelReserve(),RocketEntity.FUEL_CAPACITY),x+6,y+54,0xffc7d7e7);
-        for(int i=0;i<RocketEntity.FUEL_CAPACITY;i++){int left=x+6+i*20;ctx.fill(left,y+66,left+17,y+72,i<r.fuelReserve()?0xff72b8bd:0xff354653);}
+        ctx.drawTextWithShadow(mc.textRenderer,Text.translatable("hud.lunar_horizons.rocket_reserve",r.fuelReserve(),r.fuelCapacity()),x+6,y+54,0xffc7d7e7);
+        for(int i=0;i<r.fuelCapacity();i++){int cell=172/r.fuelCapacity(),left=x+6+i*cell;ctx.fill(left,y+66,left+cell-2,y+72,i<r.fuelReserve()?0xff72b8bd:0xff354653);}
         ctx.drawTextWithShadow(mc.textRenderer,Text.translatable("hud.lunar_horizons.rocket_fuel",fuel),x+6,y+78,0xffc7d7e7);
         if(r.phase()==RocketEntity.ASCENT)
             ctx.drawCenteredTextWithShadow(mc.textRenderer,Text.translatable("hud.lunar_horizons.abort_hint",launch.getBoundKeyLocalizedText()),ctx.getScaledWindowWidth()/2,ctx.getScaledWindowHeight()-74,0xffffbf72);

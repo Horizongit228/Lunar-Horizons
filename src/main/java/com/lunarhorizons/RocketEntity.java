@@ -35,6 +35,9 @@ public final class RocketEntity extends Entity {
     private static final TrackedData<Integer> FUEL_RESERVE = DataTracker.registerData(RocketEntity.class,TrackedDataHandlerRegistry.INTEGER);
     private static final TrackedData<Integer> SPEED = DataTracker.registerData(RocketEntity.class,TrackedDataHandlerRegistry.INTEGER);
     public static final int FUEL_CAPACITY=8;
+    public boolean advanced(){return getType()==LunarHorizons.ADVANCED_ROCKET_ENTITY;}
+    public int fuelCapacity(){return advanced()?16:FUEL_CAPACITY;}
+    private int countdownTicks(){return advanced()?60:COUNTDOWN_TICKS;}
     private static final int COUNTDOWN_TICKS = 100;
     private double lastFlightY=Double.NaN;
     private BlockPos landing = BlockPos.ORIGIN;
@@ -55,7 +58,7 @@ public final class RocketEntity extends Entity {
     public int flightAltitude(){return getDataTracker().get(ALTITUDE);}
     public int countdownSeconds(){return getDataTracker().get(COUNTDOWN_SYNC);}
     public int fuelReserve(){return getDataTracker().get(FUEL_RESERVE);}
-    private void fuelReserve(int fuel){getDataTracker().set(FUEL_RESERVE,MathHelper.clamp(fuel,0,FUEL_CAPACITY));}
+    private void fuelReserve(int fuel){getDataTracker().set(FUEL_RESERVE,MathHelper.clamp(fuel,0,fuelCapacity()));}
     public int flightSpeedTenths(){return getDataTracker().get(SPEED);}
     public boolean warmingUp(){return phase()==COUNTDOWN&&countdownSeconds()<=2;}
     public boolean enginesOn() { return phase()==ASCENT || phase()==DESCENT; }
@@ -83,7 +86,7 @@ public final class RocketEntity extends Entity {
     @Override protected Vec3d getPassengerAttachmentPos(Entity passenger, EntityDimensions dimensions, float scaleFactor) {
         return new Vec3d(0,4.5,0);
     }
-    @Override public ItemStack getPickBlockStack() { return new ItemStack(LunarHorizons.ROCKET_ITEM); }
+    @Override public ItemStack getPickBlockStack() { return new ItemStack(advanced()?LunarHorizons.ADVANCED_ROCKET_ITEM:LunarHorizons.ROCKET_ITEM); }
 
     // Shift dismounts normally; during ascent/descent it is an emergency exit to ground.
     @Override public Vec3d updatePassengerForDismount(LivingEntity passenger) {
@@ -137,8 +140,11 @@ public final class RocketEntity extends Entity {
         return !world.getEntitiesByClass(RocketEntity.class,boxAt(pos,height), Entity::isAlive).isEmpty();
     }
     static RocketEntity deploy(ServerWorld world, BlockPos base, float yaw) {
-        if(!hasPad(world,base)||!clear(world,base,8)||occupied(world,base,8)) return null;
-        RocketEntity rocket = new RocketEntity(LunarHorizons.ROCKET_ENTITY,world);
+        return deploy(world,base,yaw,false);
+    }
+    static RocketEntity deploy(ServerWorld world, BlockPos base,float yaw,boolean advanced){
+        if(!hasPad(world,base)||!clear(world,base,8)||occupied(world,base,8))return null;
+        RocketEntity rocket=new RocketEntity(advanced?LunarHorizons.ADVANCED_ROCKET_ENTITY:LunarHorizons.ROCKET_ENTITY,world);
         rocket.landing=base.toImmutable();
         rocket.refreshPositionAndAngles(base.getX()+.5,base.getY(),base.getZ()+.5,Math.round(yaw/90f)*90f,0);
         return world.spawnEntity(rocket)?rocket:null;
@@ -161,11 +167,11 @@ public final class RocketEntity extends Entity {
         if(phase()!=IDLE || hasPassengers()) {message(p,"busy");return ActionResult.CONSUME;}
         ItemStack held=p.getStackInHand(hand);
         if(held.isOf(LunarHorizons.FUEL)){
-            int add=Math.min(FUEL_CAPACITY-fuelReserve(),p.isSneaking()?held.getCount():1);
+            int add=Math.min(fuelCapacity()-fuelReserve(),p.isSneaking()?held.getCount():1);
             if(add<=0){message(p,"rocket_tank_full");return ActionResult.CONSUME;}
             fuelReserve(fuelReserve()+add);
             if(!p.isCreative())held.decrement(add);
-            message(p,"rocket_refueled",fuelReserve(),FUEL_CAPACITY);
+            message(p,"rocket_refueled",fuelReserve(),fuelCapacity());
             return ActionResult.CONSUME;
         }
         if(p.isSneaking()) {
@@ -174,7 +180,7 @@ public final class RocketEntity extends Entity {
                 if(!p.getInventory().insertStack(reserve)&&!reserve.isEmpty())p.dropItem(reserve,false);
                 fuelReserve(0);
             }
-            ItemStack stack = new ItemStack(LunarHorizons.ROCKET_ITEM);
+            ItemStack stack = new ItemStack(advanced()?LunarHorizons.ADVANCED_ROCKET_ITEM:LunarHorizons.ROCKET_ITEM);
             if(!p.getInventory().insertStack(stack) && !stack.isEmpty()) p.dropItem(stack,false);
             discard();
             return ActionResult.CONSUME;
@@ -202,7 +208,7 @@ public final class RocketEntity extends Entity {
 
     public void requestLaunch(ServerPlayerEntity pilot){
         if(getWorld().isClient || !(getWorld() instanceof ServerWorld world) || getFirstPassenger()!=pilot || !pilot.isAlive())return;
-        if(phase()==READY && ready(pilot,world)){phase(COUNTDOWN);getDataTracker().set(COUNTDOWN_SYNC,5);message(pilot,"countdown",5);}
+        if(phase()==READY && ready(pilot,world)){phase(COUNTDOWN);getDataTracker().set(COUNTDOWN_SYNC,countdownTicks()/20);message(pilot,"countdown",countdownTicks()/20);}
         else if(phase()==COUNTDOWN){phase(READY);getDataTracker().set(COUNTDOWN_SYNC,0);message(pilot,"launch_cancelled");}
         else if(phase()==ASCENT){phase(DESCENT);message(pilot,"rocket_abort");}
     }
@@ -230,19 +236,19 @@ public final class RocketEntity extends Entity {
         getDataTracker().set(SPEED,enginesOn()?speed:0);
         lastFlightY=getY();
         getDataTracker().set(ALTITUDE,Math.max(0,(int)Math.ceil(getY()-landing.getY())));
-        getDataTracker().set(COUNTDOWN_SYNC,phase()==COUNTDOWN?Math.max(0,(COUNTDOWN_TICKS-phaseTicks+19)/20):0);
+        getDataTracker().set(COUNTDOWN_SYNC,phase()==COUNTDOWN?Math.max(0,(countdownTicks()-phaseTicks+19)/20):0);
         switch(phase()){
             case READY -> { if(pilot==null && ++missingPilotTicks>60)phase(IDLE); else if(pilot!=null)missingPilotTicks=0; }
             case IDLE -> { if(hasPassengers() && pilot!=null){pilot.stopRiding();} }
             case COUNTDOWN -> {
                 if(pilot==null){ if(++missingPilotTicks>60)phase(IDLE); return; }
                 missingPilotTicks=0;
-                if(phaseTicks==1 || phaseTicks%20==0 && phaseTicks<COUNTDOWN_TICKS){
-                    message(pilot,"countdown",Math.max(1,(COUNTDOWN_TICKS-phaseTicks+19)/20));
+                if(phaseTicks==1 || phaseTicks%20==0 && phaseTicks<countdownTicks()){
+                    message(pilot,"countdown",Math.max(1,(countdownTicks()-phaseTicks+19)/20));
                     world.playSound(null,getBlockPos(),SoundEvents.BLOCK_NOTE_BLOCK_HAT.value(),SoundCategory.NEUTRAL,.8f,1f);
                 }
-                if(phaseTicks>60 && phaseTicks%4==0) exhaust(world,false);
-                if(phaseTicks>=COUNTDOWN_TICKS){
+                if(phaseTicks>countdownTicks()-40 && phaseTicks%4==0) exhaust(world,false);
+                if(phaseTicks>=countdownTicks()){
                     if(!ready(pilot,world)){phase(READY);return;}
                     if(!pilot.isCreative()){
                         if(fuelReserve()>0)fuelReserve(fuelReserve()-1);
@@ -258,7 +264,7 @@ public final class RocketEntity extends Entity {
                 if(pilot==null){if(++missingPilotTicks>60)phase(DESCENT);return;}
                 missingPilotTicks=0;
                 double travel=Math.min(48,world.getTopY()-landing.getY()-9);
-                double rise=Math.min(1.05,.045+phaseTicks*.0075);
+                double rise=advanced()?Math.min(1.55,.08+phaseTicks*.015):Math.min(1.05,.045+phaseTicks*.0075);
                 double next=Math.min(landing.getY()+travel,getY()+rise);
                 // Entire sweep is checked for obstructions; no blocks are broken.
                 if(!clear(world,landing,Math.min(world.getTopY()-landing.getY(),(int)Math.ceil(next-landing.getY())+8))){message(pilot,"launch_corridor");phase(DESCENT);return;}
@@ -269,7 +275,7 @@ public final class RocketEntity extends Entity {
             }
             case DESCENT -> {
                 double remaining=getY()-landing.getY();
-                double descentSpeed=Math.min(.72,Math.max(.035,remaining*.085));
+                double descentSpeed=Math.min(advanced()?1.0:.72,Math.max(.035,remaining*.085));
                 double next=Math.max(landing.getY(),getY()-descentSpeed);
                 int y=(int)Math.floor(next);
                 if(!clear(world,new BlockPos(landing.getX(),y,landing.getZ()),9)){
@@ -355,7 +361,7 @@ public final class RocketEntity extends Entity {
         if(target==null){message(pilot,"missing_world");phase(DESCENT);return;}
         BlockPos dest=findLanding(target,!moon&&home!=null?home:landing);
         if(dest==null){message(pilot,"no_landing");phase(DESCENT);return;}
-        RocketEntity arrival=new RocketEntity(LunarHorizons.ROCKET_ENTITY,target);
+        RocketEntity arrival=new RocketEntity(advanced()?LunarHorizons.ADVANCED_ROCKET_ENTITY:LunarHorizons.ROCKET_ENTITY,target);
         arrival.landing=dest;arrival.home=home;arrival.fuelReserve(fuelReserve());arrival.phase(DESCENT);
         double x=dest.getX()+.5,y=dest.getY()+descentHeight(target,dest),z=dest.getZ()+.5;
         arrival.refreshPositionAndAngles(x,y,z,getYaw(),0);

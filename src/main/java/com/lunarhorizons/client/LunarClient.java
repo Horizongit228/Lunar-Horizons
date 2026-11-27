@@ -11,6 +11,9 @@ public final class LunarClient implements ClientModInitializer {
         VehicleClient.register();
         EngineeringScreen.register();
         LunarGuideScreen.register();
+        BuilderScreen.register();
+        EntityRendererRegistry.register(LunarHorizons.ADVANCED_ROVER_ENTITY,RoverRenderer::new);
+        EntityRendererRegistry.register(LunarHorizons.ADVANCED_ROCKET_ENTITY,RocketRenderer::new);
         EntityRendererRegistry.register(LunarHorizons.ROVER_ENTITY,RoverRenderer::new);
         net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.registerGlobalReceiver(com.lunarhorizons.ColonyStatus.ID,(payload,context)->context.client().execute(()->OxygenHud.habitat=payload.breathable()));
         net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents.DISCONNECT.register((handler,mc)->OxygenHud.habitat=false);

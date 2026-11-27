@@ -24,7 +24,7 @@ public final class RocketRenderer extends EntityRenderer<RocketEntity> {
     private static final int IVORY=0xffdeded5, TITANIUM=0xffa4adb1, GRAPHITE=0xff424a51, RED=0xff92544a, GOLD=0xffb19a6f;
     private static final int SIDES=12;
     private record Piece(ModelPart model,int color,boolean glass,boolean lit){}
-    private final List<Piece> hull=new ArrayList<>(),windows=new ArrayList<>(),flames=new ArrayList<>();
+    private final List<Piece> hull=new ArrayList<>(),windows=new ArrayList<>(),flames=new ArrayList<>(),upgrade=new ArrayList<>();
 
     public RocketRenderer(EntityRendererFactory.Context context){
         super(context);
@@ -94,6 +94,20 @@ public final class RocketRenderer extends EntityRenderer<RocketEntity> {
                 {-.32f,-11.65f,4.16f,.64f,.34f,.12f}
             }));
         }
+        // Mk II: armored blue-gray service modules and thermal radiator strips.
+        for(int i=0;i<4;i++){
+            float angle=i*(float)Math.PI/2;
+            upgrade.add(part(0xff496a80,false,false,angle,0,0,0,new float[][]{
+                {-1.35f,-16.8f,4.43f,2.7f,4.9f,.38f},
+                {-1.22f,-10.7f,4.18f,2.44f,1.8f,.3f}
+            }));
+            for(int j=0;j<5;j++)upgrade.add(part(0xffa4b7c1,false,false,angle,0,0,0,new float[][]{
+                {-1.13f,-16.4f+j*.82f,4.82f,2.26f,.26f,.14f}
+            }));
+            upgrade.add(part(0xff9edce4,false,true,angle,0,0,0,new float[][]{
+                {-.8f,-9.6f,4.50f,1.6f,.2f,.15f}
+            }));
+        }
         // Four recessed flared bells, with hollow dark openings and silver nozzle lips.
         for(float x:new float[]{-1.8f,1.8f})for(float z:new float[]{-1.8f,1.8f}){
             hull.add(part(GRAPHITE,false,false,0,x,0,z,new float[][]{{-.69f,-3.75f,-.69f,1.38f,1.05f,1.38f}}));
@@ -143,6 +157,7 @@ public final class RocketRenderer extends EntityRenderer<RocketEntity> {
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-yaw));
         matrices.scale(-4,-4,4);
         for(Piece p:hull)draw(p,matrices,vertices,light);
+        if(entity.advanced())for(Piece p:upgrade)draw(p,matrices,vertices,light);
         for(Piece p:windows)draw(p,matrices,vertices,light);
         if(entity.enginesOn()||entity.warmingUp()){
             matrices.push();
