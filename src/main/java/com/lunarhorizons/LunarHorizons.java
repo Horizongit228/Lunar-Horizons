@@ -64,7 +64,7 @@ public final class LunarHorizons implements ModInitializer {
             .dimensions(5.5F,5.5F).maxTrackingRange(16).trackingTickInterval(1).makeFireImmune().disableSaving().build(ID+":huge_meteor"));
     public static final EntityType<RoverEntity> ROVER_ENTITY = Registry.register(Registries.ENTITY_TYPE,id("rover"),
         EntityType.Builder.<RoverEntity>create(RoverEntity::new,SpawnGroup.MISC)
-            .dimensions(1.9F,1.35F).maxTrackingRange(12).trackingTickInterval(1).build(ID+":rover"));
+            .dimensions(1.9F,1.5F).maxTrackingRange(12).trackingTickInterval(1).build(ID+":rover"));
     public static final Item ROVER_ITEM = item("rover",new RoverItem(new Item.Settings().maxCount(1)));
     public static final EntityType<RocketEntity> ADVANCED_ROCKET_ENTITY=Registry.register(Registries.ENTITY_TYPE,id("advanced_rocket"),
         EntityType.Builder.<RocketEntity>create(RocketEntity::new,SpawnGroup.MISC).dimensions(3f,12f).maxTrackingRange(16).trackingTickInterval(1).makeFireImmune().build(ID+":advanced_rocket"));
