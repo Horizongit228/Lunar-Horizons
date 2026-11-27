@@ -435,5 +435,11 @@
   "screen.lunar_horizons.route_from": "Departure: %s",
   "screen.lunar_horizons.route_countdown": "Changing route cancels countdown",
   "screen.lunar_horizons.route_ascent": "Route can change before Y=500",
-  "screen.lunar_horizons.route_hint": "Select a destination"
+  "screen.lunar_horizons.route_hint": "Select a destination",
+  "message.lunar_horizons.structure_usage": "Use /teleport structure <name>. Press Tab for the list.",
+  "message.lunar_horizons.structure_dismount": "Dismount before teleporting.",
+  "message.lunar_horizons.structure_missing": "Structure %s not found within the search range.",
+  "message.lunar_horizons.structure_unsafe": "No safe destination found at structure %s.",
+  "message.lunar_horizons.structure_arrived": "Structure %s: %s, %s, %s.",
+  "message.lunar_horizons.conduits_repaired": "Refreshed connections: %s. Bridged gaps: %s."
 }
