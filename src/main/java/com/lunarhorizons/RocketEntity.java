@@ -423,6 +423,59 @@ public final class RocketEntity extends Entity {
     }
 
     private BlockPos findDock(ServerWorld world){
+        BlockPos primary=findPrimaryDock(world);
+        if(primary!=null)return primary;
+        // A world upgraded from before 0.9 may contain already-generated empty orbital chunks.
+        if(world.isAir(new BlockPos(0,OrbitalStationFeature.DECK,0))){
+            OrbitalStationFeature.restoreMissingStation(world);
+            primary=findPrimaryDock(world);
+            if(primary!=null)return primary;
+        }
+        // Never block a mission just because the original three docks are unavailable.
+        // Reserve pads are created only in empty space; solid blocks are never removed.
+        for(int z:new int[]{-64,-80,-96})for(int x:OrbitalStationFeature.DOCK_X){
+            BlockPos p=new BlockPos(x,OrbitalStationFeature.DECK+1,z);
+            for(int cx=(x-4)>>4;cx<=(x+4)>>4;cx++)
+                for(int cz=(z-4)>>4;cz<=(z+4)>>4;cz++)world.getChunk(cx,cz);
+            int h=descentHeight(world,p);
+            if(h<12||!flightClear(world,p,TRANSFER_Y-p.getY()+hullHeight())
+                ||occupied(world,p,h+hullHeight(),this))continue;
+            if(hasPad(world,p)&&safeDockExit(world,p))return p;
+            if(buildReserveDock(world,p))return p;
+        }
+        return null;
+    }
+    private static boolean safeDockExit(ServerWorld world,BlockPos p){
+        BlockPos exit=p.east(3);
+        return world.getBlockState(exit.down()).isSideSolidFullSquare(world,exit.down(),net.minecraft.util.math.Direction.UP)
+            &&world.isAir(exit)&&world.isAir(exit.up());
+    }
+    private boolean buildReserveDock(ServerWorld world,BlockPos p){
+        // Validate the entire 9x9 deck before writing anything. Existing reserve pads
+        // can be reused; partially occupied or modified sites are left untouched.
+        for(int dx=-4;dx<=4;dx++)for(int dz=-4;dz<=4;dz++){
+            BlockPos q=p.add(dx,-1,dz);
+            if(!world.getWorldBorder().contains(q)||!world.isAir(q)||!world.isAir(q.up())||!world.isAir(q.up(2)))return false;
+        }
+        for(int dx=-4;dx<=4;dx++)for(int dz=-4;dz<=4;dz++)
+            world.setBlockState(p.add(dx,-1,dz),LunarHorizons.LAUNCH_PAD.getDefaultState(),3);
+        // Link to the station or an earlier reserve pad if a safe path exists.
+        int z=p.getZ()+5;
+        for(int zz=z;zz<=-53;zz++){
+            for(int dx=-1;dx<=1;dx++){
+                BlockPos q=new BlockPos(p.getX()+dx,p.getY()-1,zz);
+                world.getChunk(q.getX()>>4,q.getZ()>>4);
+                if(!world.getWorldBorder().contains(q)||!world.isAir(q.up())||!world.isAir(q.up(2))
+                    ||(!world.isAir(q)&&!world.getBlockState(q).isSideSolidFullSquare(world,q,net.minecraft.util.math.Direction.UP)))return true;
+            }
+        }
+        for(int zz=z;zz<=-53;zz++)for(int dx=-1;dx<=1;dx++){
+            BlockPos q=new BlockPos(p.getX()+dx,p.getY()-1,zz);
+            if(world.isAir(q))world.setBlockState(q,LunarHorizons.TITANIUM_BLOCK.getDefaultState(),3);
+        }
+        return true;
+    }
+    private BlockPos findPrimaryDock(ServerWorld world){
         // Load every chunk intersecting the three 9x9 station platforms first.
         for(int i=0;i<OrbitalStationFeature.DOCK_X.length;i++){
             BlockPos p=OrbitalStationFeature.dock(i);
@@ -436,7 +489,7 @@ public final class RocketEntity extends Entity {
                 if(Math.max(Math.abs(dx),Math.abs(dz))!=ring)continue;
                 BlockPos p=center.add(dx,0,dz);
                 int h=descentHeight(world,p);
-                if(h>=12&&hasPad(world,p)&&flightClear(world,p,TRANSFER_Y-p.getY()+hullHeight())
+                if(h>=12&&hasPad(world,p)&&safeDockExit(world,p)&&flightClear(world,p,TRANSFER_Y-p.getY()+hullHeight())
                     &&!occupied(world,p,h+hullHeight(),this))return p;
             }
         }
