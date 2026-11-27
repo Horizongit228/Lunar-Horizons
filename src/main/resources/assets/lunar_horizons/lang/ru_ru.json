@@ -441,5 +441,17 @@
   "message.lunar_horizons.structure_missing": "Структура %s не найдена в пределах поиска.",
   "message.lunar_horizons.structure_unsafe": "Не найдено безопасное место в структуре %s.",
   "message.lunar_horizons.structure_arrived": "Структура %s: %s, %s, %s.",
-  "message.lunar_horizons.conduits_repaired": "Обновлено соединений: %s. Восстановлено участков: %s."
+  "message.lunar_horizons.conduits_repaired": "Обновлено соединений: %s. Восстановлено участков: %s.",
+  "block.lunar_horizons.server_block": "Сервер",
+  "item.lunar_horizons.data_core": "Ядро данных",
+  "structure.lunar_horizons.ultra_data_center": "Ультра дата центр",
+  "screen.lunar_horizons.machine_io_9": "Микросхема → ядро данных",
+  "guide.lunar_horizons.page.18.title": "Серверы и ядра данных",
+  "guide.lunar_horizons.page.18.body": "Сервер обрабатывает управляющую микросхему за 60 секунд при питании 30 Е/с. ПКМ пустой рукой — интерфейс. Загрузить микросхему, включить питание и забрать ядро данных. Авто: сырьё сверху, продукт снизу.\nЯдра предназначены для будущего проекта «Разлом». Пока они не запускают никаких событий.\nУльтра дата центр — крайне редкая структура во всех лунных биомах. Восемь независимых серверных залов, командный центр и секретный архив.",
+  "journal.lunar_horizons.22.title": "Журнал вычислительного комплекса",
+  "journal.lunar_horizons.22.line1": "Вычислительные секции разделены на независимые контуры.",
+  "journal.lunar_horizons.22.line2": "Храните ядра данных. Окончательный протокол проекта «Разлом» ещё не утверждён.",
+  "journal.lunar_horizons.23.title": "Секретный архив: проект «Разлом»",
+  "journal.lunar_horizons.23.line1": "Моделирование планетарных процессов завершено частично.",
+  "journal.lunar_horizons.23.line2": "Цель не определена: Луна или Земля. Активация запрещена до завершения исследований."
 }
