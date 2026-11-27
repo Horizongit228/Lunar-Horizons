@@ -48,6 +48,33 @@
         "state": {
           "Name": "lunar_horizons:helium_ore"
         }
+      },
+      {
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "lunar_horizons:basalt_dust"
+        },
+        "state": {
+          "Name": "lunar_horizons:helium_ore"
+        }
+      },
+      {
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "lunar_horizons:anorthosite"
+        },
+        "state": {
+          "Name": "lunar_horizons:helium_ore"
+        }
+      },
+      {
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "lunar_horizons:ejecta_rock"
+        },
+        "state": {
+          "Name": "lunar_horizons:helium_ore"
+        }
       }
     ]
   }

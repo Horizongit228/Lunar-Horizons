@@ -111,5 +111,11 @@
   "block.lunar_horizons.expedition_flag": "Флаг Lunar Horizons",
   "block.lunar_horizons.red_flag": "Красный экспедиционный флаг",
   "block.lunar_horizons.blue_flag": "Синий экспедиционный флаг",
-  "block.lunar_horizons.orange_flag": "Оранжевый экспедиционный флаг"
+  "block.lunar_horizons.orange_flag": "Оранжевый экспедиционный флаг",
+  "biome.lunar_horizons.basalt_seas": "Базальтовые моря",
+  "biome.lunar_horizons.anorthosite_ridges": "Анортозитовые хребты",
+  "biome.lunar_horizons.ejecta_fields": "Поля ударных выбросов",
+  "block.lunar_horizons.basalt_dust": "Базальтовая пыль",
+  "block.lunar_horizons.anorthosite": "Лунный анортозит",
+  "block.lunar_horizons.ejecta_rock": "Ударная брекчия"
 }

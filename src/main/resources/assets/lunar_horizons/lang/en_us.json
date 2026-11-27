@@ -111,5 +111,11 @@
   "block.lunar_horizons.expedition_flag": "Lunar Horizons Expedition Flag",
   "block.lunar_horizons.red_flag": "Red Expedition Flag",
   "block.lunar_horizons.blue_flag": "Blue Expedition Flag",
-  "block.lunar_horizons.orange_flag": "Orange Expedition Flag"
+  "block.lunar_horizons.orange_flag": "Orange Expedition Flag",
+  "biome.lunar_horizons.basalt_seas": "Basalt Seas",
+  "biome.lunar_horizons.anorthosite_ridges": "Anorthosite Ridges",
+  "biome.lunar_horizons.ejecta_fields": "Ejecta Fields",
+  "block.lunar_horizons.basalt_dust": "Basalt Dust",
+  "block.lunar_horizons.anorthosite": "Lunar Anorthosite",
+  "block.lunar_horizons.ejecta_rock": "Impact Breccia"
 }

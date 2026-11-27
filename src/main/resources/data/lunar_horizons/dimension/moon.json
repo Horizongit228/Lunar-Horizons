@@ -10,7 +10,22 @@
           "parameters": {
             "temperature": [
               -1,
-              -0.28
+              -0.34
+            ],
+            "humidity": 0,
+            "continentalness": 0,
+            "erosion": 0,
+            "depth": 0,
+            "weirdness": 0,
+            "offset": 0
+          }
+        },
+        {
+          "biome": "lunar_horizons:basalt_seas",
+          "parameters": {
+            "temperature": [
+              -0.34,
+              -0.19
             ],
             "humidity": 0,
             "continentalness": 0,
@@ -24,8 +39,8 @@
           "biome": "lunar_horizons:lunar_plains",
           "parameters": {
             "temperature": [
-              -0.28,
-              -0.04
+              -0.19,
+              -0.06
             ],
             "humidity": 0,
             "continentalness": 0,
@@ -39,8 +54,23 @@
           "biome": "lunar_horizons:crater_fields",
           "parameters": {
             "temperature": [
-              -0.04,
-              0.14
+              -0.06,
+              0.06
+            ],
+            "humidity": 0,
+            "continentalness": 0,
+            "erosion": 0,
+            "depth": 0,
+            "weirdness": 0,
+            "offset": 0
+          }
+        },
+        {
+          "biome": "lunar_horizons:ejecta_fields",
+          "parameters": {
+            "temperature": [
+              0.06,
+              0.17
             ],
             "humidity": 0,
             "continentalness": 0,
@@ -54,8 +84,23 @@
           "biome": "lunar_horizons:lunar_highlands",
           "parameters": {
             "temperature": [
-              0.14,
-              0.36
+              0.17,
+              0.29
+            ],
+            "humidity": 0,
+            "continentalness": 0,
+            "erosion": 0,
+            "depth": 0,
+            "weirdness": 0,
+            "offset": 0
+          }
+        },
+        {
+          "biome": "lunar_horizons:anorthosite_ridges",
+          "parameters": {
+            "temperature": [
+              0.29,
+              0.43
             ],
             "humidity": 0,
             "continentalness": 0,
@@ -69,7 +114,7 @@
           "biome": "lunar_horizons:dark_wastes",
           "parameters": {
             "temperature": [
-              0.36,
+              0.43,
               1
             ],
             "humidity": 0,

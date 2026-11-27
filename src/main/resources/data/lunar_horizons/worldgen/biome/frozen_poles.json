@@ -20,11 +20,7 @@
   },
   "spawn_costs": {},
   "carvers": {
-    "air": [
-      "lunar_horizons:lunar_tunnels",
-      "lunar_horizons:lunar_shallow_caves",
-      "lunar_horizons:lunar_deep_caves"
-    ]
+    "air": []
   },
   "features": [
     [],
@@ -35,7 +31,7 @@
     [],
     [
       "lunar_horizons:impact_crater",
-      "lunar_horizons:cave_entrance",
+      "lunar_horizons:cave_network",
       "lunar_horizons:crystal_ore",
       "lunar_horizons:dark_crystal_ore",
       "lunar_horizons:titanium_ore",

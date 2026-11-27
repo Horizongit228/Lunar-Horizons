@@ -16,7 +16,7 @@ public final class ImpactCraterFeature extends Feature<DefaultFeatureConfig> {
     public ImpactCraterFeature(Codec<DefaultFeatureConfig> codec){super(codec);}
     static boolean natural(StructureWorldAccess w,BlockPos p){
         var s=w.getBlockState(p);
-        return s.isOf(LunarHorizons.MOON_ROCK)||s.isOf(LunarHorizons.REGOLITH)||s.isOf(LunarHorizons.HIGHLAND_ROCK)||s.isOf(LunarHorizons.FROSTED_REGOLITH)||s.isOf(LunarHorizons.DARK_REGOLITH);
+        return s.isOf(LunarHorizons.MOON_ROCK)||s.isOf(LunarHorizons.REGOLITH)||s.isOf(LunarHorizons.HIGHLAND_ROCK)||s.isOf(LunarHorizons.FROSTED_REGOLITH)||s.isOf(LunarHorizons.DARK_REGOLITH)||s.isOf(LunarHorizons.BASALT_DUST)||s.isOf(LunarHorizons.ANORTHOSITE)||s.isOf(LunarHorizons.EJECTA_ROCK);
     }
     private record Crater(int x,int z,int r,int depth,boolean meteorite){}
     @Override public boolean generate(FeatureContext<DefaultFeatureConfig> c){
@@ -45,14 +45,15 @@ public final class ImpactCraterFeature extends Feature<DefaultFeatureConfig> {
             if(top<0||top>170)continue;
             BlockPos surface=new BlockPos(x,top-1,z);
             if(!natural(w,surface))continue;
+            var surfaceState=w.getBlockState(surface);
             if(depth>0){
                 int removed=0;
                 for(int y=0;y<depth;y++){BlockPos p=surface.down(y);if(!natural(w,p))break;w.setBlockState(p,Blocks.AIR.getDefaultState(),2);removed++;}
                 BlockPos floor=surface.down(removed);
-                if(natural(w,floor))w.setBlockState(floor,meteor?LunarHorizons.METEORITE_ROCK.getDefaultState():LunarHorizons.REGOLITH.getDefaultState(),2);
+                if(natural(w,floor))w.setBlockState(floor,meteor?LunarHorizons.METEORITE_ROCK.getDefaultState():surfaceState,2);
                 changed|=removed>0;
             }else if(raise>0){
-                for(int y=1;y<=raise;y++){BlockPos p=surface.up(y);if(!w.isAir(p))break;w.setBlockState(p,LunarHorizons.REGOLITH.getDefaultState(),2);changed=true;}
+                for(int y=1;y<=raise;y++){BlockPos p=surface.up(y);if(!w.isAir(p))break;w.setBlockState(p,surfaceState,2);changed=true;}
             }
         }
         return changed;

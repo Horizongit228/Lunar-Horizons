@@ -63,7 +63,7 @@ public final class LunarHorizons implements ModInitializer {
     public static final Item OXYGEN = item("oxygen_tank", new Item(new Item.Settings().maxDamage(600)));
     public static final Item LARGE_OXYGEN = item("large_oxygen_tank",new Item(new Item.Settings().maxDamage(1800)));
     public static final Item BACKPACK = item("oxygen_backpack",new Item(new Item.Settings().maxCount(1)));
-    public static final Block REFILL_STATION = block("oxygen_station",AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).luminance(s -> 4));
+    public static final Block REFILL_STATION = machine("oxygen_station",AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).nonOpaque().luminance(s -> 4),0);
     public static final Item LUNAR_STICK = item("lunar_stick",new Item(new Item.Settings()));
     public static final Block LUNAR_STEMS = stemBlock();
     public static final Feature<DefaultFeatureConfig> LUNAR_STEM_PATCH = Registry.register(Registries.FEATURE,id("lunar_stem_patch"),new LunarStemFeature(DefaultFeatureConfig.CODEC));
@@ -93,8 +93,8 @@ public final class LunarHorizons implements ModInitializer {
     public static final Block TITANIUM_ORE = block("titanium_ore",AbstractBlock.Settings.copy(Blocks.IRON_ORE));
     public static final Block HELIUM_ORE = block("helium_ore",AbstractBlock.Settings.copy(Blocks.COAL_ORE).luminance(s -> 2));
     public static final Block METEORITE_ROCK = block("meteorite_rock",AbstractBlock.Settings.copy(Blocks.DEEPSLATE));
-    public static final Block LUNAR_LANTERN = block("lunar_lantern",AbstractBlock.Settings.copy(Blocks.SEA_LANTERN).luminance(s -> 15));
-    public static final Block SURVEY_BEACON = block("survey_beacon",AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).luminance(s -> 10));
+    public static final Block LUNAR_LANTERN = machine("lunar_lantern",AbstractBlock.Settings.copy(Blocks.SEA_LANTERN).nonOpaque().luminance(s -> 15),1);
+    public static final Block SURVEY_BEACON = machine("survey_beacon",AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).nonOpaque().luminance(s -> 10),2);
     public static final Block TITANIUM_BLOCK = block("titanium_block",AbstractBlock.Settings.copy(Blocks.IRON_BLOCK));
     public static final Item RAW_TITANIUM = item("raw_titanium",new Item(new Item.Settings()));
     public static final Item TITANIUM_INGOT = item("titanium_ingot",new Item(new Item.Settings()));
@@ -109,6 +109,10 @@ public final class LunarHorizons implements ModInitializer {
     public static final Feature<DefaultFeatureConfig> SATELLITE = Registry.register(Registries.FEATURE,id("crashed_satellite"),new ExplorationSiteFeature(DefaultFeatureConfig.CODEC,1));
     public static final Feature<DefaultFeatureConfig> LAB = Registry.register(Registries.FEATURE,id("buried_lab"),new ExplorationSiteFeature(DefaultFeatureConfig.CODEC,2));
     public static final Feature<DefaultFeatureConfig> GEODE = Registry.register(Registries.FEATURE,id("lunar_geode"),new ExplorationSiteFeature(DefaultFeatureConfig.CODEC,3));
+    public static final Block BASALT_DUST = block("basalt_dust",AbstractBlock.Settings.copy(Blocks.DIRT));
+    public static final Block ANORTHOSITE = block("anorthosite",AbstractBlock.Settings.copy(Blocks.STONE));
+    public static final Block EJECTA_ROCK = block("ejecta_rock",AbstractBlock.Settings.copy(Blocks.STONE));
+    public static final Feature<DefaultFeatureConfig> CAVE_NETWORK = Registry.register(Registries.FEATURE,id("cave_network"),new LunarCaveNetworkFeature(DefaultFeatureConfig.CODEC));
     public static final Block EXPEDITION_FLAG = flag("expedition_flag");
     public static final Block RED_FLAG = flag("red_flag");
     public static final Block BLUE_FLAG = flag("blue_flag");
@@ -116,7 +120,7 @@ public final class LunarHorizons implements ModInitializer {
     public static final ItemGroup GROUP = FabricItemGroup.builder()
             .icon(() -> new ItemStack(ROCKET)).displayName(Text.translatable("itemGroup.lunar_horizons"))
             .entries((context, entries) -> {
-                for (Block b : new Block[]{ROCKET, LAUNCH_PAD, REGOLITH, MOON_ROCK, CRYSTAL_ORE, MOON_BRICKS, REFILL_STATION, CRYSTAL_CLUSTER, CRYSTAL_STONE, DARK_CRYSTAL_ORE, LUNAR_STEMS, HIGHLAND_ROCK, DARK_REGOLITH, FROSTED_REGOLITH, LUNAR_ICE, TITANIUM_ORE, HELIUM_ORE, METEORITE_ROCK, LUNAR_LANTERN, SURVEY_BEACON, TITANIUM_BLOCK, EXPEDITION_FLAG, RED_FLAG, BLUE_FLAG, ORANGE_FLAG}) entries.add(b);
+                for (Block b : new Block[]{ROCKET, LAUNCH_PAD, REGOLITH, MOON_ROCK, CRYSTAL_ORE, MOON_BRICKS, REFILL_STATION, CRYSTAL_CLUSTER, CRYSTAL_STONE, DARK_CRYSTAL_ORE, LUNAR_STEMS, HIGHLAND_ROCK, DARK_REGOLITH, FROSTED_REGOLITH, LUNAR_ICE, TITANIUM_ORE, HELIUM_ORE, METEORITE_ROCK, LUNAR_LANTERN, SURVEY_BEACON, TITANIUM_BLOCK, BASALT_DUST, ANORTHOSITE, EJECTA_ROCK, EXPEDITION_FLAG, RED_FLAG, BLUE_FLAG, ORANGE_FLAG}) entries.add(b);
                 for (Item i : new Item[]{FUEL, OXYGEN, LARGE_OXYGEN, BACKPACK, HELMET, CHEST, LEGS, BOOTS, LUNAR_STICK, CRYSTAL, CRYSTAL_SWORD, CRYSTAL_PICKAXE, CRYSTAL_AXE, CRYSTAL_SHOVEL, CRYSTAL_HOE, DARK_CRYSTAL, DARK_CRYSTAL_SWORD, DARK_CRYSTAL_PICKAXE, DARK_CRYSTAL_AXE, DARK_CRYSTAL_SHOVEL, DARK_CRYSTAL_HOE, RAW_TITANIUM, TITANIUM_INGOT, HELIUM, METEORITE_FRAGMENT, EXTREME_OXYGEN, MINERAL_DETECTOR, LUNAR_RADAR, TITANIUM_DRILL}) entries.add(i);
             }).build();
 
@@ -132,6 +136,11 @@ public final class LunarHorizons implements ModInitializer {
     private static Block block(String path, AbstractBlock.Settings settings) {
         Block block = Registry.register(Registries.BLOCK, id(path), new Block(settings));
         item(path, new BlockItem(block, new Item.Settings()));
+        return block;
+    }
+    private static Block machine(String path,AbstractBlock.Settings settings,int kind) {
+        Block block=Registry.register(Registries.BLOCK,id(path),new LunarMachineBlock(settings,kind));
+        item(path,new BlockItem(block,new Item.Settings()));
         return block;
     }
     private static Block stemBlock() {

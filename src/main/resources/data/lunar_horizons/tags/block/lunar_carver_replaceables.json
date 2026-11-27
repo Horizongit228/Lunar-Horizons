@@ -5,6 +5,9 @@
     "lunar_horizons:regolith",
     "lunar_horizons:highland_rock",
     "lunar_horizons:dark_regolith",
-    "lunar_horizons:frosted_regolith"
+    "lunar_horizons:frosted_regolith",
+    "lunar_horizons:basalt_dust",
+    "lunar_horizons:anorthosite",
+    "lunar_horizons:ejecta_rock"
   ]
 }
