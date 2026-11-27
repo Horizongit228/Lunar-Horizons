@@ -46,10 +46,23 @@ final class StructureTeleport {
             BlockPos center=BlockPos.ofFloored(player.getPos());
             var found=world.getChunkManager().getChunkGenerator().locateStructure(world,RegistryEntryList.of(entry.get()),center,100,false);
             if(found==null){s.sendError(Text.translatable("message.lunar_horizons.structure_missing",id));return 0;}
-            // Locate returns a chunk-based structure reference. Land safely at its surface;
-            // underground entrances are accessible from the surrounding terrain.
-            BlockPos pos=found.getFirst().add(7,0,7);
-            at=safeNear(world,pos,12);
+            BlockPos foundPos=found.getFirst();
+            BlockPos pos=new BlockPos((foundPos.getX()&~15)+7,foundPos.getY(),(foundPos.getZ()&~15)+7);
+            var chunk=world.getChunk(foundPos.getX()>>4,foundPos.getZ()>>4);
+            var start=chunk.getStructureStart(entry.get().value());
+            at=null;
+            if(start!=null&&start.hasChildren()){
+                java.util.List<BlockPos> candidates=new java.util.ArrayList<>();
+                for(var piece:start.getChildren())if(piece instanceof LunarSitePiece site)site.visitCandidates(candidates,pos);
+                candidates.sort(java.util.Comparator.comparingDouble(p->Math.pow(p.getX()-pos.getX(),2)+Math.pow(p.getZ()-pos.getZ(),2)+.01*Math.abs(p.getY()-pos.getY())));
+                int checks=0;
+                for(BlockPos candidate:candidates){
+                    if(++checks>128)break;
+                    world.getChunk(candidate.getX()>>4,candidate.getZ()>>4);
+                    if(safe(world,candidate)){at=candidate;break;}
+                }
+            }
+            if(at==null)at=safeNear(world,pos,12);
         }
         if(at==null){s.sendError(Text.translatable("message.lunar_horizons.structure_unsafe",id));return 0;}
         BlockPos destination=at;
@@ -78,6 +91,27 @@ final class StructureTeleport {
     static int repair(ServerCommandSource s)throws CommandSyntaxException{
         var player=s.getPlayerOrThrow();ServerWorld w=player.getServerWorld();
         BlockPos center=player.getBlockPos();int count=0;
+        java.util.Map<BlockPos,BlockState> gaps=new java.util.LinkedHashMap<>();
+        // Restore only a single empty cell between two matching conduit ends.
+        // Never excavate, cross a hatch or build in a rocket launch column.
+        for(BlockPos mutable:BlockPos.iterate(center.add(-16,-16,-16),center.add(16,16,16))){
+            BlockPos p=mutable.toImmutable();
+            if(gaps.size()>=256||!ColonyGrid.loaded(w,p)||!w.isAir(p)||!w.getWorldBorder().contains(p)||!w.canPlayerModifyAt(player,p))continue;
+            boolean blocked=false;
+            for(var d:net.minecraft.util.math.Direction.values()){
+                BlockPos q=p.offset(d);
+                if(!ColonyGrid.loaded(w,q)){blocked=true;break;}
+                BlockState state=w.getBlockState(q);
+                if(state.isOf(LunarHorizons.AIRLOCK)||state.isOf(net.minecraft.block.Blocks.LADDER)||state.isOf(LunarHorizons.LAUNCH_PAD)){blocked=true;break;}
+            }
+            if(blocked)continue;
+            for(var d:new net.minecraft.util.math.Direction[]{net.minecraft.util.math.Direction.UP,net.minecraft.util.math.Direction.EAST,net.minecraft.util.math.Direction.SOUTH}){
+                BlockState a=w.getBlockState(p.offset(d)),b=w.getBlockState(p.offset(d.getOpposite()));
+                if(a.isOf(LunarHorizons.OXYGEN_PIPE)&&b.isOf(LunarHorizons.OXYGEN_PIPE)){gaps.put(p,LunarHorizons.OXYGEN_PIPE.getDefaultState());break;}
+                if(electrical(a)&&electrical(b)){gaps.put(p,(a.isOf(LunarHorizons.POWER_WIRE)&&b.isOf(LunarHorizons.POWER_WIRE)?LunarHorizons.POWER_WIRE:LunarHorizons.POWER_CABLE).getDefaultState());break;}
+            }
+        }
+        for(var gap:gaps.entrySet())w.setBlockState(gap.getKey(),gap.getValue(),3);
         for(BlockPos mutable:BlockPos.iterate(center.add(-16,-16,-16),center.add(16,16,16))){
             BlockPos p=mutable.toImmutable();
             if(!ColonyGrid.loaded(w,p))continue;
@@ -88,8 +122,9 @@ final class StructureTeleport {
             else continue;
             if(w.getBlockState(p)!=old)count++;
         }
-        int repaired=count;
-        s.sendFeedback(()->Text.translatable("message.lunar_horizons.conduits_repaired",repaired),false);
-        return count;
+        int repaired=count,bridged=gaps.size();
+        s.sendFeedback(()->Text.translatable("message.lunar_horizons.conduits_repaired",repaired,bridged),false);
+        return count+bridged;
     }
+    private static boolean electrical(BlockState state){return state.isOf(LunarHorizons.POWER_WIRE)||state.isOf(LunarHorizons.POWER_CABLE);}
 }
