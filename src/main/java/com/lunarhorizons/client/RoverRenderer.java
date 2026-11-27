@@ -61,9 +61,9 @@ public final class RoverRenderer extends EntityRenderer<RoverEntity>{
             float x=s<0?-12:11;
             add(v,STEEL,false,new float[]{x,-24,-8,1,12,1},new float[]{x,-24,9,1,12,1},new float[]{x,-24,-7,1,1,16},
                 new float[]{x,-17,-12,1,4,4});
-            for(int z:new int[]{-12,-4,4,12}){
+            for(float z:new float[]{-13.5f,-4.5f,4.5f,13.5f}){
                 add(v,STEEL,false,new float[]{s<0?-15:10,-8,z-1,5,2.4f,2},new float[]{s<0?-12:11,-12,z-.8f,1,4.5f,1.6f});
-                wheel(v,s*14.2f,-5.7f,z,5.7f,4.6f,s,z==-12?1:z==12?-1:0);
+                wheel(v,s*14.2f,-5f,z,5f,4.6f,s,z< -10?1:z>10?-1:0);
             }
             add(v,BLUE,false,new float[]{s<0?-12:8,-18,8,4,4,5});
             add(v,STEEL,false,new float[]{s<0?-12.15f:11.85f,-17,9,.3f,1.8f,3});
