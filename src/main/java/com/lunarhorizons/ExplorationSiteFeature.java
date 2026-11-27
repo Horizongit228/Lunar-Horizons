@@ -701,6 +701,7 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
         p.machine(8,1,-31,LunarHorizons.OXYGEN_GENERATOR,Direction.WEST);
         p.put(9,1,-31,LunarHorizons.POWER_WIRE);p.chest(-9,1,-36,18,Direction.SOUTH);
         p.put(0,7,0,LunarHorizons.SURVEY_BEACON);
+        colonyDetail(p,r);
     }
 
     // 71 x 71 spaceport: two 17 x 17 launch platforms, two actual hangars, service hub.
@@ -709,13 +710,13 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
         p.fill(-35,0,-34,35,0,35,deck);
         for(int side:new int[]{-1,1}){
             int center=side*20;
-            chamber(p,center-14,-34,center+14,-14,9);
-            p.fill(center-6,1,-14,center+6,6,-14,Blocks.AIR);
-            p.fill(center-5,1,-34,center+5,5,-34,Blocks.AIR);
-            for(int x=center-11;x<=center+11;x+=6){light(p,x,8,-25);p.put(x,3,-34,LunarHorizons.PRESSURE_GLASS);}
+            chamber(p,center-14,-34,center+14,-14,16);
+            p.fill(center-6,1,-14,center+6,13,-14,Blocks.AIR);
+            p.fill(center-5,1,-34,center+5,13,-34,Blocks.AIR);
+            for(int x=center-11;x<=center+11;x+=6){light(p,x,15,-25);p.put(x,3,-34,LunarHorizons.PRESSURE_GLASS);}
             p.machine(center-10,1,-29,LunarHorizons.FUEL_SYNTHESIZER,Direction.SOUTH);
             p.machine(center-9,1,-29,LunarHorizons.HELIUM_GENERATOR,Direction.SOUTH);
-            batteryRoof(p,center+10,-29,9,r);
+            batteryRoof(p,center+10,-29,16,r);
             p.chest(center-12,1,-32,19,Direction.SOUTH);
             p.fill(center-8,0,5,center+8,0,21,LunarHorizons.LAUNCH_PAD);
             for(int x:new int[]{center-8,center+8})for(int z:new int[]{5,21}){
@@ -740,6 +741,189 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
         }
         p.put(4,17,29,Blocks.AIR);p.put(4,15,29,Blocks.LADDER.getDefaultState().with(Properties.HORIZONTAL_FACING,rotated(p.rot,Direction.EAST)));p.machine(0,16,30,LunarHorizons.POWER_TERMINAL,Direction.NORTH);
         p.put(0,21,29,LunarHorizons.SURVEY_BEACON);p.fill(0,22,29,0,25,29,Blocks.IRON_BARS);
+        spaceportDetail(p,r);
+    }
+
+    // Add interior fittings only to planned air. Never replace machines, loot, doors or a structural shell.
+    private void furnishing(Plan p,int x,int y,int z,Block block){
+        BlockState s=p.blocks.get(p.at(x,y,z));
+        if(s!=null&&s.isAir())p.put(x,y,z,block);
+    }
+    private void colonyDetail(Plan p,Random r){
+        Block armor=LunarHorizons.REINFORCED_HULL, floor=LunarHorizons.HABITAT_FLOOR;
+        // A continuous layered spine roof with skylights above the circulation lane.
+        for(int z=-40;z<=40;z++){
+            for(int x:new int[]{-12,12})p.put(x,7,z,armor);
+            if(z%7==0){
+                for(int x=-11;x<=11;x++)if(Math.abs(x)>2)p.put(x,7,z,LunarHorizons.TITANIUM_BLOCK);
+                for(int x=-2;x<=2;x++)if(z!=0&&z!=-21&&z!=-7&&z!=7&&z!=21)p.put(x,6,z,LunarHorizons.PRESSURE_GLASS);
+            }
+            if(z%4==0){p.put(-2,0,z,LunarHorizons.INDUSTRIAL_GRATE);p.put(2,0,z,LunarHorizons.INDUSTRIAL_GRATE);}
+        }
+        // Six wings: individually recognizable roof silhouettes and furnished rooms.
+        for(int side:new int[]{-1,1})for(int z:new int[]{-28,0,28}){
+            int min=side<0?-44:22,max=side<0?-22:44,center=(min+max)/2;
+            for(int x=min;x<=max;x++){
+                p.put(x,7,z-11,armor);p.put(x,7,z+11,armor);
+                if((x-min)%5==0)for(int dz=-10;dz<=10;dz++)p.put(x,7,z+dz,LunarHorizons.TITANIUM_BLOCK);
+            }
+            for(int dz=-10;dz<=10;dz++){
+                p.put(min,7,z+dz,armor);p.put(max,7,z+dz,armor);
+            }
+            // Two-height windows with external reinforcement ribs.
+            for(int xx=min+2;xx<=max-2;xx+=5)for(int zz:new int[]{z-11,z+11}){
+                p.put(xx,2,zz,LunarHorizons.PRESSURE_GLASS);p.put(xx,3,zz,LunarHorizons.PRESSURE_GLASS);
+            }
+            for(int dz=-9;dz<=9;dz+=6)for(int x:new int[]{min,max}){
+                p.put(x,2,z+dz,LunarHorizons.PRESSURE_GLASS);p.put(x,3,z+dz,LunarHorizons.PRESSURE_GLASS);
+            }
+            // Lit floor strips and ceiling lamps leave the center circulation aisle clear.
+            for(int dz=-9;dz<=9;dz++){
+                if(dz!=2)p.put(center,0,z+dz,LunarHorizons.INDUSTRIAL_GRATE);
+                if(dz%4==0)furnishing(p,center,5,z+dz,LunarHorizons.LUNAR_LANTERN);
+            }
+            if(z==-28&&side<0){
+                // Crew quarters: lockers, bedside storage and mess tables.
+                for(int xx=min+3;xx<=max-3;xx+=4){
+                    furnishing(p,xx+1,1,z-8,Blocks.BARREL);furnishing(p,xx+1,1,z+7,Blocks.BARREL);
+                    furnishing(p,xx,1,z-3,Blocks.SMOOTH_STONE_SLAB);furnishing(p,xx,1,z+4,Blocks.SMOOTH_STONE_SLAB);
+                }
+                for(int xx=min+4;xx<=max-4;xx+=5)furnishing(p,xx,1,z-1,Blocks.OAK_STAIRS);
+            }else if(z==-28){
+                // Power wing: cooling equipment and service lockers, attached PV bank.
+                for(int xx=min+3;xx<=max-3;xx+=4){
+                    furnishing(p,xx,1,z-7,LunarHorizons.INDUSTRIAL_BATTERY);
+                    furnishing(p,xx,2,z-7,LunarHorizons.POWER_CABLE);
+                }
+                for(int xx=min+3;xx<=max-3;xx++)p.put(xx,8,z+5,LunarHorizons.ADVANCED_SOLAR_PANEL);
+                // Lower panels connect to the existing powered roof cluster.
+                for(int xx=min+3;xx<=max-3;xx++)p.put(xx,7,z+5,LunarHorizons.SOLAR_PANEL);
+            }else if(z==0&&side<0){
+                for(int xx=min+3;xx<=max-3;xx+=4){
+                    furnishing(p,xx,1,z-5,Blocks.IRON_BLOCK);
+                    furnishing(p,xx,2,z-5,Blocks.IRON_BARS);
+                    furnishing(p,xx,1,z+4,Blocks.BARREL);
+                }
+            }else if(z==0){
+                for(int xx=min+3;xx<=max-3;xx+=4){
+                    furnishing(p,xx,1,z-5,Blocks.CRAFTING_TABLE);
+                    furnishing(p,xx,1,z+5,Blocks.BARREL);
+                    furnishing(p,xx,4,z-8,LunarHorizons.LUNAR_LANTERN);
+                }
+            }else if(side<0){
+                // Research benches, sample lockers and a glazed specimen wall.
+                for(int xx=min+3;xx<=max-3;xx+=4){
+                    furnishing(p,xx,1,z-5,Blocks.SMOOTH_STONE);
+                    furnishing(p,xx,2,z-5,LunarHorizons.CRYSTAL_CLUSTER);
+                    furnishing(p,xx,1,z+8,Blocks.BARREL);
+                }
+            }else{
+                // Maintenance storage with shelf frames.
+                for(int xx=min+3;xx<=max-3;xx+=4){
+                    furnishing(p,xx,1,z-6,Blocks.BARREL);
+                    furnishing(p,xx,2,z-6,Blocks.BARREL);
+                    furnishing(p,xx,3,z-6,LunarHorizons.INDUSTRIAL_GRATE);
+                    furnishing(p,xx,1,z+5,Blocks.CRAFTING_TABLE);
+                }
+            }
+            // Close the large transit openings with functional two-block airlocks.
+            int inner=side<0?-22:22;
+            for(int edge:new int[]{inner,side*12}){
+                p.fill(edge,1,z-1,edge,3,z+1,armor);p.door(edge,1,z,side<0?Direction.WEST:Direction.EAST);
+            }
+            for(int xx=Math.min(inner,side*12)+1;xx<Math.max(inner,side*12);xx++){
+                p.put(xx,0,z,LunarHorizons.INDUSTRIAL_GRATE);
+                if(xx%3==0)furnishing(p,xx,3,z,LunarHorizons.LUNAR_LANTERN);
+            }
+        }
+        // Wayfinding and benches in the main spine, without blocking doors or wiring.
+        for(int z:new int[]{-33,-25,-17,-10,-3,3,10,17,25,33}){
+            furnishing(p,-8,1,z,Blocks.SMOOTH_STONE_SLAB);
+            furnishing(p,-7,1,z,Blocks.SMOOTH_STONE_SLAB);
+            furnishing(p,7,1,z,Blocks.BARREL);
+            furnishing(p,0,4,z,LunarHorizons.LUNAR_LANTERN);
+        }
+        // Central communications mast, with a stepped equipment platform.
+        p.fill(-3,7,-3,3,7,3,armor);
+        p.fill(-1,8,-1,1,11,1,LunarHorizons.TITANIUM_BLOCK);
+        p.fill(-3,11,0,3,11,0,Blocks.IRON_BARS);
+        p.fill(0,11,-3,0,11,3,Blocks.IRON_BARS);
+        p.fill(0,12,0,0,15,0,Blocks.IRON_BARS);p.put(0,16,0,LunarHorizons.SURVEY_BEACON);
+    }
+
+    private void spaceportDetail(Plan p,Random r){
+        Block armor=LunarHorizons.REINFORCED_HULL, metal=LunarHorizons.TITANIUM_BLOCK;
+        // Hangars accept a full 12-block Mk II with an extra block of door headroom.
+        for(int side:new int[]{-1,1}){
+            int center=side*20;
+            for(int x=center-14;x<=center+14;x++){
+                p.put(x,17,-34,armor);p.put(x,17,-14,armor);
+                if((x-center+14)%5==0)for(int z=-33;z<=-15;z++)p.put(x,17,z,metal);
+            }
+            // Tall exterior buttresses and high ribbon glazing.
+            for(int z=-32;z<=-16;z+=4)for(int x:new int[]{center-14,center+14}){
+                for(int y=1;y<=15;y++)if(y==7||y==8||y==9)p.put(x,y,z,LunarHorizons.PRESSURE_GLASS);
+                else p.put(x,y,z,armor);
+            }
+            // Service gantry on each side, leaving the central vehicle bay unobstructed.
+            for(int x:new int[]{center-11,center+11}){
+                for(int z=-31;z<=-17;z++){
+                    p.put(x,9,z,LunarHorizons.INDUSTRIAL_GRATE);
+                    if(z%4==0){
+                        for(int y=1;y<=8;y++)furnishing(p,x,y,z,Blocks.IRON_BARS);
+                        furnishing(p,x,10,z,LunarHorizons.LUNAR_LANTERN);
+                    }
+                }
+                for(int y=1;y<=10;y++){
+                    p.put(x,y,-32,metal);
+                    p.put(x+(x<center?1:-1),y,-32,Blocks.LADDER.getDefaultState().with(Properties.HORIZONTAL_FACING,rotated(p.rot,x<center?Direction.EAST:Direction.WEST)));
+                }
+            }
+            // Workshop tools, storage, and bays along the walls.
+            for(int z=-27;z<=-17;z+=3){
+                furnishing(p,center-12,1,z,Blocks.CRAFTING_TABLE);
+                furnishing(p,center+12,1,z,Blocks.BARREL);
+                furnishing(p,center+12,2,z,Blocks.BARREL);
+            }
+            for(int z=-33;z<=-15;z++)for(int x:new int[]{center-5,center+5})p.put(x,0,z,LunarHorizons.INDUSTRIAL_GRATE);
+            // Launch pad border and taxiway: keep 17x17 pad itself and its central air clear.
+            for(int z=5;z<=21;z++)for(int x:new int[]{center-9,center+9}){
+                p.put(x,0,z,Blocks.YELLOW_CONCRETE);if(z%4==1)light(p,x,1,z);
+            }
+            for(int x=center-9;x<=center+9;x++)for(int z:new int[]{4,22})p.put(x,0,z,Blocks.YELLOW_CONCRETE);
+            for(int z=-12;z<=3;z++){
+                p.put(center-4,0,z,Blocks.YELLOW_CONCRETE);p.put(center+4,0,z,Blocks.YELLOW_CONCRETE);
+                if(z%3==0)p.put(center,0,z,Blocks.WHITE_CONCRETE);
+            }
+            // Elevated service tower and cantilever, entirely outside the rocket clearance.
+            int sx=center+10;
+            p.fill(sx-1,1,24,sx+1,13,24,armor);
+            p.fill(sx-3,13,23,sx+3,13,25,LunarHorizons.INDUSTRIAL_GRATE);
+            for(int y=1;y<=14;y++)p.put(sx,y,25,Blocks.LADDER.getDefaultState().with(Properties.HORIZONTAL_FACING,rotated(p.rot,Direction.SOUTH)));
+            for(int x=sx-3;x<=sx+3;x++)p.put(x,14,23,Blocks.IRON_BARS);
+            light(p,sx,14,24);
+            // Separate propellant tanks and their pipe headers outside the taxiway.
+            for(int zz:new int[]{-8,-2}){
+                p.fill(center+11,1,zz,center+13,4,zz+2,metal);
+                p.fill(center+11,5,zz,center+13,5,zz+2,armor);
+                p.put(center+12,6,zz+1,LunarHorizons.OXYGEN_PIPE);
+            }
+        }
+        // Public apron markings and additional lighting, away from launch columns.
+        for(int z=-13;z<=22;z++){
+            if(z%3==0){p.put(-4,0,z,Blocks.WHITE_CONCRETE);p.put(4,0,z,Blocks.WHITE_CONCRETE);}
+            if(z%7==0){light(p,-6,1,z);light(p,6,1,z);}
+        }
+        // Tower control consoles, aerials and balcony guard rails.
+        for(int x=-5;x<=5;x+=2){
+            furnishing(p,x,16,24,LunarHorizons.POWER_TERMINAL);
+            furnishing(p,x,16,26,Blocks.SMOOTH_STONE_SLAB);
+            furnishing(p,x,19,29,LunarHorizons.LUNAR_LANTERN);
+        }
+        for(int x=-6;x<=6;x++){p.put(x,21,23,Blocks.IRON_BARS);p.put(x,21,35,Blocks.IRON_BARS);}
+        for(int z=24;z<=34;z++){p.put(-7,21,z,Blocks.IRON_BARS);p.put(7,21,z,Blocks.IRON_BARS);}
+        p.fill(-5,21,29,-5,24,29,Blocks.IRON_BARS);p.fill(5,21,29,5,24,29,Blocks.IRON_BARS);
+        p.put(-5,25,29,LunarHorizons.LUNAR_LANTERN);p.put(5,25,29,LunarHorizons.LUNAR_LANTERN);
     }
 
     // 59 x 61, high reactor hall with a separate control gallery, cooling and backup power.
