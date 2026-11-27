@@ -1,7 +1,17 @@
 {
-  "variants": {
-    "": {
-      "model": "lunar_horizons:block/damaged_solar_panel"
+  "multipart": [
+    {
+      "apply": {
+        "model": "lunar_horizons:block/damaged_solar_panel"
+      }
+    },
+    {
+      "when": {
+        "up": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/damaged_solar_panel_terminal"
+      }
     }
-  }
+  ]
 }

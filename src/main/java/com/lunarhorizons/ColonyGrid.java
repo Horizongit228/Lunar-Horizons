@@ -12,7 +12,7 @@ final class ColonyGrid {
     private static final Map<ServerWorld,Frame> FRAMES=new WeakHashMap<>();
     private static final class Frame {long tick=Long.MIN_VALUE;final Set<BlockPos> visited=new HashSet<>();}
     static boolean loaded(ServerWorld w,BlockPos p){return p.getY()>=w.getBottomY()&&p.getY()<w.getTopY()&&w.isChunkLoaded(p.getX()>>4,p.getZ()>>4);}
-    private static boolean conductor(BlockState s){return s.getBlock() instanceof ColonyMachineBlock||s.isOf(LunarHorizons.POWER_CABLE)||s.isOf(LunarHorizons.POWER_WIRE)||s.isOf(LunarHorizons.SOLAR_PANEL)||s.isOf(LunarHorizons.DAMAGED_SOLAR_PANEL)||s.isOf(LunarHorizons.ADVANCED_SOLAR_PANEL)||s.isOf(LunarHorizons.POWER_FEEDTHROUGH)||(s.isOf(LunarHorizons.POWER_SWITCH)&&s.get(net.minecraft.state.property.Properties.POWERED));}
+    private static boolean conductor(BlockState s){return ColonyConduitBlock.powerPort(s)&&(!s.isOf(LunarHorizons.POWER_SWITCH)||s.get(net.minecraft.state.property.Properties.POWERED));}
     static void tick(World world,ColonyBlockEntity root){
         if(!(world instanceof ServerWorld w)||w.getTime()%20!=0)return;
         Frame f=FRAMES.computeIfAbsent(w,k->new Frame());
@@ -21,7 +21,7 @@ final class ColonyGrid {
         ArrayDeque<BlockPos> queue=new ArrayDeque<>();Set<BlockPos> nodes=new HashSet<>();List<ColonyBlockEntity> machines=new ArrayList<>();
         queue.add(root.getPos());nodes.add(root.getPos());int solar=0;boolean overflow=false;
         while(!queue.isEmpty()){
-            BlockPos p=queue.remove();BlockState state=w.getBlockState(p);ColonyConduitBlock.refresh(w,p,state);
+            BlockPos p=queue.remove();BlockState state=w.getBlockState(p);ColonyConduitBlock.refresh(w,p,state);SolarPanelBlock.refresh(w,p,state);
             if(w.getBlockEntity(p) instanceof ColonyBlockEntity be)machines.add(be);
             if((state.isOf(LunarHorizons.SOLAR_PANEL)||state.isOf(LunarHorizons.DAMAGED_SOLAR_PANEL)||state.isOf(LunarHorizons.ADVANCED_SOLAR_PANEL))&&w.isSkyVisible(p.up())&&(w.getRegistryKey().equals(LunarHorizons.MOON)||w.isDay()))solar+=state.isOf(LunarHorizons.ADVANCED_SOLAR_PANEL)?90:state.isOf(LunarHorizons.SOLAR_PANEL)?30:8;
             for(Direction dir:Direction.values()){

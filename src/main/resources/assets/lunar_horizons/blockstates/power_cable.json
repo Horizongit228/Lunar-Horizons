@@ -1,19 +1,8 @@
 {
   "multipart": [
     {
-      "when": {
-        "down": "false"
-      },
       "apply": {
         "model": "lunar_horizons:block/power_cable_cap_down"
-      }
-    },
-    {
-      "when": {
-        "down": "true"
-      },
-      "apply": {
-        "model": "lunar_horizons:block/power_cable_down"
       }
     },
     {

@@ -25,11 +25,13 @@ public final class ColonyConduitBlock extends Block {
         super(settings);this.oxygen=oxygen;
         BlockState s=getStateManager().getDefaultState();for(BooleanProperty p:SIDES)s=s.with(p,false);setDefaultState(s);
         double hi=16-lo;
+        // Electrical lines share a low axis that intersects the frame of a 2/16 or 3/16 solar panel.
+        double yLo=oxygen?lo:1.5-(8-lo),yHi=oxygen?hi:1.5+(8-lo);
         for(int mask=0;mask<64;mask++){
-            VoxelShape shape=createCuboidShape(lo,lo,lo,hi,hi,hi);
+            VoxelShape shape=createCuboidShape(lo,yLo,lo,hi,yHi,hi);
             for(Direction d:Direction.values())if((mask&(1<<d.getId()))!=0){
                 double x1=d==Direction.WEST?0:lo,x2=d==Direction.EAST?16:hi;
-                double y1=d==Direction.DOWN?0:lo,y2=d==Direction.UP?16:hi;
+                double y1=d==Direction.DOWN?0:yLo,y2=d==Direction.UP?16:yHi;
                 double z1=d==Direction.NORTH?0:lo,z2=d==Direction.SOUTH?16:hi;
                 shape=VoxelShapes.union(shape,createCuboidShape(x1,y1,z1,x2,y2,z2));
             }
@@ -39,6 +41,9 @@ public final class ColonyConduitBlock extends Block {
     @Override protected void appendProperties(StateManager.Builder<Block,BlockState> b){b.add(SIDES);}
     boolean connects(BlockState s){
         if(oxygen)return s.isOf(LunarHorizons.OXYGEN_PIPE)||s.isOf(LunarHorizons.OXYGEN_VENT)||s.isOf(LunarHorizons.OXYGEN_GENERATOR);
+        return powerPort(s);
+    }
+    static boolean powerPort(BlockState s){
         return s.isOf(LunarHorizons.POWER_WIRE)||s.isOf(LunarHorizons.POWER_CABLE)||s.getBlock() instanceof ColonyMachineBlock||s.isOf(LunarHorizons.SOLAR_PANEL)||s.isOf(LunarHorizons.DAMAGED_SOLAR_PANEL)||s.isOf(LunarHorizons.ADVANCED_SOLAR_PANEL)||s.isOf(LunarHorizons.POWER_SWITCH)||s.isOf(LunarHorizons.POWER_FEEDTHROUGH);
     }
     private BlockState connections(BlockState s,WorldView w,BlockPos p){
