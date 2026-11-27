@@ -795,9 +795,8 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
                     furnishing(p,xx,1,z-7,LunarHorizons.INDUSTRIAL_BATTERY);
                     furnishing(p,xx,2,z-7,LunarHorizons.POWER_CABLE);
                 }
-                for(int xx=min+3;xx<=max-3;xx++)p.put(xx,8,z+5,LunarHorizons.ADVANCED_SOLAR_PANEL);
-                // Lower panels connect to the existing powered roof cluster.
-                for(int xx=min+3;xx<=max-3;xx++)p.put(xx,7,z+5,LunarHorizons.SOLAR_PANEL);
+                // Single exposed array at roof level, connected to the existing power feedthrough.
+                for(int xx=min+3;xx<=max-3;xx++)p.put(xx,7,z+5,LunarHorizons.ADVANCED_SOLAR_PANEL);
             }else if(z==0&&side<0){
                 for(int xx=min+3;xx<=max-3;xx+=4){
                     furnishing(p,xx,1,z-5,Blocks.IRON_BLOCK);
@@ -830,9 +829,11 @@ public final class ExplorationSiteFeature extends Feature<DefaultFeatureConfig>{
             int inner=side<0?-22:22;
             for(int edge:new int[]{inner,side*12}){
                 p.fill(edge,1,z-1,edge,3,z+1,armor);p.door(edge,1,z,side<0?Direction.WEST:Direction.EAST);
+                if(side>0)p.put(edge,1,z+1,LunarHorizons.POWER_FEEDTHROUGH);
             }
             for(int xx=Math.min(inner,side*12)+1;xx<Math.max(inner,side*12);xx++){
                 p.put(xx,0,z,LunarHorizons.INDUSTRIAL_GRATE);
+                if(side>0){p.put(xx,1,z+1,LunarHorizons.POWER_WIRE);if(xx==side*12+1||xx==inner-1)p.put(xx,1,z,LunarHorizons.POWER_WIRE);}
                 if(xx%3==0)furnishing(p,xx,3,z,LunarHorizons.LUNAR_LANTERN);
             }
         }
