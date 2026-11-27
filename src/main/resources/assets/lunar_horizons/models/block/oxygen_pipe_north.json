@@ -3,7 +3,8 @@
   "ambientocclusion": false,
   "textures": {
     "particle": "lunar_horizons:block/oxygen_pipe",
-    "body": "lunar_horizons:block/oxygen_pipe"
+    "body": "lunar_horizons:block/oxygen_pipe",
+    "joint": "lunar_horizons:block/oxygen_pipe_joint_0"
   },
   "elements": [
     {
@@ -57,7 +58,7 @@
           ]
         },
         "north": {
-          "texture": "#body",
+          "texture": "#joint",
           "uv": [
             0,
             0,

@@ -25,8 +25,7 @@
             0,
             16,
             16
-          ],
-          "rotation": 90
+          ]
         },
         "south": {
           "texture": "#body",
@@ -35,8 +34,7 @@
             0,
             16,
             16
-          ],
-          "rotation": 90
+          ]
         },
         "west": {
           "texture": "#body",
@@ -45,8 +43,7 @@
             0,
             16,
             16
-          ],
-          "rotation": 90
+          ]
         },
         "east": {
           "texture": "#body",
@@ -55,8 +52,7 @@
             0,
             16,
             16
-          ],
-          "rotation": 90
+          ]
         },
         "up": {
           "texture": "#body",

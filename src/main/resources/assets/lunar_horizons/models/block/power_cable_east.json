@@ -3,7 +3,8 @@
   "ambientocclusion": false,
   "textures": {
     "particle": "lunar_horizons:block/power_cable",
-    "body": "lunar_horizons:block/power_cable"
+    "body": "lunar_horizons:block/power_cable",
+    "joint": "lunar_horizons:block/power_cable_joint_0"
   },
   "elements": [
     {
@@ -56,7 +57,7 @@
           ]
         },
         "east": {
-          "texture": "#body",
+          "texture": "#joint",
           "uv": [
             0,
             0,

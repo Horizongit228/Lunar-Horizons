@@ -2,10 +2,194 @@
   "multipart": [
     {
       "when": {
-        "down": "false"
+        "down": "false",
+        "west": "false",
+        "east": "false",
+        "south": "false",
+        "north": "false"
       },
       "apply": {
-        "model": "lunar_horizons:block/oxygen_pipe_cap_down"
+        "model": "lunar_horizons:block/oxygen_pipe_joint_down_0"
+      }
+    },
+    {
+      "when": {
+        "down": "false",
+        "west": "true",
+        "east": "false",
+        "south": "false",
+        "north": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_down_1"
+      }
+    },
+    {
+      "when": {
+        "down": "false",
+        "west": "false",
+        "east": "true",
+        "south": "false",
+        "north": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_down_2"
+      }
+    },
+    {
+      "when": {
+        "down": "false",
+        "west": "true",
+        "east": "true",
+        "south": "false",
+        "north": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_down_3"
+      }
+    },
+    {
+      "when": {
+        "down": "false",
+        "west": "false",
+        "east": "false",
+        "south": "true",
+        "north": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_down_4"
+      }
+    },
+    {
+      "when": {
+        "down": "false",
+        "west": "true",
+        "east": "false",
+        "south": "true",
+        "north": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_down_5"
+      }
+    },
+    {
+      "when": {
+        "down": "false",
+        "west": "false",
+        "east": "true",
+        "south": "true",
+        "north": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_down_6"
+      }
+    },
+    {
+      "when": {
+        "down": "false",
+        "west": "true",
+        "east": "true",
+        "south": "true",
+        "north": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_down_7"
+      }
+    },
+    {
+      "when": {
+        "down": "false",
+        "west": "false",
+        "east": "false",
+        "south": "false",
+        "north": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_down_8"
+      }
+    },
+    {
+      "when": {
+        "down": "false",
+        "west": "true",
+        "east": "false",
+        "south": "false",
+        "north": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_down_9"
+      }
+    },
+    {
+      "when": {
+        "down": "false",
+        "west": "false",
+        "east": "true",
+        "south": "false",
+        "north": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_down_10"
+      }
+    },
+    {
+      "when": {
+        "down": "false",
+        "west": "true",
+        "east": "true",
+        "south": "false",
+        "north": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_down_11"
+      }
+    },
+    {
+      "when": {
+        "down": "false",
+        "west": "false",
+        "east": "false",
+        "south": "true",
+        "north": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_down_12"
+      }
+    },
+    {
+      "when": {
+        "down": "false",
+        "west": "true",
+        "east": "false",
+        "south": "true",
+        "north": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_down_13"
+      }
+    },
+    {
+      "when": {
+        "down": "false",
+        "west": "false",
+        "east": "true",
+        "south": "true",
+        "north": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_down_14"
+      }
+    },
+    {
+      "when": {
+        "down": "false",
+        "west": "true",
+        "east": "true",
+        "south": "true",
+        "north": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_down_15"
       }
     },
     {
@@ -18,10 +202,194 @@
     },
     {
       "when": {
-        "up": "false"
+        "up": "false",
+        "west": "false",
+        "east": "false",
+        "north": "false",
+        "south": "false"
       },
       "apply": {
-        "model": "lunar_horizons:block/oxygen_pipe_cap_up"
+        "model": "lunar_horizons:block/oxygen_pipe_joint_up_0"
+      }
+    },
+    {
+      "when": {
+        "up": "false",
+        "west": "true",
+        "east": "false",
+        "north": "false",
+        "south": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_up_1"
+      }
+    },
+    {
+      "when": {
+        "up": "false",
+        "west": "false",
+        "east": "true",
+        "north": "false",
+        "south": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_up_2"
+      }
+    },
+    {
+      "when": {
+        "up": "false",
+        "west": "true",
+        "east": "true",
+        "north": "false",
+        "south": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_up_3"
+      }
+    },
+    {
+      "when": {
+        "up": "false",
+        "west": "false",
+        "east": "false",
+        "north": "true",
+        "south": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_up_4"
+      }
+    },
+    {
+      "when": {
+        "up": "false",
+        "west": "true",
+        "east": "false",
+        "north": "true",
+        "south": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_up_5"
+      }
+    },
+    {
+      "when": {
+        "up": "false",
+        "west": "false",
+        "east": "true",
+        "north": "true",
+        "south": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_up_6"
+      }
+    },
+    {
+      "when": {
+        "up": "false",
+        "west": "true",
+        "east": "true",
+        "north": "true",
+        "south": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_up_7"
+      }
+    },
+    {
+      "when": {
+        "up": "false",
+        "west": "false",
+        "east": "false",
+        "north": "false",
+        "south": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_up_8"
+      }
+    },
+    {
+      "when": {
+        "up": "false",
+        "west": "true",
+        "east": "false",
+        "north": "false",
+        "south": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_up_9"
+      }
+    },
+    {
+      "when": {
+        "up": "false",
+        "west": "false",
+        "east": "true",
+        "north": "false",
+        "south": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_up_10"
+      }
+    },
+    {
+      "when": {
+        "up": "false",
+        "west": "true",
+        "east": "true",
+        "north": "false",
+        "south": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_up_11"
+      }
+    },
+    {
+      "when": {
+        "up": "false",
+        "west": "false",
+        "east": "false",
+        "north": "true",
+        "south": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_up_12"
+      }
+    },
+    {
+      "when": {
+        "up": "false",
+        "west": "true",
+        "east": "false",
+        "north": "true",
+        "south": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_up_13"
+      }
+    },
+    {
+      "when": {
+        "up": "false",
+        "west": "false",
+        "east": "true",
+        "north": "true",
+        "south": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_up_14"
+      }
+    },
+    {
+      "when": {
+        "up": "false",
+        "west": "true",
+        "east": "true",
+        "north": "true",
+        "south": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_up_15"
       }
     },
     {
@@ -34,10 +402,194 @@
     },
     {
       "when": {
-        "north": "false"
+        "north": "false",
+        "east": "false",
+        "west": "false",
+        "up": "false",
+        "down": "false"
       },
       "apply": {
-        "model": "lunar_horizons:block/oxygen_pipe_cap_north"
+        "model": "lunar_horizons:block/oxygen_pipe_joint_north_0"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "west": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_north_1"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "west": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_north_2"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "west": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_north_3"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "west": "false",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_north_4"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "west": "false",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_north_5"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "west": "true",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_north_6"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "west": "true",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_north_7"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "west": "false",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_north_8"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "west": "false",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_north_9"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "west": "true",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_north_10"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "west": "true",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_north_11"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "west": "false",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_north_12"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "west": "false",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_north_13"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "west": "true",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_north_14"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "west": "true",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_north_15"
       }
     },
     {
@@ -50,10 +602,194 @@
     },
     {
       "when": {
-        "south": "false"
+        "south": "false",
+        "west": "false",
+        "east": "false",
+        "up": "false",
+        "down": "false"
       },
       "apply": {
-        "model": "lunar_horizons:block/oxygen_pipe_cap_south"
+        "model": "lunar_horizons:block/oxygen_pipe_joint_south_0"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "true",
+        "east": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_south_1"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "false",
+        "east": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_south_2"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "true",
+        "east": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_south_3"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "false",
+        "east": "false",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_south_4"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "true",
+        "east": "false",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_south_5"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "false",
+        "east": "true",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_south_6"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "true",
+        "east": "true",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_south_7"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "false",
+        "east": "false",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_south_8"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "true",
+        "east": "false",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_south_9"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "false",
+        "east": "true",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_south_10"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "true",
+        "east": "true",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_south_11"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "false",
+        "east": "false",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_south_12"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "true",
+        "east": "false",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_south_13"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "false",
+        "east": "true",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_south_14"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "true",
+        "east": "true",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_south_15"
       }
     },
     {
@@ -66,10 +802,194 @@
     },
     {
       "when": {
-        "west": "false"
+        "west": "false",
+        "north": "false",
+        "south": "false",
+        "up": "false",
+        "down": "false"
       },
       "apply": {
-        "model": "lunar_horizons:block/oxygen_pipe_cap_west"
+        "model": "lunar_horizons:block/oxygen_pipe_joint_west_0"
+      }
+    },
+    {
+      "when": {
+        "west": "false",
+        "north": "true",
+        "south": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_west_1"
+      }
+    },
+    {
+      "when": {
+        "west": "false",
+        "north": "false",
+        "south": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_west_2"
+      }
+    },
+    {
+      "when": {
+        "west": "false",
+        "north": "true",
+        "south": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_west_3"
+      }
+    },
+    {
+      "when": {
+        "west": "false",
+        "north": "false",
+        "south": "false",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_west_4"
+      }
+    },
+    {
+      "when": {
+        "west": "false",
+        "north": "true",
+        "south": "false",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_west_5"
+      }
+    },
+    {
+      "when": {
+        "west": "false",
+        "north": "false",
+        "south": "true",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_west_6"
+      }
+    },
+    {
+      "when": {
+        "west": "false",
+        "north": "true",
+        "south": "true",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_west_7"
+      }
+    },
+    {
+      "when": {
+        "west": "false",
+        "north": "false",
+        "south": "false",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_west_8"
+      }
+    },
+    {
+      "when": {
+        "west": "false",
+        "north": "true",
+        "south": "false",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_west_9"
+      }
+    },
+    {
+      "when": {
+        "west": "false",
+        "north": "false",
+        "south": "true",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_west_10"
+      }
+    },
+    {
+      "when": {
+        "west": "false",
+        "north": "true",
+        "south": "true",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_west_11"
+      }
+    },
+    {
+      "when": {
+        "west": "false",
+        "north": "false",
+        "south": "false",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_west_12"
+      }
+    },
+    {
+      "when": {
+        "west": "false",
+        "north": "true",
+        "south": "false",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_west_13"
+      }
+    },
+    {
+      "when": {
+        "west": "false",
+        "north": "false",
+        "south": "true",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_west_14"
+      }
+    },
+    {
+      "when": {
+        "west": "false",
+        "north": "true",
+        "south": "true",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_west_15"
       }
     },
     {
@@ -82,10 +1002,194 @@
     },
     {
       "when": {
-        "east": "false"
+        "east": "false",
+        "south": "false",
+        "north": "false",
+        "up": "false",
+        "down": "false"
       },
       "apply": {
-        "model": "lunar_horizons:block/oxygen_pipe_cap_east"
+        "model": "lunar_horizons:block/oxygen_pipe_joint_east_0"
+      }
+    },
+    {
+      "when": {
+        "east": "false",
+        "south": "true",
+        "north": "false",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_east_1"
+      }
+    },
+    {
+      "when": {
+        "east": "false",
+        "south": "false",
+        "north": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_east_2"
+      }
+    },
+    {
+      "when": {
+        "east": "false",
+        "south": "true",
+        "north": "true",
+        "up": "false",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_east_3"
+      }
+    },
+    {
+      "when": {
+        "east": "false",
+        "south": "false",
+        "north": "false",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_east_4"
+      }
+    },
+    {
+      "when": {
+        "east": "false",
+        "south": "true",
+        "north": "false",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_east_5"
+      }
+    },
+    {
+      "when": {
+        "east": "false",
+        "south": "false",
+        "north": "true",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_east_6"
+      }
+    },
+    {
+      "when": {
+        "east": "false",
+        "south": "true",
+        "north": "true",
+        "up": "true",
+        "down": "false"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_east_7"
+      }
+    },
+    {
+      "when": {
+        "east": "false",
+        "south": "false",
+        "north": "false",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_east_8"
+      }
+    },
+    {
+      "when": {
+        "east": "false",
+        "south": "true",
+        "north": "false",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_east_9"
+      }
+    },
+    {
+      "when": {
+        "east": "false",
+        "south": "false",
+        "north": "true",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_east_10"
+      }
+    },
+    {
+      "when": {
+        "east": "false",
+        "south": "true",
+        "north": "true",
+        "up": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_east_11"
+      }
+    },
+    {
+      "when": {
+        "east": "false",
+        "south": "false",
+        "north": "false",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_east_12"
+      }
+    },
+    {
+      "when": {
+        "east": "false",
+        "south": "true",
+        "north": "false",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_east_13"
+      }
+    },
+    {
+      "when": {
+        "east": "false",
+        "south": "false",
+        "north": "true",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_east_14"
+      }
+    },
+    {
+      "when": {
+        "east": "false",
+        "south": "true",
+        "north": "true",
+        "up": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "lunar_horizons:block/oxygen_pipe_joint_east_15"
       }
     },
     {
