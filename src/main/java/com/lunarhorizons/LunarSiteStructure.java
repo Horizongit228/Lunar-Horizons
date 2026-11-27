@@ -13,7 +13,7 @@ import net.minecraft.world.gen.structure.StructureType;
 /** Vanilla structure starts, with one persistent, chunk-local piece per occupied chunk. */
 public final class LunarSiteStructure extends Structure {
     public static final MapCodec<LunarSiteStructure> CODEC=RecordCodecBuilder.mapCodec(i->i.group(
-        configCodecBuilder(i),Codec.intRange(0,18).fieldOf("site").forGetter(s->s.kind)
+        configCodecBuilder(i),Codec.intRange(0,19).fieldOf("site").forGetter(s->s.kind)
     ).apply(i,LunarSiteStructure::new));
     private final int kind;
     public LunarSiteStructure(Config config,int kind){super(config);this.kind=kind;}

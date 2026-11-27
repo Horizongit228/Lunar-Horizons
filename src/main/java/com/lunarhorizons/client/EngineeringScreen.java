@@ -48,10 +48,10 @@ final class EngineeringScreen extends Screen{
         if(toggle==null)return;
         toggle.setMessage(tr(data.enabled()?"disable":"enable"));
         int k=data.kind();
-        load.active=(k==1||k==2||k==3||k==4||k==5||k==8)&&data.input()<64;
-        collect.active=(k==3||k==4||k==8)&&data.output()>0;
+        load.active=(k==1||k==2||k==3||k==4||k==5||k==8||k==9)&&data.input()<64;
+        collect.active=(k==3||k==4||k==8||k==9)&&data.output()>0;
         refill.active=k==5&&data.output()>0;
-        automatic.active=k==1||k==2||k==3||k==4||k==5||k==8;
+        automatic.active=k==1||k==2||k==3||k==4||k==5||k==8||k==9;
         automatic.setMessage(tr(data.automation()?"auto_on":"auto_off"));
     }
     @Override public boolean shouldPause(){return false;}

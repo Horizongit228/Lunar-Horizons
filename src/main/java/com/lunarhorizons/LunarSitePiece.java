@@ -63,6 +63,20 @@ public final class LunarSitePiece extends StructurePiece {
         for(BlockState state:palette)list.add(NbtHelper.fromBlockState(state));
         nbt.put("Palette",list);
     }
+    void visitCandidates(List<BlockPos> out,BlockPos center){
+        Map<Integer,BlockState> states=new HashMap<>();
+        for(int i=0;i+1<cells.length;i+=2){
+            int index=cells[i+1];if(index>=0&&index<palette.size())states.put(cells[i],palette.get(index));
+        }
+        for(var e:states.entrySet()){
+            int n=e.getKey();
+            if(!e.getValue().isAir())continue;
+            BlockState below=states.get(n-256),above=states.get(n+256);
+            if(below==null||below.isAir()||above==null||!above.isAir())continue;
+            BlockPos pos=unpack(n);
+            if(Math.abs(pos.getX()-center.getX())<=16&&Math.abs(pos.getZ()-center.getZ())<=16)out.add(pos);
+        }
+    }
     @Override public void generate(StructureWorldAccess world,StructureAccessor accessor,ChunkGenerator generator,Random random,BlockBox box,ChunkPos chunk,BlockPos pivot){
         // The native structure engine may call this piece while visiting nearby chunks.
         if(chunk.getStartX()!=cx||chunk.getStartZ()!=cz)return;
@@ -91,6 +105,20 @@ public final class LunarSitePiece extends StructurePiece {
                     if(old.isFullCube(world,p))break;
                     world.setBlockState(p,LunarHorizons.MOON_BRICKS.getDefaultState(),2);p=p.down();
                 }
+            }
+        }
+        // Seed the rare facility with finite startup supplies. Never modify old sites.
+        if(kind==19)for(int i=0;i+1<cells.length;i+=2){
+            BlockPos p=unpack(cells[i]);if(!box.contains(p))continue;
+            if(world.getBlockEntity(p) instanceof ColonyBlockEntity be){
+                switch(be.kind()){
+                    case BATTERY -> be.energy=be.capacity()/2;
+                    case OXYGEN -> be.input=16;
+                    case GENERATOR -> be.input=8;
+                    case SERVER -> {if(Math.floorMod(p.asLong()^seed,4)==0)be.input=1;}
+                    default -> {}
+                }
+                be.markDirty();
             }
         }
         // Stable per-chest loot stream, independent of chunk visitation order.

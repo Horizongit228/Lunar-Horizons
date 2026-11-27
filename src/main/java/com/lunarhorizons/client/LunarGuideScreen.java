@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 final class LunarGuideScreen extends Screen{
-    private static final int TEXT_PAGES=18,DIAGRAMS=4,RECIPE_START=TEXT_PAGES+DIAGRAMS,W=304,H=216;
+    private static final int TEXT_PAGES=19,DIAGRAMS=4,RECIPE_START=TEXT_PAGES+DIAGRAMS,W=304,H=216;
     private record Recipe(String result,int count,String[] slots){}
     private static final Recipe[] RECIPES={
         new Recipe("lunar_horizons:solar_panel",2,new String[]{"minecraft:glass","minecraft:glass","minecraft:glass","minecraft:coal","minecraft:redstone","minecraft:coal","lunar_horizons:titanium_ingot","lunar_horizons:titanium_ingot","lunar_horizons:titanium_ingot"}),
